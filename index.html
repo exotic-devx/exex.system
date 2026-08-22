@@ -116,10 +116,6 @@
     opacity:0;
     transform:rotateX(0deg) rotateY(0deg);
     will-change:transform;
-    display:block;
-  }
-  .card-wrapper.visible{
-    opacity:1;
   }
   .card-wrapper.flipped{
     transform:rotateY(180deg);
@@ -461,7 +457,7 @@
 
       <!-- GAME -->
       <div class="game-panel" id="gamePanel">
-        <img class="cover" id="gameCover" src="assets/gift.png" alt="game cover">
+        <img class="cover" id="gameCover" src="assets/profile.gif" alt="game cover">
         <div class="info">
           <div class="game-name" id="gameName">No game running</div>
           <div class="game-detail" id="gameDetail">Last played</div>
@@ -489,6 +485,7 @@
     const startScreen   = document.getElementById('start-screen');
     const startText     = document.getElementById('start-text');
     const cardWrapper   = document.getElementById('cardWrapper');
+    const cardFront     = document.getElementById('cardFront');
     const profileUsername = document.getElementById('profile-username');
     const profileBio    = document.getElementById('profile-bio');
     const backgroundVideo = document.getElementById('background');
@@ -505,13 +502,13 @@
     let isFlipped = false;
     const bootTime = Date.now();
 
-    // CURSOR
+    // ----- CURSOR -----
     document.addEventListener('mousemove', (e) => {
       customCursor.style.left = e.clientX + 'px';
       customCursor.style.top = e.clientY + 'px';
     });
 
-    // CLOCK / UPTIME
+    // ----- CLOCK / UPTIME -----
     function pad(n){ return n.toString().padStart(2,'0'); }
     function tickClock(){
       const d = new Date();
@@ -536,7 +533,7 @@
     setInterval(tickClock, 1000);
     tickClock();
 
-    // START SCREEN
+    // ----- START SCREEN -----
     const startMessage = "click here...";
     let startTextContent = '';
     let startIndex = 0;
@@ -567,7 +564,7 @@
     }, 500);
     typeWriterStart();
 
-    // START APP
+    // ----- START APP -----
     function startApp() {
       startScreen.classList.add('hidden');
       if (backgroundVideo) {
@@ -580,13 +577,8 @@
         backgroundMusic.muted = false;
         backgroundMusic.play().catch(()=>{});
       }
-      
-      cardWrapper.classList.add('visible');
-      gsap.fromTo(cardWrapper, 
-        { opacity:0, y:-20, scale:0.96 }, 
-        { opacity:1, y:0, scale:1, duration:0.9, ease:'power2.out' }
-      );
-      
+      cardWrapper.style.opacity = '1';
+      gsap.fromTo(cardWrapper, {opacity:0, y:-20, scale:0.96}, {opacity:1, y:0, scale:1, duration:0.9, ease:'power2.out'});
       huds.forEach((h,i)=> setTimeout(()=> h.classList.add('visible'), 300 + i*120));
       typeWriterUsername();
       typeWriterBio();
@@ -595,7 +587,7 @@
     startScreen.addEventListener('click', startApp);
     startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
 
-    // FLIP CARD
+    // ----- FLIP CARD (click su pannello o tasto SPACE) -----
     function toggleFlip(e) {
       if(e) e.stopPropagation();
       isFlipped = !isFlipped;
@@ -612,7 +604,58 @@
       }
     });
 
-    // USERNAME TYPING
+    // ----- EFFETTO 3D SULLO SFONDO -----
+    let tiltX = 0, tiltY = 0;
+    let targetTiltX = 0, targetTiltY = 0;
+    let isMouseOnCard = false;
+
+    document.addEventListener('mousemove', (e) => {
+      const rect = document.body.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const relX = Math.max(-1, Math.min(1, (e.clientX - centerX) / centerX));
+      const relY = Math.max(-1, Math.min(1, (e.clientY - centerY) / centerY));
+      const maxTilt = 8;
+      targetTiltX = relY * maxTilt;
+      targetTiltY = -relX * maxTilt;
+      const px = (e.clientX / window.innerWidth - 0.5) * 8;
+      const py = (e.clientY / window.innerHeight - 0.5) * 4;
+      backgroundVideo.style.transform = `translate(-50%, -50%) scale(1.05) translate(${px}px, ${py}px)`;
+    });
+
+    function animateTilt() {
+      tiltX += (targetTiltX - tiltX) * 0.08;
+      tiltY += (targetTiltY - tiltY) * 0.08;
+      // Solo se il mouse NON è sulla card
+      if (!isMouseOnCard) {
+        cardWrapper.style.transition = 'none';
+        let transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+        if (isFlipped) {
+          transform += ` rotateY(180deg)`;
+        }
+        cardWrapper.style.transform = transform;
+      }
+      requestAnimationFrame(animateTilt);
+    }
+
+    cardWrapper.addEventListener('mouseenter', () => {
+      isMouseOnCard = true;
+    });
+    cardWrapper.addEventListener('mouseleave', () => {
+      isMouseOnCard = false;
+      cardWrapper.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)';
+      if (!isFlipped) {
+        cardWrapper.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      } else {
+        cardWrapper.style.transform = 'rotateY(180deg)';
+      }
+      tiltX = 0; tiltY = 0;
+      targetTiltX = 0; targetTiltY = 0;
+    });
+
+    animateTilt();
+
+    // ----- USERNAME TYPING -----
     const usernameTexts = ["𝔢𝔵𝔬𝔱𝔦𝔠"];
     let usernameIndex = 0, charIndex = 0, isDeleting = false, usernameCursorVisible = true;
     function typeWriterUsername(){
@@ -640,7 +683,7 @@
       }
     }, 500);
 
-    // BIO TYPING
+    // ----- BIO TYPING -----
     const bioMessages = ["I created my own.", "DM me.", '<span class="bio-link">guns.lol/javraj</span>'];
     let bioText='', bioIndex=0, bioMessageIndex=0, isBioDeleting=false, bioCursorVisible=true;
     function typeWriterBio(){
@@ -670,41 +713,7 @@
       }
     }, 500);
 
-    // SPOTIFY PROGRESS
-    let spotifyData = null;
-
-    function updateSpotifyProgress() {
-      const spotifyProgress = document.getElementById('spotifyProgress');
-      const progressCurrent = document.getElementById('progressCurrent');
-      const progressTotal = document.getElementById('progressTotal');
-
-      if (!spotifyData || !spotifyData.timestamps) {
-        if (spotifyProgress) spotifyProgress.style.width = '0%';
-        if (progressCurrent) progressCurrent.textContent = '0:00';
-        if (progressTotal) progressTotal.textContent = '0:00';
-        return;
-      }
-
-      const start = spotifyData.timestamps.start;
-      const end = spotifyData.timestamps.end;
-      const now = Date.now();
-      const elapsed = Math.floor((now - start) / 1000);
-      const total = Math.floor((end - start) / 1000);
-      const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
-
-      if (spotifyProgress) spotifyProgress.style.width = progress + '%';
-      if (progressCurrent) progressCurrent.textContent = formatTime(Math.min(elapsed, total));
-      if (progressTotal) progressTotal.textContent = formatTime(total);
-    }
-
-    function formatTime(seconds){
-      if (seconds < 0) seconds = 0;
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60);
-      return m + ':' + (s < 10 ? '0' : '') + s;
-    }
-
-    // DISCORD STATUS + SPOTIFY + GAME
+    // ----- DISCORD STATUS + SPOTIFY + GAME -----
     async function fetchDiscordStatus(){
       const userId = '1019329014369882123';
       const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
@@ -746,19 +755,32 @@
       const spotifyCover = document.getElementById('spotifyCover');
       const spotifyTrack = document.getElementById('spotifyTrack');
       const spotifyArtist = document.getElementById('spotifyArtist');
+      const spotifyProgress = document.getElementById('spotifyProgress');
+      const progressCurrent = document.getElementById('progressCurrent');
+      const progressTotal = document.getElementById('progressTotal');
 
       if(spotify && spotify.song){
         spotifyCover.src = spotify.album_art_url || 'assets/spotify.png';
         spotifyTrack.textContent = spotify.song;
         spotifyArtist.textContent = spotify.artist;
-        spotifyData = spotify;
-        updateSpotifyProgress();
+        if(spotify.timestamps){
+          const start = spotify.timestamps.start;
+          const end = spotify.timestamps.end;
+          const now = Date.now();
+          const elapsed = Math.floor((now - start) / 1000);
+          const total = Math.floor((end - start) / 1000);
+          const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+          spotifyProgress.style.width = progress + '%';
+          progressCurrent.textContent = formatTime(elapsed);
+          progressTotal.textContent = formatTime(total);
+        }
       } else {
         spotifyCover.src = 'assets/spotify.png';
         spotifyTrack.textContent = 'No song playing';
         spotifyArtist.textContent = 'Last listened';
-        spotifyData = null;
-        updateSpotifyProgress();
+        spotifyProgress.style.width = '0%';
+        progressCurrent.textContent = '0:00';
+        progressTotal.textContent = '0:00';
       }
 
       // Game
@@ -768,11 +790,7 @@
       const gameDetail = document.getElementById('gameDetail');
 
       if(gameActivity && gameActivity.name){
-        if(gameActivity.assets && gameActivity.assets.large_image) {
-          gameCover.src = `https://cdn.discordapp.com/app-assets/${gameActivity.application_id}/${gameActivity.assets.large_image}.png`;
-        } else {
-          gameCover.src = 'assets/gift.png';
-        }
+        gameCover.src = 'assets/profile.gif';
         gameName.textContent = gameActivity.name;
         let details = '';
         if(gameActivity.details) details += gameActivity.details + ' ';
@@ -783,10 +801,16 @@
           gameDetail.textContent += ` (${elapsed}m)`;
         }
       } else {
-        gameCover.src = 'assets/gift.png';
+        gameCover.src = 'assets/profile.gif';
         gameName.textContent = 'No game running';
         gameDetail.textContent = 'Last played';
       }
+    }
+
+    function formatTime(seconds){
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
     }
 
     setInterval(fetchDiscordStatus, 30000);
