@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -54,7 +54,6 @@
     -webkit-font-smoothing:antialiased;
   }
 
-  /* ---------- background video con parallax ---------- */
   #background-wrapper{
     position:fixed; inset:0; z-index:1; overflow:hidden;
     pointer-events:none;
@@ -69,7 +68,6 @@
   }
   #background.visible{opacity:0.7;}
 
-  /* ---------- custom cursor ---------- */
   .custom-cursor{
     position:fixed; width:40px; height:40px;
     background:url('assets/custom_cursor.png') no-repeat center center; background-size:contain;
@@ -77,7 +75,6 @@
     display:block;
   }
 
-  /* ---------- HUD ---------- */
   .hud{
     position:fixed; z-index:15; font-family:var(--font-ui); font-size:10.5px;
     letter-spacing:1.5px; color:var(--ash); pointer-events:none;
@@ -89,7 +86,6 @@
   .hud b{color:var(--mist); font-weight:500;}
   @media (max-width:700px){ .hud{display:none;} }
 
-  /* ---------- start screen ---------- */
   #start-screen{
     position:fixed; inset:0; background:#000; display:flex;
     align-items:center; justify-content:center; z-index:50;
@@ -106,7 +102,6 @@
     position:relative; z-index:2;
   }
 
-  /* ---------- profile card ---------- */
   .stage{
     position:fixed; inset:0; z-index:20; display:flex; align-items:center; justify-content:center;
     perspective:1200px;
@@ -116,7 +111,7 @@
     pointer-events:auto;
   }
   .card-wrapper{
-    position:relative; width:520px; max-width:92vw; min-height:620px;
+    position:relative; width:480px; max-width:92vw; min-height:560px;
     transform-style:preserve-3d; transition:transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
     opacity:0;
     transform:rotateX(0deg) rotateY(0deg);
@@ -128,50 +123,59 @@
   .card-face{
     position:absolute; inset:0; backface-visibility:hidden;
     border-radius:12px;
-    min-height:620px;
+    min-height:560px;
   }
   .card-front{
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); padding:34px 34px 24px;
+    border:1px solid var(--hair); padding:28px 28px 20px;
     display:flex; flex-direction:column;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
   }
   .card-back{
     transform:rotateY(180deg);
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); padding:30px;
-    display:flex; flex-direction:column; gap:14px;
+    border:1px solid var(--hair); padding:24px;
+    display:flex; flex-direction:column; gap:12px;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
     overflow-y:auto;
   }
 
-  /* ---- flip trigger ---- */
-  .flip-trigger{
-    position:absolute; bottom:14px; left:50%; transform:translateX(-50%);
-    font-size:10px; letter-spacing:2px; color:var(--ash);
-    text-transform:uppercase; 
-    transition:color .3s ease;
-    z-index:10; pointer-events:auto;
-    cursor:none;
+  /* ---- flip trigger panel ---- */
+  .flip-panel{
+    position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+    background:rgba(255,255,255,0.04); border:1px solid var(--hair);
+    border-radius:20px; padding:8px 20px; z-index:10;
+    pointer-events:auto; cursor:none;
+    transition:background .3s ease, border-color .3s ease;
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
   }
-  .flip-trigger:hover{ color:var(--mist); }
+  .flip-panel:hover{
+    background:rgba(255,255,255,0.08);
+    border-color:rgba(255,255,255,0.2);
+  }
+  .flip-panel .flip-text{
+    font-size:10px; letter-spacing:2px; color:var(--ash);
+    text-transform:uppercase; transition:color .3s ease;
+  }
+  .flip-panel:hover .flip-text{ color:var(--mist); }
 
   /* ---- FRONT ---- */
-  .username-section{ text-align:center; min-height:58px; position:relative; }
+  .username-section{ text-align:center; min-height:52px; position:relative; }
   #profile-username{
-    font-family:var(--font-display); font-size:42px; font-weight:400; letter-spacing:3px;
-    color:#fff; filter:drop-shadow(0 0 18px rgba(255,255,255,.35)); display:inline-block; min-height:56px;
+    font-family:var(--font-display); font-size:38px; font-weight:400; letter-spacing:3px;
+    color:#fff; filter:drop-shadow(0 0 18px rgba(255,255,255,.35)); display:inline-block; min-height:48px;
   }
   .rule{
-    width:56px; height:1px; margin:16px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+    width:48px; height:1px; margin:14px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
   }
   .badge-section{
     display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap;
-    margin-bottom:20px; padding:2px 0;
+    margin-bottom:16px; padding:2px 0;
   }
-  .badge-container{ position:relative; width:32px; height:32px; }
+  .badge-container{ position:relative; width:30px; height:30px; }
   .badge{
-    width:32px; height:32px; display:block; border-radius:4px; object-fit:contain;
+    width:30px; height:30px; display:block; border-radius:4px; object-fit:contain;
     filter:grayscale(.55) brightness(1.05); opacity:.85;
     transition:transform .3s cubic-bezier(.25,.1,.25,1), filter .3s ease, opacity .3s ease;
   }
@@ -187,8 +191,8 @@
   .badge-container:hover .tooltip{ visibility:visible; opacity:1; transform:translateX(-50%) translateY(0); }
 
   #profile-bio{
-    color:var(--mist); font-size:15.5px; line-height:1.6; min-height:2.1em; text-align:center;
-    margin:6px 0 20px; padding:0 6px; letter-spacing:.2px;
+    color:var(--mist); font-size:15px; line-height:1.6; min-height:2em; text-align:center;
+    margin:4px 0 16px; padding:0 6px; letter-spacing:.2px;
   }
   #profile-bio .bio-link{
     color:#4fc3f7; text-decoration:none;
@@ -204,21 +208,21 @@
   @keyframes glitch{ 0%{transform:translate(0);} 25%{transform:translate(-1px,1px);} 50%{transform:translate(1px,-1px);} 75%{transform:translate(-1px,-1px);} 100%{transform:translate(0);} }
 
   .profile-main{
-    display:flex; align-items:center; gap:16px; background:rgba(255,255,255,.03);
-    border:1px solid var(--hair); border-radius:8px; padding:13px 18px; max-width:420px;
-    margin:0 auto 18px; width:100%; transition:border-color .4s ease, box-shadow .4s ease;
+    display:flex; align-items:center; gap:14px; background:rgba(255,255,255,.03);
+    border:1px solid var(--hair); border-radius:8px; padding:11px 16px; max-width:400px;
+    margin:0 auto 14px; width:100%; transition:border-color .4s ease, box-shadow .4s ease;
   }
   .profile-main:hover{
     border-color:rgba(255,255,255,.35);
     box-shadow:0 0 30px rgba(255,255,255,.08);
   }
-  .profile-container{ position:relative; width:56px; height:56px; flex-shrink:0; }
+  .profile-container{ position:relative; width:52px; height:52px; flex-shrink:0; }
   .profile-picture{
-    width:56px; height:56px; border-radius:50%; object-fit:cover; display:block;
+    width:52px; height:52px; border-radius:50%; object-fit:cover; display:block;
     border:1px solid rgba(255,255,255,.18); filter:grayscale(.2);
   }
   .status-ring{
-    position:absolute; bottom:-1px; right:-1px; width:15px; height:15px; border-radius:50%;
+    position:absolute; bottom:-1px; right:-1px; width:14px; height:14px; border-radius:50%;
     border:2px solid #000; background:#3a3a3a; transition:all .3s ease;
   }
   .status-ring.online{ background:#fff; box-shadow:0 0 10px rgba(255,255,255,.9); }
@@ -226,19 +230,19 @@
   .status-ring.dnd{ background:#8a8a8a; box-shadow:0 0 6px rgba(255,255,255,.3); }
   .status-ring.offline{ background:#3a3a3a; box-shadow:none; }
 
-  .profile-name-section{ flex:1; display:flex; flex-direction:column; min-width:120px; }
+  .profile-name-section{ flex:1; display:flex; flex-direction:column; min-width:110px; }
   .profile-display-name{
-    font-family:var(--font-display); font-size:18px; color:#fff; letter-spacing:.5px; text-align:left;
+    font-family:var(--font-display); font-size:17px; color:#fff; letter-spacing:.5px; text-align:left;
   }
-  .last-seen{ font-size:10px; color:var(--ash); margin-top:4px; text-align:left; letter-spacing:.5px; }
+  .last-seen{ font-size:10px; color:var(--ash); margin-top:3px; text-align:left; letter-spacing:.5px; }
 
   .social-links{
-    display:flex; justify-content:center; gap:26px; align-items:center; padding:6px 0 0;
-    margin-top:6px;
+    display:flex; justify-content:center; gap:24px; align-items:center; padding:4px 0 0;
+    margin-top:4px;
   }
   .social-link-tooltip{ position:relative; display:inline-block; }
   .social-icon{
-    width:32px; height:32px; opacity:.7; filter:grayscale(1) brightness(2) drop-shadow(0 0 0 rgba(255,255,255,0));
+    width:30px; height:30px; opacity:.7; filter:grayscale(1) brightness(2) drop-shadow(0 0 0 rgba(255,255,255,0));
     transition:transform .3s ease, filter .3s ease, opacity .3s ease;
   }
   .social-link-tooltip:hover .social-icon{
@@ -259,59 +263,93 @@
     text-align:center; margin-bottom:2px;
   }
   .back-divider{
-    width:40px; height:1px; margin:4px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+    width:36px; height:1px; margin:4px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
   }
 
   .clock-panel{
     background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
-    padding:14px 18px; display:flex; align-items:center; gap:16px;
+    padding:12px 16px; display:flex; align-items:center; gap:14px;
   }
-  .clock-panel .clock-svg{ width:56px; height:56px; flex-shrink:0; }
+  .clock-panel .clock-svg{ width:50px; height:50px; flex-shrink:0; }
   .clock-panel .clock-info{ flex:1; }
-  .clock-panel .clock-time{ font-size:26px; font-weight:300; letter-spacing:2px; font-family:var(--font-display); color:#fff; }
-  .clock-panel .clock-date{ font-size:11px; color:var(--ash); letter-spacing:1px; margin-top:2px; }
-  .clock-panel .clock-location{ font-size:10px; color:var(--ash); letter-spacing:1px; margin-top:4px; display:flex; align-items:center; gap:6px; }
-  .clock-panel .clock-location svg{ width:12px; height:12px; stroke:var(--ash); fill:none; }
+  .clock-panel .clock-time{ font-size:24px; font-weight:300; letter-spacing:2px; font-family:var(--font-display); color:#fff; }
+  .clock-panel .clock-date{ font-size:10px; color:var(--ash); letter-spacing:1px; margin-top:2px; }
+  .clock-panel .clock-location{ font-size:9px; color:var(--ash); letter-spacing:1px; margin-top:4px; display:flex; align-items:center; gap:5px; }
+  .clock-panel .clock-location svg{ width:11px; height:11px; stroke:var(--ash); fill:none; }
 
-  .spotify-panel, .game-panel{
+  .spotify-panel{
     background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
     padding:10px 14px; display:flex; align-items:center; gap:12px;
   }
-  .spotify-panel .cover, .game-panel .cover{
-    width:46px; height:46px; border-radius:6px; object-fit:cover; flex-shrink:0;
+  .spotify-panel .cover{
+    width:44px; height:44px; border-radius:6px; object-fit:cover; flex-shrink:0;
     background:rgba(255,255,255,.05);
   }
-  .spotify-panel .info, .game-panel .info{ flex:1; overflow:hidden; }
-  .spotify-panel .track-name, .game-panel .game-name{
-    font-size:12.5px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  .spotify-panel .info{ flex:1; overflow:hidden; }
+  .spotify-panel .track-name{
+    font-size:12px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
-  .spotify-panel .artist-name, .game-panel .game-detail{
-    font-size:10px; color:var(--ash); letter-spacing:.3px; margin-top:2px;
+  .spotify-panel .artist-name{
+    font-size:9.5px; color:var(--ash); letter-spacing:.3px; margin-top:1px;
+  }
+  .spotify-panel .progress-wrapper{
+    display:flex; align-items:center; gap:6px; margin-top:4px;
   }
   .spotify-panel .progress-bar{
-    margin-top:4px; height:2px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden; width:100%;
+    flex:1; height:2px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden;
   }
   .spotify-panel .progress-bar .progress-fill{
-    height:100%; width:0%; background:linear-gradient(90deg, #4fc3f7, #fff); border-radius:2px; transition:width .5s;
+    height:100%; width:0%; background:linear-gradient(90deg, #4fc3f7, #fff);
+    border-radius:2px; transition:width .3s ease;
+    box-shadow:0 0 12px rgba(79,195,247,0.3);
+  }
+  .spotify-panel .progress-time{
+    font-size:8px; color:var(--ash); font-family:var(--font-ui); min-width:32px; text-align:center;
+  }
+
+  .game-panel{
+    background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
+    padding:10px 14px; display:flex; align-items:center; gap:12px;
+  }
+  .game-panel .cover{
+    width:44px; height:44px; border-radius:6px; object-fit:cover; flex-shrink:0;
+    background:rgba(255,255,255,.05);
+  }
+  .game-panel .info{ flex:1; overflow:hidden; }
+  .game-panel .game-name{
+    font-size:12px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .game-panel .game-detail{
+    font-size:9.5px; color:var(--ash); letter-spacing:.3px; margin-top:1px;
   }
 
   .hidden{ display:none !important; }
 
   @media (max-width:580px){
-    .card-wrapper{ min-height:auto; }
-    .card-front, .card-back{ padding:20px 16px 16px; min-height:auto; }
-    .card-back{ gap:12px; }
-    #profile-username{ font-size:32px; min-height:44px; }
-    .profile-main{ max-width:340px; padding:10px 14px; gap:12px; border-radius:6px; }
-    .profile-container,.profile-picture{ width:48px; height:48px; }
-    .profile-display-name{ font-size:15px; }
-    .badge,.badge-container{ width:27px; height:27px; }
-    .social-icon{ width:28px; height:28px; }
+    .card-wrapper{ min-height:auto; width:440px; }
+    .card-front, .card-back{ padding:18px 14px 14px; min-height:auto; }
+    .card-back{ gap:10px; }
+    #profile-username{ font-size:30px; min-height:40px; }
+    .profile-main{ max-width:320px; padding:8px 12px; gap:10px; border-radius:6px; }
+    .profile-container,.profile-picture{ width:44px; height:44px; }
+    .profile-display-name{ font-size:14px; }
+    .badge,.badge-container{ width:25px; height:25px; }
+    .social-icon{ width:26px; height:26px; }
     .clock-panel .clock-time{ font-size:20px; }
-    .clock-panel .clock-svg{ width:40px; height:40px; }
-    .spotify-panel .cover, .game-panel .cover{ width:36px; height:36px; }
-    .spotify-panel, .game-panel{ padding:8px 12px; gap:10px; }
-    .flip-trigger{ bottom:10px; font-size:9px; }
+    .clock-panel .clock-svg{ width:38px; height:38px; }
+    .spotify-panel .cover, .game-panel .cover{ width:34px; height:34px; }
+    .spotify-panel, .game-panel{ padding:8px 10px; gap:8px; }
+    .flip-panel{ padding:6px 14px; bottom:10px; }
+    .flip-panel .flip-text{ font-size:9px; }
+  }
+
+  @media (max-width:400px){
+    .card-wrapper{ width:380px; }
+    #profile-username{ font-size:26px; min-height:36px; }
+    .profile-main{ max-width:280px; padding:6px 10px; gap:8px; }
+    .profile-container,.profile-picture{ width:38px; height:38px; }
+    .badge,.badge-container{ width:22px; height:22px; }
+    .social-icon{ width:22px; height:22px; }
   }
 </style>
 </head>
@@ -373,7 +411,9 @@
           <img src="assets/discord.png" alt="Discord" class="social-icon"><span class="tooltip-text">Discord</span>
         </a>
       </div>
-      <div class="flip-trigger" id="flipFront">↻ click to flip</div>
+      <div class="flip-panel" id="flipFrontPanel">
+        <span class="flip-text">↻ click to flip — or press SPACE</span>
+      </div>
     </div>
 
     <!-- BACK -->
@@ -381,7 +421,7 @@
       <div class="back-title">↻ INFO</div>
       <div class="back-divider"></div>
 
-      <!-- OROLOGIO -->
+      <!-- CLOCK -->
       <div class="clock-panel">
         <svg class="clock-svg" viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.08)" stroke-width="2" fill="none"/>
@@ -405,22 +445,28 @@
       <div class="spotify-panel" id="spotifyPanel">
         <img class="cover" id="spotifyCover" src="assets/spotify.png" alt="cover">
         <div class="info">
-          <div class="track-name" id="spotifyTrack">Nessuna canzone in riproduzione</div>
-          <div class="artist-name" id="spotifyArtist">Ultima canzone ascoltata</div>
-          <div class="progress-bar"><div class="progress-fill" id="spotifyProgress" style="width:0%"></div></div>
+          <div class="track-name" id="spotifyTrack">No song playing</div>
+          <div class="artist-name" id="spotifyArtist">Last listened</div>
+          <div class="progress-wrapper">
+            <span class="progress-time" id="progressCurrent">0:00</span>
+            <div class="progress-bar"><div class="progress-fill" id="spotifyProgress" style="width:0%"></div></div>
+            <span class="progress-time" id="progressTotal">0:00</span>
+          </div>
         </div>
       </div>
 
       <!-- GAME -->
       <div class="game-panel" id="gamePanel">
-        <img class="cover" id="gameCover" src="assets/developer.png" alt="game cover">
+        <img class="cover" id="gameCover" src="assets/profile.gif" alt="game cover">
         <div class="info">
-          <div class="game-name" id="gameName">Nessun gioco in esecuzione</div>
-          <div class="game-detail" id="gameDetail">Ultimo gioco giocato</div>
+          <div class="game-name" id="gameName">No game running</div>
+          <div class="game-detail" id="gameDetail">Last played</div>
         </div>
       </div>
 
-      <div class="flip-trigger" id="flipBack">↻ click to flip back</div>
+      <div class="flip-panel" id="flipBackPanel">
+        <span class="flip-text">↻ click to flip back — or press SPACE</span>
+      </div>
     </div>
   </div>
 </div>
@@ -436,7 +482,6 @@
 
   document.addEventListener('DOMContentLoaded', function(){
 
-    // ----- ELEMENTI -----
     const startScreen   = document.getElementById('start-screen');
     const startText     = document.getElementById('start-text');
     const cardWrapper   = document.getElementById('cardWrapper');
@@ -475,7 +520,6 @@
       const diff = Math.floor((Date.now()-bootTime)/1000);
       const mm = Math.floor(diff/60), ss = diff%60;
       uptimeEl.textContent = pad(mm)+':'+pad(ss);
-      // Orologio SVG
       const hourDeg = (d.getHours()%12)*30 + d.getMinutes()*0.5;
       const minDeg = d.getMinutes()*6 + d.getSeconds()*0.1;
       const secDeg = d.getSeconds()*6;
@@ -534,7 +578,7 @@
         backgroundMusic.play().catch(()=>{});
       }
       cardWrapper.style.opacity = '1';
-      gsap.fromTo(cardWrapper, {opacity:0, y:-24}, {opacity:1, y:0, duration:1, ease:'power2.out'});
+      gsap.fromTo(cardWrapper, {opacity:0, y:-20, scale:0.96}, {opacity:1, y:0, scale:1, duration:0.9, ease:'power2.out'});
       huds.forEach((h,i)=> setTimeout(()=> h.classList.add('visible'), 300 + i*120));
       typeWriterUsername();
       typeWriterBio();
@@ -543,24 +587,29 @@
     startScreen.addEventListener('click', startApp);
     startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
 
-    // ----- FLIP CARD -----
-    document.getElementById('flipFront').addEventListener('click', function(e){
-      e.stopPropagation();
+    // ----- FLIP CARD (click su pannello o tasto SPACE) -----
+    function toggleFlip(e) {
+      if(e) e.stopPropagation();
       isFlipped = !isFlipped;
       cardWrapper.classList.toggle('flipped');
-    });
-    document.getElementById('flipBack').addEventListener('click', function(e){
-      e.stopPropagation();
-      isFlipped = !isFlipped;
-      cardWrapper.classList.toggle('flipped');
+    }
+
+    document.getElementById('flipFrontPanel').addEventListener('click', toggleFlip);
+    document.getElementById('flipBackPanel').addEventListener('click', toggleFlip);
+
+    document.addEventListener('keydown', (e) => {
+      if(e.code === 'Space') {
+        e.preventDefault();
+        toggleFlip(e);
+      }
     });
 
-    // ----- EFFETTO 3D: INSEGUE IL MOUSE SULLO SFONDO (NON SULLA CARD) -----
+    // ----- EFFETTO 3D SULLO SFONDO -----
     let tiltX = 0, tiltY = 0;
     let targetTiltX = 0, targetTiltY = 0;
+    let isMouseOnCard = false;
 
     document.addEventListener('mousemove', (e) => {
-      // Calcola la posizione del mouse rispetto al centro dello schermo
       const rect = document.body.getBoundingClientRect();
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
@@ -569,37 +618,31 @@
       const maxTilt = 8;
       targetTiltX = relY * maxTilt;
       targetTiltY = -relX * maxTilt;
-
-      // Aggiorna anche il parallax del video
       const px = (e.clientX / window.innerWidth - 0.5) * 8;
       const py = (e.clientY / window.innerHeight - 0.5) * 4;
       backgroundVideo.style.transform = `translate(-50%, -50%) scale(1.05) translate(${px}px, ${py}px)`;
     });
 
-    // Anima fluentemente il tilt della card
     function animateTilt() {
       tiltX += (targetTiltX - tiltX) * 0.08;
       tiltY += (targetTiltY - tiltY) * 0.08;
-      // Applica solo se la card NON è girata e se il mouse NON è sulla card
-      if (!isFlipped && !isMouseOnCard) {
+      // Solo se il mouse NON è sulla card
+      if (!isMouseOnCard) {
         cardWrapper.style.transition = 'none';
-        cardWrapper.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-        // Mantieni il flip se è attivo
+        let transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
         if (isFlipped) {
-          cardWrapper.style.transform += ` rotateY(180deg)`;
+          transform += ` rotateY(180deg)`;
         }
+        cardWrapper.style.transform = transform;
       }
       requestAnimationFrame(animateTilt);
     }
-
-    let isMouseOnCard = false;
 
     cardWrapper.addEventListener('mouseenter', () => {
       isMouseOnCard = true;
     });
     cardWrapper.addEventListener('mouseleave', () => {
       isMouseOnCard = false;
-      // Reset dolce
       cardWrapper.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)';
       if (!isFlipped) {
         cardWrapper.style.transform = 'rotateX(0deg) rotateY(0deg)';
@@ -713,6 +756,8 @@
       const spotifyTrack = document.getElementById('spotifyTrack');
       const spotifyArtist = document.getElementById('spotifyArtist');
       const spotifyProgress = document.getElementById('spotifyProgress');
+      const progressCurrent = document.getElementById('progressCurrent');
+      const progressTotal = document.getElementById('progressTotal');
 
       if(spotify && spotify.song){
         spotifyCover.src = spotify.album_art_url || 'assets/spotify.png';
@@ -722,14 +767,20 @@
           const start = spotify.timestamps.start;
           const end = spotify.timestamps.end;
           const now = Date.now();
+          const elapsed = Math.floor((now - start) / 1000);
+          const total = Math.floor((end - start) / 1000);
           const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
           spotifyProgress.style.width = progress + '%';
+          progressCurrent.textContent = formatTime(elapsed);
+          progressTotal.textContent = formatTime(total);
         }
       } else {
         spotifyCover.src = 'assets/spotify.png';
-        spotifyTrack.textContent = 'Nessuna canzone in riproduzione';
-        spotifyArtist.textContent = 'Ultima canzone ascoltata';
+        spotifyTrack.textContent = 'No song playing';
+        spotifyArtist.textContent = 'Last listened';
         spotifyProgress.style.width = '0%';
+        progressCurrent.textContent = '0:00';
+        progressTotal.textContent = '0:00';
       }
 
       // Game
@@ -739,21 +790,27 @@
       const gameDetail = document.getElementById('gameDetail');
 
       if(gameActivity && gameActivity.name){
-        gameCover.src = 'assets/developer.png';
+        gameCover.src = 'assets/profile.gif';
         gameName.textContent = gameActivity.name;
         let details = '';
         if(gameActivity.details) details += gameActivity.details + ' ';
         if(gameActivity.state) details += gameActivity.state;
-        gameDetail.textContent = details || 'Giocando ora';
+        gameDetail.textContent = details || 'Playing now';
         if(gameActivity.timestamps && gameActivity.timestamps.start){
           const elapsed = Math.floor((Date.now() - gameActivity.timestamps.start) / 60000);
           gameDetail.textContent += ` (${elapsed}m)`;
         }
       } else {
-        gameCover.src = 'assets/developer.png';
-        gameName.textContent = 'Nessun gioco in esecuzione';
-        gameDetail.textContent = 'Ultimo gioco giocato';
+        gameCover.src = 'assets/profile.gif';
+        gameName.textContent = 'No game running';
+        gameDetail.textContent = 'Last played';
       }
+    }
+
+    function formatTime(seconds){
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
     }
 
     setInterval(fetchDiscordStatus, 30000);
