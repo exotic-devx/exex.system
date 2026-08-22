@@ -437,10 +437,10 @@
 
       <!-- SPOTIFY -->
       <div class="spotify-panel" id="spotifyPanel">
-        <img class="cover" id="spotifyCover" src="assets/spotify.png" alt="cover">
+        <img class="cover" id="spotifyCover" src="assets/gift.png" alt="cover">
         <div class="info">
           <div class="track-name" id="spotifyTrack">No song playing</div>
-          <div class="artist-name" id="spotifyArtist">Last listened</div>
+          <div class="artist-name" id="spotifyArtist">—</div>
           <div class="progress-wrapper">
             <span class="progress-time" id="progressCurrent">0:00</span>
             <div class="progress-bar"><div class="progress-fill" id="spotifyProgress" style="width:0%"></div></div>
@@ -454,7 +454,7 @@
         <img class="cover" id="gameCover" src="assets/gift.png" alt="game cover">
         <div class="info">
           <div class="game-name" id="gameName">No game running</div>
-          <div class="game-detail" id="gameDetail">Last played</div>
+          <div class="game-detail" id="gameDetail">—</div>
         </div>
       </div>
 
@@ -588,9 +588,6 @@
       if(e) e.stopPropagation();
       isFlipped = !isFlipped;
       cardWrapper.classList.toggle('flipped');
-      // Applica subito il transform aggiornato con una transition esplicita,
-      // sia che il mouse sia sopra la card sia che sia fuori: mentre l'animazione
-      // è in corso, il loop del tilt 3D non deve sovrascrivere il transform.
       flipAnimating = true;
       cardWrapper.style.transition = 'transform 0.8s cubic-bezier(0.23, 1, 0.32, 1)';
       let transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
@@ -604,7 +601,6 @@
     document.getElementById('flipFrontPanel').addEventListener('click', toggleFlip);
     document.getElementById('flipBackPanel').addEventListener('click', toggleFlip);
 
-    // Click ovunque sulla card (tranne link e badge) gira la card
     cardFront.addEventListener('click', (e) => {
       if(e.target.closest('a, .badge-container, .flip-panel')) return;
       toggleFlip(e);
@@ -643,7 +639,6 @@
     function animateTilt() {
       tiltX += (targetTiltX - tiltX) * 0.08;
       tiltY += (targetTiltY - tiltY) * 0.08;
-      // Solo se il mouse NON è sulla card e non è in corso l'animazione di flip
       if (!isMouseOnCard && !flipAnimating) {
         cardWrapper.style.transition = 'none';
         let transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
@@ -777,7 +772,7 @@
       const progressTotal = document.getElementById('progressTotal');
 
       if(spotify && spotify.song){
-        spotifyCover.src = spotify.album_art_url || 'assets/spotify.png';
+        spotifyCover.src = spotify.album_art_url || 'assets/gift.png';
         spotifyTrack.textContent = spotify.song;
         spotifyArtist.textContent = spotify.artist;
         if(spotify.timestamps){
@@ -792,9 +787,9 @@
           progressTotal.textContent = formatTime(total);
         }
       } else {
-        spotifyCover.src = 'assets/spotify.png';
+        spotifyCover.src = 'assets/gift.png';
         spotifyTrack.textContent = 'No song playing';
-        spotifyArtist.textContent = 'Last listened';
+        spotifyArtist.textContent = '—';
         spotifyProgress.style.width = '0%';
         progressCurrent.textContent = '0:00';
         progressTotal.textContent = '0:00';
@@ -807,7 +802,11 @@
       const gameDetail = document.getElementById('gameDetail');
 
       if(gameActivity && gameActivity.name){
-        gameCover.src = 'assets/gift.png';
+        if(gameActivity.assets && gameActivity.assets.large_image) {
+          gameCover.src = `https://cdn.discordapp.com/app-assets/${gameActivity.application_id}/${gameActivity.assets.large_image}.png`;
+        } else {
+          gameCover.src = 'assets/gift.png';
+        }
         gameName.textContent = gameActivity.name;
         let details = '';
         if(gameActivity.details) details += gameActivity.details + ' ';
@@ -815,12 +814,18 @@
         gameDetail.textContent = details || 'Playing now';
         if(gameActivity.timestamps && gameActivity.timestamps.start){
           const elapsed = Math.floor((Date.now() - gameActivity.timestamps.start) / 60000);
-          gameDetail.textContent += ` (${elapsed}m)`;
+          const hours = Math.floor(elapsed / 60);
+          const minutes = Math.floor(elapsed % 60);
+          if(hours > 0) {
+            gameDetail.textContent += ` (${hours}:${minutes.toString().padStart(2, '0')}h)`;
+          } else {
+            gameDetail.textContent += ` (${minutes}m)`;
+          }
         }
       } else {
         gameCover.src = 'assets/gift.png';
         gameName.textContent = 'No game running';
-        gameDetail.textContent = 'Last played';
+        gameDetail.textContent = '—';
       }
     }
 
