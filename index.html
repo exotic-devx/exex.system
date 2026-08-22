@@ -612,56 +612,6 @@
       }
     });
 
-    // EFFETTO 3D SULLO SFONDO
-    let tiltX = 0, tiltY = 0;
-    let targetTiltX = 0, targetTiltY = 0;
-    let isMouseOnCard = false;
-
-    document.addEventListener('mousemove', (e) => {
-      const rect = document.body.getBoundingClientRect();
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const relX = Math.max(-1, Math.min(1, (e.clientX - centerX) / centerX));
-      const relY = Math.max(-1, Math.min(1, (e.clientY - centerY) / centerY));
-      const maxTilt = 8;
-      targetTiltX = relY * maxTilt;
-      targetTiltY = -relX * maxTilt;
-      const px = (e.clientX / window.innerWidth - 0.5) * 8;
-      const py = (e.clientY / window.innerHeight - 0.5) * 4;
-      backgroundVideo.style.transform = `translate(-50%, -50%) scale(1.05) translate(${px}px, ${py}px)`;
-    });
-
-    function animateTilt() {
-      tiltX += (targetTiltX - tiltX) * 0.08;
-      tiltY += (targetTiltY - tiltY) * 0.08;
-      if (!isMouseOnCard) {
-        cardWrapper.style.transition = 'none';
-        let transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-        if (isFlipped) {
-          transform += ` rotateY(180deg)`;
-        }
-        cardWrapper.style.transform = transform;
-      }
-      requestAnimationFrame(animateTilt);
-    }
-
-    cardWrapper.addEventListener('mouseenter', () => {
-      isMouseOnCard = true;
-    });
-    cardWrapper.addEventListener('mouseleave', () => {
-      isMouseOnCard = false;
-      cardWrapper.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)';
-      if (!isFlipped) {
-        cardWrapper.style.transform = 'rotateX(0deg) rotateY(0deg)';
-      } else {
-        cardWrapper.style.transform = 'rotateY(180deg)';
-      }
-      tiltX = 0; tiltY = 0;
-      targetTiltX = 0; targetTiltY = 0;
-    });
-
-    animateTilt();
-
     // USERNAME TYPING
     const usernameTexts = ["𝔢𝔵𝔬𝔱𝔦𝔠"];
     let usernameIndex = 0, charIndex = 0, isDeleting = false, usernameCursorVisible = true;
