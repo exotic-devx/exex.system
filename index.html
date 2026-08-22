@@ -18,6 +18,7 @@
             user-drag: none;
         }
 
+        /* CURSOR PERSONALIZZATO - solo sul pannello */
         .custom-cursor {
             position: fixed;
             width: 40px;
@@ -27,10 +28,21 @@
             pointer-events: none;
             z-index: 9999;
             transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        .custom-cursor.active {
+            display: block;
         }
 
         body:not(.touch-device) {
-            cursor: none;
+            cursor: default;
+        }
+
+        /* Sul pannello il cursore personalizzato è attivo */
+        #profile-block:hover ~ .custom-cursor,
+        .custom-cursor.active {
+            display: block;
         }
 
         body {
@@ -89,7 +101,7 @@
             display: none !important;
         }
 
-        /* PANNELLO PRINCIPALE - con effetto 3D dinamico più pronunciato */
+        /* PANNELLO PRINCIPALE - con effetto 3D dinamico */
         #profile-block {
             position: fixed;
             top: 50%;
@@ -110,9 +122,10 @@
             pointer-events: auto;
             opacity: 0;
             transform-style: preserve-3d;
-            transition: transform 0.08s cubic-bezier(0.2, 0.1, 0.2, 1);
+            transition: transform 0.12s cubic-bezier(0.25, 0.1, 0.25, 1);
             will-change: transform;
             perspective: 600px;
+            cursor: none;
         }
 
         /* USERNAME - effetto typing e deleting */
@@ -158,52 +171,61 @@
         .badge-container {
             position: relative;
             display: inline-block;
-            width: 30px;
-            height: 30px;
+            width: 34px;
+            height: 34px;
             flex-shrink: 0;
         }
 
         .badge {
-            width: 30px;
-            height: 30px;
+            width: 34px;
+            height: 34px;
             display: block;
             border-radius: 6px;
             object-fit: contain;
-            transition: transform 0.3s;
+            transition: transform 0.3s, filter 0.3s;
             user-select: none;
             -webkit-user-drag: none;
             user-drag: none;
+            image-rendering: auto;
         }
 
         .badge:hover {
             transform: scale(1.15);
+            filter: brightness(1.2) drop-shadow(0 0 8px rgba(255,255,255,0.3));
         }
 
+        /* TOOLTIP PER BADGE - con blur e animazione fluida */
         .badge-container .tooltip {
             visibility: hidden;
-            width: 100px;
-            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            width: auto;
+            max-width: 120px;
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             color: #fff;
             text-align: center;
             border-radius: 8px;
-            padding: 6px 0;
+            padding: 5px 12px;
             position: absolute;
             z-index: 100;
             bottom: 110%;
             left: 50%;
-            margin-left: -50px;
-            opacity: 0;
-            transition: opacity 0.2s;
+            transform: translateX(-50%) scale(0.9) translateY(5px);
+            transition: opacity 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0.25s;
             font-size: 11px;
+            white-space: nowrap;
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            pointer-events: none;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
         }
 
         .badge-container:hover .tooltip {
             visibility: visible;
             opacity: 1;
+            transform: translateX(-50%) scale(1) translateY(0);
         }
 
         /* BIO */
@@ -364,13 +386,14 @@
             margin-top: auto;
         }
 
-        /* SOCIAL LINK */
+        /* SOCIAL LINK - spostati leggermente più in alto */
         .social-links {
             display: flex;
             justify-content: center;
             gap: 24px;
             align-items: center;
-            padding: 4px 0 6px 0;
+            padding: 2px 0 4px 0;
+            margin-top: -4px;
         }
 
         .social-icon {
@@ -397,32 +420,36 @@
             display: inline-block;
         }
 
+        /* TOOLTIP PER SOCIAL - con blur e animazione fluida */
         .social-link-tooltip .tooltip-text {
             visibility: hidden;
-            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             color: #fff;
             text-align: center;
             border-radius: 8px;
-            padding: 5px 10px;
+            padding: 5px 12px;
             position: absolute;
             z-index: 100;
             bottom: 110%;
             left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.2s;
+            transform: translateX(-50%) scale(0.9) translateY(5px);
+            transition: opacity 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0.25s;
             font-size: 11px;
             white-space: nowrap;
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             pointer-events: none;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
         }
 
         .social-link-tooltip:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
+            transform: translateX(-50%) scale(1) translateY(0);
         }
 
         /* START SCREEN - sfondo nero opaco */
@@ -446,6 +473,7 @@
             color: #fff;
             text-align: center;
             letter-spacing: 2px;
+            cursor: pointer;
         }
 
         .glitch {
@@ -510,8 +538,13 @@
             }
 
             .badge {
-                width: 26px;
-                height: 26px;
+                width: 28px;
+                height: 28px;
+            }
+
+            .badge-container {
+                width: 28px;
+                height: 28px;
             }
 
             .badge-section {
@@ -548,8 +581,13 @@
             }
 
             .badge {
-                width: 22px;
-                height: 22px;
+                width: 24px;
+                height: 24px;
+            }
+
+            .badge-container {
+                width: 24px;
+                height: 24px;
             }
 
             .badge-section {
@@ -613,8 +651,8 @@
 </head>
 <body class="home-theme">
 
-    <!-- CURSOR -->
-    <div class="custom-cursor"></div>
+    <!-- CURSOR PERSONALIZZATO - si attiva solo sul pannello -->
+    <div class="custom-cursor" id="customCursor"></div>
 
     <!-- START SCREEN - sfondo nero opaco -->
     <div id="start-screen">
@@ -729,6 +767,7 @@
                 const profileBio = document.getElementById('profile-bio');
                 const backgroundVideo = document.getElementById('background');
                 const backgroundMusic = document.getElementById('background-music');
+                const customCursor = document.getElementById('customCursor');
 
                 // STATUS ELEMENTI
                 const statusRing = document.getElementById('status-ring');
@@ -738,27 +777,26 @@
                 let isTiltEnabled = false;
                 let tiltTimeout = null;
 
-                // CURSOR
-                const cursor = document.querySelector('.custom-cursor');
-                const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
-                if (isTouchDevice) {
-                    document.body.classList.add('touch-device');
-                    cursor.style.display = 'none';
-                } else {
-                    document.addEventListener('mousemove', (e) => {
-                        cursor.style.left = e.clientX + 'px';
-                        cursor.style.top = e.clientY + 'px';
-                        cursor.style.display = 'block';
+                // CURSOR PERSONALIZZATO - attivo solo sul pannello
+                if (profileBlock) {
+                    profileBlock.addEventListener('mouseenter', () => {
+                        customCursor.classList.add('active');
                     });
-                    document.addEventListener('mousedown', () => {
-                        cursor.style.transform = 'scale(0.8) translate(-50%, -50%)';
-                    });
-                    document.addEventListener('mouseup', () => {
-                        cursor.style.transform = 'scale(1) translate(-50%, -50%)';
+
+                    profileBlock.addEventListener('mouseleave', () => {
+                        customCursor.classList.remove('active');
                     });
                 }
 
-                // EFFETTO 3D DINAMICO PER IL PANNELLO PRINCIPALE - più pronunciato
+                // Movimento del cursore personalizzato
+                document.addEventListener('mousemove', (e) => {
+                    if (customCursor.classList.contains('active')) {
+                        customCursor.style.left = e.clientX + 'px';
+                        customCursor.style.top = e.clientY + 'px';
+                    }
+                });
+
+                // EFFETTO 3D DINAMICO PER IL PANNELLO PRINCIPALE - più lento e fluido
                 function handleTilt(e) {
                     if (!profileBlock || profileBlock.style.opacity !== '1') return;
                     
@@ -778,12 +816,11 @@
                     const relX = Math.max(-1, Math.min(1, (clientX - centerX) / (rect.width / 2)));
                     const relY = Math.max(-1, Math.min(1, (clientY - centerY) / (rect.height / 2)));
 
-                    // Massima inclinazione aumentata a 18 gradi per più movimento
                     const maxTilt = 18;
                     const tiltY = relX * maxTilt;
                     const tiltX = -relY * maxTilt;
 
-                    profileBlock.style.transition = 'transform 0.06s cubic-bezier(0.15, 0.1, 0.15, 1)';
+                    profileBlock.style.transition = 'transform 0.12s cubic-bezier(0.25, 0.1, 0.25, 1)';
                     profileBlock.style.transform = `translate(-50%, -50%) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
                 }
 
@@ -856,10 +893,8 @@
                 }, 500);
 
                 function startApp() {
-                    // Nascondi start screen
                     startScreen.classList.add('hidden');
                     
-                    // Avvia il video con fade in
                     if (backgroundVideo) {
                         backgroundVideo.muted = true;
                         backgroundVideo.play().catch(() => {});
@@ -868,14 +903,12 @@
                         }, 100);
                     }
                     
-                    // Avvia l'audio
                     if (backgroundMusic) {
                         backgroundMusic.volume = 0.3;
                         backgroundMusic.muted = false;
                         backgroundMusic.play().catch(() => {});
                     }
                     
-                    // Mostra il profilo con animazione
                     profileBlock.style.display = 'flex';
                     gsap.fromTo(profileBlock,
                         { opacity: 0, y: -30 },
