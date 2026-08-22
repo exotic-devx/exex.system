@@ -18,7 +18,6 @@
             user-drag: none;
         }
 
-        /* CURSOR PERSONALIZZATO - solo sul pannello */
         .custom-cursor {
             position: fixed;
             width: 40px;
@@ -46,7 +45,6 @@
             font-family: 'Courier New', monospace;
         }
 
-        /* VIDEO SFONDO - leggermente opaco */
         #background {
             position: fixed;
             top: 50%;
@@ -81,7 +79,8 @@
             transition: opacity 0.5s;
         }
 
-        #hacker-overlay, #snow-overlay {
+        #hacker-overlay,
+        #snow-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -95,7 +94,6 @@
             display: none !important;
         }
 
-        /* PANNELLO PRINCIPALE - con effetto 3D dinamico */
         #profile-block {
             position: fixed;
             top: 50%;
@@ -122,11 +120,12 @@
             cursor: none;
         }
 
-        /* USERNAME - effetto typing e deleting */
         .username-section {
             text-align: center;
             margin-bottom: 2px;
             min-height: 60px;
+            position: relative;
+            z-index: 30;
         }
 
         @font-face {
@@ -150,7 +149,6 @@
             user-drag: none;
         }
 
-        /* BADGE - tutti allineati al centro senza andare a capo */
         .badge-section {
             display: flex;
             justify-content: center;
@@ -160,6 +158,8 @@
             flex-wrap: nowrap;
             overflow-x: auto;
             padding: 4px 0;
+            position: relative;
+            z-index: 25;
         }
 
         .badge-container {
@@ -185,35 +185,46 @@
 
         .badge:hover {
             transform: scale(1.15);
-            filter: brightness(1.2) drop-shadow(0 0 8px rgba(255,255,255,0.3));
+            filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
         }
 
-        /* TOOLTIP PER BADGE - con blur e animazione fluida */
+        /* TOOLTIP BADGE - ora sopra tutto con z-index alto */
         .badge-container .tooltip {
             visibility: hidden;
             opacity: 0;
             width: auto;
-            max-width: 120px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            max-width: 140px;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             color: #fff;
             text-align: center;
-            border-radius: 8px;
-            padding: 5px 12px;
+            border-radius: 10px;
+            padding: 6px 16px;
             position: absolute;
-            z-index: 100;
-            bottom: 110%;
+            z-index: 999;
+            bottom: calc(100% + 14px);
             left: 50%;
-            transform: translateX(-50%) scale(0.9) translateY(5px);
+            transform: translateX(-50%) scale(0.85) translateY(8px);
             transition: opacity 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0.25s;
-            font-size: 11px;
+            font-size: 12px;
             white-space: nowrap;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
             pointer-events: none;
             font-family: 'Courier New', monospace;
             letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .badge-container .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.55);
         }
 
         .badge-container:hover .tooltip {
@@ -222,7 +233,6 @@
             transform: translateX(-50%) scale(1) translateY(0);
         }
 
-        /* BIO */
         #profile-bio {
             color: rgba(255, 255, 255, 0.8);
             font-size: 17px;
@@ -236,7 +246,6 @@
             user-drag: none;
         }
 
-        /* SEZIONE FOTO + NOME - con glow animato al hover */
         .profile-main {
             display: flex;
             align-items: center;
@@ -307,7 +316,6 @@
             user-drag: none;
         }
 
-        /* CERCHIO DI STATUS SULLA FOTO */
         .status-ring {
             position: absolute;
             bottom: -2px;
@@ -318,7 +326,7 @@
             border: 2.5px solid rgba(0, 0, 0, 0.8);
             background: #80848e;
             transition: all 0.3s ease;
-            box-shadow: 0 0 0px rgba(0,0,0,0);
+            box-shadow: 0 0 0px rgba(0, 0, 0, 0);
         }
 
         .status-ring.online {
@@ -362,7 +370,7 @@
 
         .last-seen {
             font-size: 11px;
-            color: rgba(255,255,255,0.35);
+            color: rgba(255, 255, 255, 0.35);
             font-family: 'Courier New', monospace;
             margin-top: 3px;
             text-align: left;
@@ -371,7 +379,6 @@
             user-drag: none;
         }
 
-        /* FOOTER */
         .profile-footer {
             display: flex;
             flex-direction: column;
@@ -380,7 +387,6 @@
             margin-top: auto;
         }
 
-        /* SOCIAL LINK - spostati leggermente più in alto */
         .social-links {
             display: flex;
             justify-content: center;
@@ -414,7 +420,6 @@
             display: inline-block;
         }
 
-        /* TOOLTIP PER SOCIAL - con blur e animazione fluida */
         .social-link-tooltip .tooltip-text {
             visibility: hidden;
             opacity: 0;
@@ -433,8 +438,8 @@
             transition: opacity 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0.25s;
             font-size: 11px;
             white-space: nowrap;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             pointer-events: none;
             font-family: 'Courier New', monospace;
             letter-spacing: 0.5px;
@@ -446,7 +451,6 @@
             transform: translateX(-50%) scale(1) translateY(0);
         }
 
-        /* START SCREEN - sfondo nero opaco */
         #start-screen {
             position: fixed;
             top: 0;
@@ -475,87 +479,116 @@
         }
 
         @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            100% {
+                transform: translate(0);
+            }
         }
 
-        /* RESPONSIVE */
+        /* VISITE */
+        .visitor-counter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            align-self: flex-start;
+            margin-top: 4px;
+        }
+
+        .visitor-icon {
+            width: 17px;
+            height: 17px;
+            color: rgba(255, 255, 255, 0.4);
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        #visitor-count {
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
         @media (max-width: 580px) {
             #profile-block {
                 width: 94vw;
                 min-height: 440px;
                 padding: 20px 16px 16px;
             }
-
             #profile-username {
                 font-size: 32px;
                 min-height: 44px;
             }
-
             .profile-main {
                 max-width: 340px;
                 padding: 10px 14px;
                 gap: 14px;
                 margin: 10px auto 6px;
             }
-
             .profile-container {
                 width: 68px;
                 height: 68px;
             }
-
             .profile-picture {
                 width: 68px;
                 height: 68px;
             }
-
             .status-ring {
                 width: 18px;
                 height: 18px;
                 border-width: 2px;
             }
-
             .profile-display-name {
                 font-size: 17px;
             }
-
             .profile-name-section {
                 min-width: 120px;
             }
-
             .last-seen {
                 font-size: 10px;
             }
-
             .badge {
                 width: 28px;
                 height: 28px;
             }
-
             .badge-container {
                 width: 28px;
                 height: 28px;
             }
-
             .badge-section {
                 gap: 8px;
                 margin-bottom: 8px;
             }
-
             .social-icon {
                 width: 40px;
                 height: 40px;
             }
-
             .social-links {
                 gap: 18px;
                 padding: 2px 0 4px 0;
             }
-
             #profile-bio {
                 font-size: 15px;
                 min-height: 2em;
@@ -568,74 +601,60 @@
                 min-height: 400px;
                 padding: 16px 12px 14px;
             }
-
             #profile-username {
                 font-size: 26px;
                 min-height: 38px;
             }
-
             .badge {
                 width: 24px;
                 height: 24px;
             }
-
             .badge-container {
                 width: 24px;
                 height: 24px;
             }
-
             .badge-section {
                 gap: 6px;
                 margin-bottom: 6px;
             }
-
             .profile-main {
                 max-width: 280px;
                 padding: 8px 12px;
                 gap: 12px;
                 margin: 8px auto 4px;
             }
-
             .profile-container {
                 width: 58px;
                 height: 58px;
             }
-
             .profile-picture {
                 width: 58px;
                 height: 58px;
             }
-
             .status-ring {
                 width: 16px;
                 height: 16px;
                 border-width: 2px;
             }
-
             .profile-display-name {
                 font-size: 15px;
             }
-
             .profile-name-section {
                 min-width: 100px;
             }
-
             .last-seen {
                 font-size: 9px;
             }
-
             #profile-bio {
                 font-size: 14px;
                 min-height: 1.8em;
                 padding: 0 6px;
                 margin: 4px 0 6px;
             }
-
             .social-icon {
                 width: 34px;
                 height: 34px;
             }
-
             .social-links {
                 gap: 14px;
                 padding: 2px 0 4px 0;
@@ -645,32 +664,25 @@
 </head>
 <body class="home-theme">
 
-    <!-- CURSOR PERSONALIZZATO - si attiva solo sul pannello -->
     <div class="custom-cursor" id="customCursor"></div>
 
-    <!-- START SCREEN - sfondo nero opaco -->
     <div id="start-screen">
         <div id="start-text"></div>
     </div>
 
-    <!-- SFONDO VIDEO DA R2 - nascosto all'inizio -->
     <video id="background" autoplay loop muted playsinline webkit-playsinline disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback">
         <source src="https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4" type="video/mp4">
     </video>
 
-    <!-- OVERLAY -->
     <div class="glitch-overlay"></div>
     <div id="hacker-overlay" class="hidden"></div>
     <div id="snow-overlay" class="hidden"></div>
 
-    <!-- PANNELLO PRINCIPALE -->
     <div id="profile-block">
-        <!-- USERNAME -->
         <div class="username-section">
             <div id="profile-username"></div>
         </div>
 
-        <!-- BADGE -->
         <div class="badge-section">
             <div class="badge-container">
                 <img src="assets/owner.gif" alt="Owner" class="badge">
@@ -706,10 +718,8 @@
             </div>
         </div>
 
-        <!-- BIO -->
         <div id="profile-bio"></div>
 
-        <!-- FOTO + NOME - con glow animato al hover -->
         <div class="profile-main">
             <div class="profile-container">
                 <img src="assets/profile.gif" alt="Profile" class="profile-picture">
@@ -721,9 +731,7 @@
             </div>
         </div>
 
-        <!-- FOOTER -->
         <div class="profile-footer">
-            <!-- SOCIAL -->
             <div class="social-links">
                 <a href="https://open.spotify.com/user/lopp05qs775yh0frde45qcf9c?si=84c4e551e4c24951" target="_blank" class="social-link-tooltip">
                     <img src="assets/spotify.png" alt="Spotify" class="social-icon">
@@ -738,10 +746,17 @@
                     <span class="tooltip-text">Discord</span>
                 </a>
             </div>
+
+            <div class="visitor-counter">
+                <svg class="visitor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span id="visitor-count">369</span>
+            </div>
         </div>
     </div>
 
-    <!-- AUDIO DA R2 - nascosto all'inizio -->
     <audio id="background-music" loop>
         <source src="https://r2.guns.lol/6556d09a-6fa7-420b-93c5-8ecd37424977.mp3" type="audio/mp3">
     </audio>
@@ -767,22 +782,19 @@
                 const statusRing = document.getElementById('status-ring');
                 const lastSeen = document.getElementById('last-seen');
 
-                // VARIABILI
                 let isTiltEnabled = false;
                 let tiltTimeout = null;
 
-                // CURSOR PERSONALIZZATO - attivo solo sul pannello
+                // CURSOR
                 if (profileBlock) {
                     profileBlock.addEventListener('mouseenter', () => {
                         customCursor.classList.add('active');
                     });
-
                     profileBlock.addEventListener('mouseleave', () => {
                         customCursor.classList.remove('active');
                     });
                 }
 
-                // Movimento del cursore personalizzato
                 document.addEventListener('mousemove', (e) => {
                     if (customCursor.classList.contains('active')) {
                         customCursor.style.left = e.clientX + 'px';
@@ -790,14 +802,14 @@
                     }
                 });
 
-                // EFFETTO 3D DINAMICO PER IL PANNELLO PRINCIPALE - più lento e fluido
+                // EFFETTO 3D
                 function handleTilt(e) {
                     if (!profileBlock || profileBlock.style.opacity !== '1') return;
-                    
+
                     const rect = profileBlock.getBoundingClientRect();
                     const centerX = rect.left + rect.width / 2;
                     const centerY = rect.top + rect.height / 2;
-                    
+
                     let clientX, clientY;
                     if (e.type === 'touchmove' || e.type === 'touchstart') {
                         clientX = e.touches[0].clientX;
@@ -815,7 +827,8 @@
                     const tiltX = -relY * maxTilt;
 
                     profileBlock.style.transition = 'transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1)';
-                    profileBlock.style.transform = `translate(-50%, -50%) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+                    profileBlock.style.transform =
+                        `translate(-50%, -50%) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
                 }
 
                 function resetTilt() {
@@ -888,7 +901,7 @@
 
                 function startApp() {
                     startScreen.classList.add('hidden');
-                    
+
                     if (backgroundVideo) {
                         backgroundVideo.muted = true;
                         backgroundVideo.play().catch(() => {});
@@ -896,26 +909,23 @@
                             backgroundVideo.classList.add('visible');
                         }, 100);
                     }
-                    
+
                     if (backgroundMusic) {
                         backgroundMusic.volume = 0.3;
                         backgroundMusic.muted = false;
                         backgroundMusic.play().catch(() => {});
                     }
-                    
+
                     profileBlock.style.display = 'flex';
-                    gsap.fromTo(profileBlock,
-                        { opacity: 0, y: -30 },
-                        { 
-                            opacity: 1, 
-                            y: 0, 
-                            duration: 0.9, 
-                            ease: 'power2.out',
-                            onComplete: () => {
-                                resetTilt();
-                            }
+                    gsap.fromTo(profileBlock, { opacity: 0, y: -30 }, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.9,
+                        ease: 'power2.out',
+                        onComplete: () => {
+                            resetTilt();
                         }
-                    );
+                    });
                     typeWriterUsername();
                     typeWriterBio();
                     fetchDiscordStatus();
@@ -927,7 +937,7 @@
                     startApp();
                 });
 
-                // USERNAME TYPING E DELETING
+                // USERNAME TYPING
                 const usernameTexts = ["𝔢𝔵𝔬𝔱𝔦𝔠"];
                 let usernameIndex = 0;
                 let charIndex = 0;
@@ -936,13 +946,15 @@
 
                 function typeWriterUsername() {
                     const currentText = usernameTexts[usernameIndex];
-                    
+
                     if (!isDeleting && charIndex <= currentText.length) {
-                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ? '|' : ' ');
+                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ?
+                            '|' : ' ');
                         charIndex++;
                         setTimeout(typeWriterUsername, isDeleting ? 80 : 150);
                     } else if (isDeleting && charIndex >= 0) {
-                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ? '|' : ' ');
+                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ?
+                            '|' : ' ');
                         charIndex--;
                         setTimeout(typeWriterUsername, 60);
                     } else if (!isDeleting && charIndex > currentText.length) {
@@ -959,7 +971,8 @@
                     usernameCursorVisible = !usernameCursorVisible;
                     const currentText = usernameTexts[usernameIndex];
                     if (charIndex >= 0 && charIndex <= currentText.length) {
-                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ? '|' : ' ');
+                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ?
+                            '|' : ' ');
                     }
                 }, 500);
 
@@ -1002,7 +1015,10 @@
                     profileBio.textContent = bioText + (bioCursorVisible ? '|' : ' ');
                 }, 500);
 
-                // --- FUNZIONE PER PRENDERE LO STATUS DA LANYARD ---
+                // --- DISCORD STATUS ---
+                let lastStatus = 'online';
+                let lastSeenTimestamp = null;
+
                 async function fetchDiscordStatus() {
                     const userId = '1019329014369882123';
                     const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
@@ -1015,10 +1031,13 @@
                             const status = data.data.discord_status;
                             const lastSeenDate = data.data.last_seen;
 
+                            // Aggiorna lo status
+                            lastStatus = status;
                             if (statusRing) {
                                 statusRing.className = 'status-ring ' + status;
                             }
 
+                            // Aggiorna last seen - CORRETTO
                             if (lastSeen) {
                                 if (status === 'online' || status === 'idle' || status === 'dnd') {
                                     lastSeen.textContent = 'Last seen: Now';
@@ -1039,13 +1058,14 @@
                                     }
                                     lastSeen.textContent = `Last seen: ${timeAgo}`;
                                 } else {
+                                    // Fallback
                                     lastSeen.textContent = 'Last seen: Just now';
                                 }
                             }
 
                             console.log('✅ Status Discord aggiornato con Lanyard!');
                         } else {
-                            console.warn('⚠️ Lanyard non ha restituito success per l\'utente.');
+                            console.warn('⚠️ Lanyard non ha restituito success.');
                             setFallbackStatus();
                         }
                     } catch (error) {
@@ -1059,7 +1079,18 @@
                     if (lastSeen) lastSeen.textContent = 'Last seen: Now';
                 }
 
+                // Aggiorna status ogni 30 secondi
                 setInterval(fetchDiscordStatus, 30000);
+
+                // Contatore visite
+                const visitorCount = document.getElementById('visitor-count');
+                let currentViews = 369;
+                setInterval(() => {
+                    currentViews++;
+                    if (visitorCount) {
+                        visitorCount.textContent = currentViews.toLocaleString();
+                    }
+                }, 60000);
 
                 typeWriterStart();
                 console.log('✅ Profile loaded with all requested changes.');
