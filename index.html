@@ -111,7 +111,7 @@
     pointer-events:auto;
   }
   .card-wrapper{
-    position:relative; width:480px; max-width:92vw; min-height:560px;
+    position:relative; width:460px; max-width:92vw; min-height:520px;
     transform-style:preserve-3d; transition:transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
     opacity:0;
     transform:rotateX(0deg) rotateY(0deg);
@@ -123,28 +123,31 @@
   .card-face{
     position:absolute; inset:0; backface-visibility:hidden;
     border-radius:12px;
-    min-height:560px;
+    min-height:520px;
   }
   .card-front{
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); padding:28px 28px 20px;
+    border:1px solid var(--hair); padding:24px 24px 18px;
     display:flex; flex-direction:column;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
+    transition:backdrop-filter 0.1s ease, -webkit-backdrop-filter 0.1s ease;
   }
   .card-back{
     transform:rotateY(180deg);
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); padding:24px;
-    display:flex; flex-direction:column; gap:12px;
+    border:1px solid var(--hair); padding:20px 22px 18px;
+    display:flex; flex-direction:column; gap:10px;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
     overflow-y:auto;
+    transition:backdrop-filter 0.1s ease, -webkit-backdrop-filter 0.1s ease;
   }
+  /* Il blur è già attivo dall'inizio - nessuna transizione */
 
   /* ---- flip trigger panel ---- */
   .flip-panel{
-    position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+    position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
     background:rgba(255,255,255,0.04); border:1px solid var(--hair);
-    border-radius:20px; padding:8px 20px; z-index:10;
+    border-radius:20px; padding:6px 18px; z-index:10;
     pointer-events:auto; cursor:none;
     transition:background .3s ease, border-color .3s ease;
     backdrop-filter:blur(4px);
@@ -155,27 +158,27 @@
     border-color:rgba(255,255,255,0.2);
   }
   .flip-panel .flip-text{
-    font-size:10px; letter-spacing:2px; color:var(--ash);
+    font-size:9.5px; letter-spacing:2px; color:var(--ash);
     text-transform:uppercase; transition:color .3s ease;
   }
   .flip-panel:hover .flip-text{ color:var(--mist); }
 
   /* ---- FRONT ---- */
-  .username-section{ text-align:center; min-height:52px; position:relative; }
+  .username-section{ text-align:center; min-height:48px; position:relative; }
   #profile-username{
-    font-family:var(--font-display); font-size:38px; font-weight:400; letter-spacing:3px;
-    color:#fff; filter:drop-shadow(0 0 18px rgba(255,255,255,.35)); display:inline-block; min-height:48px;
+    font-family:var(--font-display); font-size:36px; font-weight:400; letter-spacing:3px;
+    color:#fff; filter:drop-shadow(0 0 18px rgba(255,255,255,.35)); display:inline-block; min-height:44px;
   }
   .rule{
-    width:48px; height:1px; margin:14px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+    width:44px; height:1px; margin:12px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
   }
   .badge-section{
-    display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap;
-    margin-bottom:16px; padding:2px 0;
+    display:flex; justify-content:center; align-items:center; gap:8px; flex-wrap:wrap;
+    margin-bottom:14px; padding:2px 0;
   }
-  .badge-container{ position:relative; width:30px; height:30px; }
+  .badge-container{ position:relative; width:28px; height:28px; }
   .badge{
-    width:30px; height:30px; display:block; border-radius:4px; object-fit:contain;
+    width:28px; height:28px; display:block; border-radius:4px; object-fit:contain;
     filter:grayscale(.55) brightness(1.05); opacity:.85;
     transition:transform .3s cubic-bezier(.25,.1,.25,1), filter .3s ease, opacity .3s ease;
   }
@@ -185,14 +188,14 @@
     color:#fff; text-align:center; border-radius:4px; padding:5px 10px; position:absolute;
     z-index:9999; bottom:calc(100% + 10px); left:50%;
     transform:translateX(-50%) translateY(4px); transition:.22s cubic-bezier(.25,.1,.25,1);
-    font-size:10px; letter-spacing:1px; white-space:nowrap; border:1px solid var(--hair);
+    font-size:9px; letter-spacing:1px; white-space:nowrap; border:1px solid var(--hair);
     pointer-events:none; text-transform:uppercase;
   }
   .badge-container:hover .tooltip{ visibility:visible; opacity:1; transform:translateX(-50%) translateY(0); }
 
   #profile-bio{
-    color:var(--mist); font-size:15px; line-height:1.6; min-height:2em; text-align:center;
-    margin:4px 0 16px; padding:0 6px; letter-spacing:.2px;
+    color:var(--mist); font-size:14.5px; line-height:1.6; min-height:1.8em; text-align:center;
+    margin:4px 0 14px; padding:0 6px; letter-spacing:.2px;
   }
   #profile-bio .bio-link{
     color:#4fc3f7; text-decoration:none;
@@ -208,21 +211,21 @@
   @keyframes glitch{ 0%{transform:translate(0);} 25%{transform:translate(-1px,1px);} 50%{transform:translate(1px,-1px);} 75%{transform:translate(-1px,-1px);} 100%{transform:translate(0);} }
 
   .profile-main{
-    display:flex; align-items:center; gap:14px; background:rgba(255,255,255,.03);
-    border:1px solid var(--hair); border-radius:8px; padding:11px 16px; max-width:400px;
-    margin:0 auto 14px; width:100%; transition:border-color .4s ease, box-shadow .4s ease;
+    display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.03);
+    border:1px solid var(--hair); border-radius:8px; padding:10px 14px; max-width:380px;
+    margin:0 auto 12px; width:100%; transition:border-color .4s ease, box-shadow .4s ease;
   }
   .profile-main:hover{
     border-color:rgba(255,255,255,.35);
     box-shadow:0 0 30px rgba(255,255,255,.08);
   }
-  .profile-container{ position:relative; width:52px; height:52px; flex-shrink:0; }
+  .profile-container{ position:relative; width:48px; height:48px; flex-shrink:0; }
   .profile-picture{
-    width:52px; height:52px; border-radius:50%; object-fit:cover; display:block;
+    width:48px; height:48px; border-radius:50%; object-fit:cover; display:block;
     border:1px solid rgba(255,255,255,.18); filter:grayscale(.2);
   }
   .status-ring{
-    position:absolute; bottom:-1px; right:-1px; width:14px; height:14px; border-radius:50%;
+    position:absolute; bottom:-1px; right:-1px; width:13px; height:13px; border-radius:50%;
     border:2px solid #000; background:#3a3a3a; transition:all .3s ease;
   }
   .status-ring.online{ background:#fff; box-shadow:0 0 10px rgba(255,255,255,.9); }
@@ -230,19 +233,19 @@
   .status-ring.dnd{ background:#8a8a8a; box-shadow:0 0 6px rgba(255,255,255,.3); }
   .status-ring.offline{ background:#3a3a3a; box-shadow:none; }
 
-  .profile-name-section{ flex:1; display:flex; flex-direction:column; min-width:110px; }
+  .profile-name-section{ flex:1; display:flex; flex-direction:column; min-width:100px; }
   .profile-display-name{
-    font-family:var(--font-display); font-size:17px; color:#fff; letter-spacing:.5px; text-align:left;
+    font-family:var(--font-display); font-size:16px; color:#fff; letter-spacing:.5px; text-align:left;
   }
-  .last-seen{ font-size:10px; color:var(--ash); margin-top:3px; text-align:left; letter-spacing:.5px; }
+  .last-seen{ font-size:9.5px; color:var(--ash); margin-top:2px; text-align:left; letter-spacing:.5px; }
 
   .social-links{
-    display:flex; justify-content:center; gap:24px; align-items:center; padding:4px 0 0;
-    margin-top:4px;
+    display:flex; justify-content:center; gap:22px; align-items:center; padding:4px 0 0;
+    margin-top:2px;
   }
   .social-link-tooltip{ position:relative; display:inline-block; }
   .social-icon{
-    width:30px; height:30px; opacity:.7; filter:grayscale(1) brightness(2) drop-shadow(0 0 0 rgba(255,255,255,0));
+    width:28px; height:28px; opacity:.7; filter:grayscale(1) brightness(2) drop-shadow(0 0 0 rgba(255,255,255,0));
     transition:transform .3s ease, filter .3s ease, opacity .3s ease;
   }
   .social-link-tooltip:hover .social-icon{
@@ -252,104 +255,104 @@
     visibility:hidden; opacity:0; background:rgba(0,0,0,.6); backdrop-filter:blur(14px);
     color:#fff; text-align:center; border-radius:4px; padding:5px 10px; position:absolute;
     z-index:9999; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(4px);
-    transition:.22s cubic-bezier(.25,.1,.25,1); font-size:10px; letter-spacing:1px; white-space:nowrap;
+    transition:.22s cubic-bezier(.25,.1,.25,1); font-size:9px; letter-spacing:1px; white-space:nowrap;
     border:1px solid var(--hair); pointer-events:none; text-transform:uppercase;
   }
   .social-link-tooltip:hover .tooltip-text{ visibility:visible; opacity:1; transform:translateX(-50%) translateY(0); }
 
   /* ---- BACK ---- */
   .back-title{
-    font-size:11px; letter-spacing:3px; color:var(--ash); text-transform:uppercase;
-    text-align:center; margin-bottom:2px;
+    font-size:10.5px; letter-spacing:3px; color:var(--ash); text-transform:uppercase;
+    text-align:center; margin-bottom:1px;
   }
   .back-divider{
-    width:36px; height:1px; margin:4px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+    width:32px; height:1px; margin:3px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
   }
 
   .clock-panel{
     background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
-    padding:12px 16px; display:flex; align-items:center; gap:14px;
+    padding:10px 14px; display:flex; align-items:center; gap:12px;
   }
-  .clock-panel .clock-svg{ width:50px; height:50px; flex-shrink:0; }
+  .clock-panel .clock-svg{ width:44px; height:44px; flex-shrink:0; }
   .clock-panel .clock-info{ flex:1; }
-  .clock-panel .clock-time{ font-size:24px; font-weight:300; letter-spacing:2px; font-family:var(--font-display); color:#fff; }
-  .clock-panel .clock-date{ font-size:10px; color:var(--ash); letter-spacing:1px; margin-top:2px; }
-  .clock-panel .clock-location{ font-size:9px; color:var(--ash); letter-spacing:1px; margin-top:4px; display:flex; align-items:center; gap:5px; }
-  .clock-panel .clock-location svg{ width:11px; height:11px; stroke:var(--ash); fill:none; }
+  .clock-panel .clock-time{ font-size:22px; font-weight:300; letter-spacing:2px; font-family:var(--font-display); color:#fff; }
+  .clock-panel .clock-date{ font-size:9.5px; color:var(--ash); letter-spacing:1px; margin-top:1px; }
+  .clock-panel .clock-location{ font-size:9px; color:var(--ash); letter-spacing:1px; margin-top:3px; display:flex; align-items:center; gap:4px; }
+  .clock-panel .clock-location svg{ width:10px; height:10px; stroke:var(--ash); fill:none; }
 
   .spotify-panel{
     background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
-    padding:10px 14px; display:flex; align-items:center; gap:12px;
+    padding:8px 12px; display:flex; align-items:center; gap:10px;
   }
   .spotify-panel .cover{
-    width:44px; height:44px; border-radius:6px; object-fit:cover; flex-shrink:0;
+    width:40px; height:40px; border-radius:6px; object-fit:cover; flex-shrink:0;
     background:rgba(255,255,255,.05);
   }
   .spotify-panel .info{ flex:1; overflow:hidden; }
   .spotify-panel .track-name{
-    font-size:12px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-size:11.5px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .spotify-panel .artist-name{
-    font-size:9.5px; color:var(--ash); letter-spacing:.3px; margin-top:1px;
+    font-size:9px; color:var(--ash); letter-spacing:.3px; margin-top:1px;
   }
   .spotify-panel .progress-wrapper{
-    display:flex; align-items:center; gap:6px; margin-top:4px;
+    display:flex; align-items:center; gap:5px; margin-top:3px;
   }
   .spotify-panel .progress-bar{
     flex:1; height:2px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden;
   }
   .spotify-panel .progress-bar .progress-fill{
     height:100%; width:0%; background:linear-gradient(90deg, #4fc3f7, #fff);
-    border-radius:2px; transition:width .3s ease;
+    border-radius:2px; transition:width 0.3s ease;
     box-shadow:0 0 12px rgba(79,195,247,0.3);
   }
   .spotify-panel .progress-time{
-    font-size:8px; color:var(--ash); font-family:var(--font-ui); min-width:32px; text-align:center;
+    font-size:7.5px; color:var(--ash); font-family:var(--font-ui); min-width:28px; text-align:center;
   }
 
   .game-panel{
     background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
-    padding:10px 14px; display:flex; align-items:center; gap:12px;
+    padding:8px 12px; display:flex; align-items:center; gap:10px;
   }
   .game-panel .cover{
-    width:44px; height:44px; border-radius:6px; object-fit:cover; flex-shrink:0;
+    width:40px; height:40px; border-radius:6px; object-fit:cover; flex-shrink:0;
     background:rgba(255,255,255,.05);
   }
   .game-panel .info{ flex:1; overflow:hidden; }
   .game-panel .game-name{
-    font-size:12px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-size:11.5px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .game-panel .game-detail{
-    font-size:9.5px; color:var(--ash); letter-spacing:.3px; margin-top:1px;
+    font-size:9px; color:var(--ash); letter-spacing:.3px; margin-top:1px;
   }
 
   .hidden{ display:none !important; }
 
   @media (max-width:580px){
-    .card-wrapper{ min-height:auto; width:440px; }
-    .card-front, .card-back{ padding:18px 14px 14px; min-height:auto; }
-    .card-back{ gap:10px; }
-    #profile-username{ font-size:30px; min-height:40px; }
-    .profile-main{ max-width:320px; padding:8px 12px; gap:10px; border-radius:6px; }
-    .profile-container,.profile-picture{ width:44px; height:44px; }
+    .card-wrapper{ min-height:auto; width:420px; }
+    .card-front, .card-back{ padding:16px 12px 12px; min-height:auto; }
+    .card-back{ gap:8px; }
+    #profile-username{ font-size:28px; min-height:36px; }
+    .profile-main{ max-width:300px; padding:8px 10px; gap:8px; border-radius:6px; }
+    .profile-container,.profile-picture{ width:40px; height:40px; }
     .profile-display-name{ font-size:14px; }
-    .badge,.badge-container{ width:25px; height:25px; }
-    .social-icon{ width:26px; height:26px; }
-    .clock-panel .clock-time{ font-size:20px; }
-    .clock-panel .clock-svg{ width:38px; height:38px; }
-    .spotify-panel .cover, .game-panel .cover{ width:34px; height:34px; }
-    .spotify-panel, .game-panel{ padding:8px 10px; gap:8px; }
-    .flip-panel{ padding:6px 14px; bottom:10px; }
-    .flip-panel .flip-text{ font-size:9px; }
+    .badge,.badge-container{ width:24px; height:24px; }
+    .social-icon{ width:24px; height:24px; }
+    .clock-panel .clock-time{ font-size:18px; }
+    .clock-panel .clock-svg{ width:34px; height:34px; }
+    .spotify-panel .cover, .game-panel .cover{ width:32px; height:32px; }
+    .spotify-panel, .game-panel{ padding:6px 10px; gap:8px; }
+    .flip-panel{ padding:4px 12px; bottom:8px; }
+    .flip-panel .flip-text{ font-size:8px; }
   }
 
   @media (max-width:400px){
-    .card-wrapper{ width:380px; }
-    #profile-username{ font-size:26px; min-height:36px; }
-    .profile-main{ max-width:280px; padding:6px 10px; gap:8px; }
-    .profile-container,.profile-picture{ width:38px; height:38px; }
-    .badge,.badge-container{ width:22px; height:22px; }
-    .social-icon{ width:22px; height:22px; }
+    .card-wrapper{ width:360px; }
+    #profile-username{ font-size:24px; min-height:32px; }
+    .profile-main{ max-width:260px; padding:6px 8px; gap:6px; }
+    .profile-container,.profile-picture{ width:34px; height:34px; }
+    .badge,.badge-container{ width:20px; height:20px; }
+    .social-icon{ width:20px; height:20px; }
   }
 </style>
 </head>
@@ -457,7 +460,7 @@
 
       <!-- GAME -->
       <div class="game-panel" id="gamePanel">
-        <img class="cover" id="gameCover" src="assets/profile.gif" alt="game cover">
+        <img class="cover" id="gameCover" src="assets/gift.png" alt="game cover">
         <div class="info">
           <div class="game-name" id="gameName">No game running</div>
           <div class="game-detail" id="gameDetail">Last played</div>
@@ -529,6 +532,9 @@
       if(hourHand) hourHand.setAttribute('transform', `rotate(${hourDeg},50,50)`);
       if(minHand) minHand.setAttribute('transform', `rotate(${minDeg},50,50)`);
       if(secHand) secHand.setAttribute('transform', `rotate(${secDeg},50,50)`);
+
+      // Aggiorna progress bar Spotify anche se non cambia canzone
+      updateSpotifyProgress();
     }
     setInterval(tickClock, 1000);
     tickClock();
@@ -587,16 +593,18 @@
     startScreen.addEventListener('click', startApp);
     startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
 
-    // ----- FLIP CARD (click su pannello o tasto SPACE) -----
+    // ----- FLIP CARD -----
     function toggleFlip(e) {
       if(e) e.stopPropagation();
       isFlipped = !isFlipped;
       cardWrapper.classList.toggle('flipped');
     }
 
+    // Click sui pannelli flip
     document.getElementById('flipFrontPanel').addEventListener('click', toggleFlip);
     document.getElementById('flipBackPanel').addEventListener('click', toggleFlip);
 
+    // Tasto SPACE - funziona SEMPRE (anche dentro la card)
     document.addEventListener('keydown', (e) => {
       if(e.code === 'Space') {
         e.preventDefault();
@@ -713,6 +721,35 @@
       }
     }, 500);
 
+    // ----- SPOTIFY PROGRESS (aggiornamento continuo) -----
+    let spotifyData = null;
+
+    function updateSpotifyProgress() {
+      const spotifyProgress = document.getElementById('spotifyProgress');
+      const progressCurrent = document.getElementById('progressCurrent');
+      const progressTotal = document.getElementById('progressTotal');
+
+      if (!spotifyData || !spotifyData.timestamps) return;
+
+      const start = spotifyData.timestamps.start;
+      const end = spotifyData.timestamps.end;
+      const now = Date.now();
+      const elapsed = Math.floor((now - start) / 1000);
+      const total = Math.floor((end - start) / 1000);
+      const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+
+      if (spotifyProgress) spotifyProgress.style.width = progress + '%';
+      if (progressCurrent) progressCurrent.textContent = formatTime(Math.min(elapsed, total));
+      if (progressTotal) progressTotal.textContent = formatTime(total);
+    }
+
+    function formatTime(seconds){
+      if (seconds < 0) seconds = 0;
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
     // ----- DISCORD STATUS + SPOTIFY + GAME -----
     async function fetchDiscordStatus(){
       const userId = '1019329014369882123';
@@ -755,32 +792,25 @@
       const spotifyCover = document.getElementById('spotifyCover');
       const spotifyTrack = document.getElementById('spotifyTrack');
       const spotifyArtist = document.getElementById('spotifyArtist');
-      const spotifyProgress = document.getElementById('spotifyProgress');
-      const progressCurrent = document.getElementById('progressCurrent');
-      const progressTotal = document.getElementById('progressTotal');
 
       if(spotify && spotify.song){
         spotifyCover.src = spotify.album_art_url || 'assets/spotify.png';
         spotifyTrack.textContent = spotify.song;
         spotifyArtist.textContent = spotify.artist;
-        if(spotify.timestamps){
-          const start = spotify.timestamps.start;
-          const end = spotify.timestamps.end;
-          const now = Date.now();
-          const elapsed = Math.floor((now - start) / 1000);
-          const total = Math.floor((end - start) / 1000);
-          const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
-          spotifyProgress.style.width = progress + '%';
-          progressCurrent.textContent = formatTime(elapsed);
-          progressTotal.textContent = formatTime(total);
-        }
+        // Salva i dati per l'aggiornamento continuo
+        spotifyData = spotify;
+        updateSpotifyProgress();
       } else {
         spotifyCover.src = 'assets/spotify.png';
         spotifyTrack.textContent = 'No song playing';
         spotifyArtist.textContent = 'Last listened';
-        spotifyProgress.style.width = '0%';
-        progressCurrent.textContent = '0:00';
-        progressTotal.textContent = '0:00';
+        const spotifyProgress = document.getElementById('spotifyProgress');
+        const progressCurrent = document.getElementById('progressCurrent');
+        const progressTotal = document.getElementById('progressTotal');
+        if (spotifyProgress) spotifyProgress.style.width = '0%';
+        if (progressCurrent) progressCurrent.textContent = '0:00';
+        if (progressTotal) progressTotal.textContent = '0:00';
+        spotifyData = null;
       }
 
       // Game
@@ -790,7 +820,12 @@
       const gameDetail = document.getElementById('gameDetail');
 
       if(gameActivity && gameActivity.name){
-        gameCover.src = 'assets/profile.gif';
+        // Usa l'icona del gioco se disponibile, altrimenti gift.png
+        if(gameActivity.assets && gameActivity.assets.large_image) {
+          gameCover.src = `https://cdn.discordapp.com/app-assets/${gameActivity.application_id}/${gameActivity.assets.large_image}.png`;
+        } else {
+          gameCover.src = 'assets/gift.png';
+        }
         gameName.textContent = gameActivity.name;
         let details = '';
         if(gameActivity.details) details += gameActivity.details + ' ';
@@ -801,16 +836,10 @@
           gameDetail.textContent += ` (${elapsed}m)`;
         }
       } else {
-        gameCover.src = 'assets/profile.gif';
+        gameCover.src = 'assets/gift.png';
         gameName.textContent = 'No game running';
         gameDetail.textContent = 'Last played';
       }
-    }
-
-    function formatTime(seconds){
-      const m = Math.floor(seconds / 60);
-      const s = Math.floor(seconds % 60);
-      return m + ':' + (s < 10 ? '0' : '') + s;
     }
 
     setInterval(fetchDiscordStatus, 30000);
