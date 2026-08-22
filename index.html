@@ -116,6 +116,7 @@
     opacity:0;
     transform:rotateX(0deg) rotateY(0deg);
     will-change:transform;
+    display:block;
   }
   .card-wrapper.flipped{
     transform:rotateY(180deg);
@@ -130,7 +131,6 @@
     border:1px solid var(--hair); padding:24px 24px 18px;
     display:flex; flex-direction:column;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
-    transition:backdrop-filter 0.1s ease, -webkit-backdrop-filter 0.1s ease;
   }
   .card-back{
     transform:rotateY(180deg);
@@ -139,9 +139,7 @@
     display:flex; flex-direction:column; gap:10px;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
     overflow-y:auto;
-    transition:backdrop-filter 0.1s ease, -webkit-backdrop-filter 0.1s ease;
   }
-  /* Il blur è già attivo dall'inizio - nessuna transizione */
 
   /* ---- flip trigger panel ---- */
   .flip-panel{
@@ -533,7 +531,6 @@
       if(minHand) minHand.setAttribute('transform', `rotate(${minDeg},50,50)`);
       if(secHand) secHand.setAttribute('transform', `rotate(${secDeg},50,50)`);
 
-      // Aggiorna progress bar Spotify anche se non cambia canzone
       updateSpotifyProgress();
     }
     setInterval(tickClock, 1000);
@@ -600,11 +597,9 @@
       cardWrapper.classList.toggle('flipped');
     }
 
-    // Click sui pannelli flip
     document.getElementById('flipFrontPanel').addEventListener('click', toggleFlip);
     document.getElementById('flipBackPanel').addEventListener('click', toggleFlip);
 
-    // Tasto SPACE - funziona SEMPRE (anche dentro la card)
     document.addEventListener('keydown', (e) => {
       if(e.code === 'Space') {
         e.preventDefault();
@@ -634,7 +629,6 @@
     function animateTilt() {
       tiltX += (targetTiltX - tiltX) * 0.08;
       tiltY += (targetTiltY - tiltY) * 0.08;
-      // Solo se il mouse NON è sulla card
       if (!isMouseOnCard) {
         cardWrapper.style.transition = 'none';
         let transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
@@ -721,7 +715,7 @@
       }
     }, 500);
 
-    // ----- SPOTIFY PROGRESS (aggiornamento continuo) -----
+    // ----- SPOTIFY PROGRESS -----
     let spotifyData = null;
 
     function updateSpotifyProgress() {
@@ -729,7 +723,12 @@
       const progressCurrent = document.getElementById('progressCurrent');
       const progressTotal = document.getElementById('progressTotal');
 
-      if (!spotifyData || !spotifyData.timestamps) return;
+      if (!spotifyData || !spotifyData.timestamps) {
+        if (spotifyProgress) spotifyProgress.style.width = '0%';
+        if (progressCurrent) progressCurrent.textContent = '0:00';
+        if (progressTotal) progressTotal.textContent = '0:00';
+        return;
+      }
 
       const start = spotifyData.timestamps.start;
       const end = spotifyData.timestamps.end;
@@ -797,20 +796,14 @@
         spotifyCover.src = spotify.album_art_url || 'assets/spotify.png';
         spotifyTrack.textContent = spotify.song;
         spotifyArtist.textContent = spotify.artist;
-        // Salva i dati per l'aggiornamento continuo
         spotifyData = spotify;
         updateSpotifyProgress();
       } else {
         spotifyCover.src = 'assets/spotify.png';
         spotifyTrack.textContent = 'No song playing';
         spotifyArtist.textContent = 'Last listened';
-        const spotifyProgress = document.getElementById('spotifyProgress');
-        const progressCurrent = document.getElementById('progressCurrent');
-        const progressTotal = document.getElementById('progressTotal');
-        if (spotifyProgress) spotifyProgress.style.width = '0%';
-        if (progressCurrent) progressCurrent.textContent = '0:00';
-        if (progressTotal) progressTotal.textContent = '0:00';
         spotifyData = null;
+        updateSpotifyProgress();
       }
 
       // Game
@@ -820,7 +813,6 @@
       const gameDetail = document.getElementById('gameDetail');
 
       if(gameActivity && gameActivity.name){
-        // Usa l'icona del gioco se disponibile, altrimenti gift.png
         if(gameActivity.assets && gameActivity.assets.large_image) {
           gameCover.src = `https://cdn.discordapp.com/app-assets/${gameActivity.application_id}/${gameActivity.assets.large_image}.png`;
         } else {
