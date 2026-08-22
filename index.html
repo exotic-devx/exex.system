@@ -12,14 +12,10 @@
   :root{
     --void:#000000;
     --panel:rgba(0,0,0,0.3);
-    --panel-solid:#0a0a0b;
     --paper:#ffffff;
     --mist:rgba(255,255,255,0.62);
     --ash:rgba(255,255,255,0.30);
     --hair:rgba(255,255,255,0.10);
-    --glow-lo:rgba(255,255,255,0.10);
-    --glow-md:rgba(255,255,255,0.35);
-    --glow-hi:rgba(255,255,255,0.75);
     --font-ui:'JetBrains Mono', 'Courier New', monospace;
     --font-display:'Angel Wish', serif;
   }
@@ -42,28 +38,6 @@
     -webkit-font-smoothing:antialiased;
   }
 
-  /* ---------- ambient grain + vignette ---------- */
-  .grain{
-    position:fixed; inset:0; z-index:5; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-  .vignette{
-    position:fixed; inset:0; z-index:4; pointer-events:none;
-    background:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 78%, rgba(0,0,0,0.92) 100%);
-  }
-  .scanlines{
-    position:fixed; inset:0; z-index:6; pointer-events:none; opacity:.035;
-    background:repeating-linear-gradient(180deg, #fff 0px, #fff 1px, transparent 1px, transparent 3px);
-  }
-
-  /* ---------- custom cursor ---------- */
-  .custom-cursor{
-    position:fixed; width:40px; height:40px;
-    background:url('assets/custom_cursor.png') no-repeat center center; background-size:contain;
-    pointer-events:none; z-index:9999; transform:translate(-50%,-50%);
-    display:block;
-  }
-
   /* ---------- background video ---------- */
   #background{
     position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
@@ -73,7 +47,7 @@
   }
   #background.visible{opacity:0.7;}
 
-  /* ---------- HUD corner telemetry ---------- */
+  /* ---------- HUD ---------- */
   .hud{
     position:fixed; z-index:15; font-family:var(--font-ui); font-size:10.5px;
     letter-spacing:1.5px; color:var(--ash); pointer-events:none;
@@ -81,40 +55,25 @@
   }
   .hud.visible{opacity:1;}
   .hud-tl{top:22px; left:26px;}
-  .hud-tr{top:22px; right:26px; text-align:right;}
   .hud-bl{bottom:22px; left:26px;}
-  .hud-br{bottom:22px; right:26px; text-align:right;}
   .hud b{color:var(--mist); font-weight:500;}
-  .hud .dot{
-    display:inline-block; width:5px; height:5px; border-radius:50%;
-    background:#fff; box-shadow:0 0 6px #fff; margin-right:6px;
-    animation:blink-dot 2.2s ease-in-out infinite;
-  }
-  @keyframes blink-dot{0%,100%{opacity:1;}50%{opacity:.25;}}
   @media (max-width:700px){ .hud{display:none;} }
 
   /* ---------- start screen ---------- */
   #start-screen{
-    position:fixed; inset:0; background:#000; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; z-index:50; gap:18px;
+    position:fixed; inset:0; background:#000; display:flex;
+    align-items:center; justify-content:center; z-index:50;
+    transition:opacity 0.8s ease, backdrop-filter 0.8s ease;
   }
-  #start-screen::before{
-    content:''; position:absolute; inset:0;
-    background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.05), transparent 60%);
+  #start-screen.hidden{
+    opacity:0;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    pointer-events:none;
   }
-  .boot-line{
-    font-family:var(--font-ui); font-size:11px; letter-spacing:2px; color:var(--ash);
-    opacity:0; animation:boot-fade .5s ease forwards;
-  }
-  .boot-line:nth-child(1){animation-delay:.1s;}
-  .boot-line:nth-child(2){animation-delay:.4s;}
-  .boot-line:nth-child(3){animation-delay:.7s;}
-  @keyframes boot-fade{to{opacity:1;}}
   #start-text{
     font-family:var(--font-ui); font-size:26px; letter-spacing:2px; color:#fff;
-    padding:14px 30px; border:1px solid var(--hair); border-radius:2px;
-    opacity:0; animation:boot-fade .6s ease forwards; animation-delay:1.1s;
-    box-shadow:0 0 24px rgba(255,255,255,.08); position:relative; z-index:2;
+    position:relative; z-index:2;
   }
 
   /* ---------- profile card frame ---------- */
@@ -128,7 +87,7 @@
   #profile-block{
     position:relative; width:100%;
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); border-radius:6px;
+    border:1px solid var(--hair); border-radius:12px;
     padding:34px 34px 24px; display:flex; flex-direction:column; gap:4px;
     transform-style:preserve-3d; will-change:transform; perspective:700px;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
@@ -199,7 +158,7 @@
 
   .profile-main{
     display:flex; align-items:center; gap:16px; background:rgba(255,255,255,.03);
-    border:1px solid var(--hair); border-radius:5px; padding:13px 18px; max-width:420px;
+    border:1px solid var(--hair); border-radius:8px; padding:13px 18px; max-width:420px;
     margin:4px auto 14px; width:100%; transition:border-color .4s ease, box-shadow .4s ease;
   }
   .profile-main:hover{
@@ -227,7 +186,7 @@
   }
   .last-seen{ font-size:10px; color:var(--ash); margin-top:4px; text-align:left; letter-spacing:.5px; }
 
-  /* SOCIAL LINK - più grandi */
+  /* SOCIAL LINK */
   .social-links{
     display:flex; justify-content:center; gap:26px; align-items:center; padding:2px 0 0;
   }
@@ -248,24 +207,12 @@
   }
   .social-link-tooltip:hover .tooltip-text{ visibility:visible; opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* ---------- mute toggle ---------- */
-  #mute-toggle{
-    position:fixed; bottom:24px; right:26px; z-index:40; width:38px; height:38px;
-    border:1px solid var(--hair); border-radius:50%; background:rgba(0,0,0,.4); backdrop-filter:blur(10px);
-    display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .8s ease, border-color .3s ease, box-shadow .3s ease;
-    pointer-events:none;
-  }
-  #mute-toggle.visible{ opacity:1; pointer-events:auto; }
-  #mute-toggle:hover{ border-color:rgba(255,255,255,.5); box-shadow:0 0 16px rgba(255,255,255,.15); }
-  #mute-toggle svg{ width:15px; height:15px; }
-  #mute-toggle .bar{ fill:#fff; }
-
   .hidden{ display:none !important; }
 
   @media (max-width:580px){
-    #profile-block{ padding:26px 20px 18px; }
+    #profile-block{ padding:26px 20px 18px; border-radius:10px; }
     #profile-username{ font-size:32px; min-height:44px; }
-    .profile-main{ max-width:340px; padding:10px 14px; gap:12px; }
+    .profile-main{ max-width:340px; padding:10px 14px; gap:12px; border-radius:6px; }
     .profile-container,.profile-picture{ width:48px; height:48px; }
     .profile-display-name{ font-size:15px; }
     .badge,.badge-container{ width:27px; height:27px; }
@@ -275,22 +222,14 @@
 </head>
 <body>
 
-<div class="grain"></div>
-<div class="scanlines"></div>
-<div class="vignette"></div>
 <div class="custom-cursor" id="customCursor"></div>
 
-<div class="hud hud-tl" id="hudTl">
-  <span class="dot"></span><b>SYS</b>.EXOTIC — ONLINE
-</div>
-<div class="hud hud-tr" id="hudTr"><b>TIME</b> <span id="clock">00:00:00</span></div>
+<!-- HUD: solo clock e uptime -->
+<div class="hud hud-tl" id="hudTl"><b>CLOCK</b> <span id="clock">00:00:00</span></div>
 <div class="hud hud-bl" id="hudBl"><b>UPTIME</b> <span id="uptime">00:00</span></div>
-<div class="hud hud-br" id="hudBr">EXEX.SYSTEM // v2</div>
 
 <div id="start-screen">
-  <div class="boot-line">[ INITIALIZING SYSTEM ]</div>
-  <div class="boot-line">LOADING PROFILE.EXE — OK</div>
-  <div id="start-text">click to enter</div>
+  <div id="start-text"></div>
 </div>
 
 <video id="background" autoplay loop muted playsinline webkit-playsinline disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback">
@@ -346,10 +285,6 @@
   </div>
 </div>
 
-<button id="mute-toggle" aria-label="Toggle sound">
-  <svg viewBox="0 0 24 24" id="muteIcon"><path class="bar" d="M4 9v6h4l5 5V4L8 9H4z"/></svg>
-</button>
-
 <audio id="background-music" loop>
   <source src="https://r2.guns.lol/6556d09a-6fa7-420b-93c5-8ecd37424977.mp3" type="audio/mp3">
 </audio>
@@ -371,23 +306,20 @@
     const customCursor  = document.getElementById('customCursor');
     const statusRing    = document.getElementById('status-ring');
     const lastSeen      = document.getElementById('last-seen');
-    const muteToggle     = document.getElementById('mute-toggle');
-    const muteIcon       = document.getElementById('muteIcon');
-    const clockEl        = document.getElementById('clock');
-    const uptimeEl        = document.getElementById('uptime');
-    const huds           = [document.getElementById('hudTl'),document.getElementById('hudTr'),document.getElementById('hudBl'),document.getElementById('hudBr')];
+    const clockEl       = document.getElementById('clock');
+    const uptimeEl      = document.getElementById('uptime');
+    const huds          = [document.getElementById('hudTl'), document.getElementById('hudBl')];
 
     let isTiltEnabled = false;
-    let isMuted = false;
     const bootTime = Date.now();
 
-    /* ---- cursor ---- */
+    // CURSOR
     document.addEventListener('mousemove', (e) => {
       customCursor.style.left = e.clientX + 'px';
       customCursor.style.top = e.clientY + 'px';
     });
 
-    /* ---- live clock / uptime ---- */
+    // CLOCK / UPTIME
     function pad(n){ return n.toString().padStart(2,'0'); }
     function tickClock(){
       const d = new Date();
@@ -399,7 +331,67 @@
     setInterval(tickClock, 1000);
     tickClock();
 
-    /* ---- 3D tilt - più movimento ---- */
+    // START SCREEN - "click" con typing e deleting
+    const startMessage = "click here...";
+    let startTextContent = '';
+    let startIndex = 0;
+    let isDeletingStart = false;
+    let startCursorVisible = true;
+
+    function typeWriterStart() {
+      if (!isDeletingStart && startIndex < startMessage.length) {
+        startTextContent = startMessage.slice(0, startIndex + 1);
+        startIndex++;
+        setTimeout(typeWriterStart, 100);
+      } else if (isDeletingStart && startIndex > 0) {
+        startTextContent = startMessage.slice(0, startIndex - 1);
+        startIndex--;
+        setTimeout(typeWriterStart, 60);
+      } else if (startIndex === startMessage.length) {
+        isDeletingStart = true;
+        setTimeout(typeWriterStart, 1500);
+      } else if (startIndex === 0 && isDeletingStart) {
+        isDeletingStart = false;
+        setTimeout(typeWriterStart, 500);
+      }
+      startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
+    }
+
+    setInterval(() => {
+      startCursorVisible = !startCursorVisible;
+      startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
+    }, 500);
+
+    typeWriterStart();
+
+    // START APP
+    function startApp() {
+      startScreen.classList.add('hidden');
+
+      if (backgroundVideo) {
+        backgroundVideo.muted = true;
+        backgroundVideo.play().catch(()=>{});
+        setTimeout(()=> backgroundVideo.classList.add('visible'), 100);
+      }
+      if (backgroundMusic) {
+        backgroundMusic.volume = 0.28;
+        backgroundMusic.muted = false;
+        backgroundMusic.play().catch(()=>{});
+      }
+
+      frame.style.display = 'block';
+      gsap.fromTo(frame, {opacity:0, y:-24}, {opacity:1, y:0, duration:1, ease:'power2.out'});
+      huds.forEach((h,i)=> setTimeout(()=> h.classList.add('visible'), 300 + i*120));
+
+      typeWriterUsername();
+      typeWriterBio();
+      fetchDiscordStatus();
+    }
+
+    startScreen.addEventListener('click', startApp);
+    startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
+
+    // 3D TILT
     function handleTilt(e){
       if(!profileBlock) return;
       const rect = frame.getBoundingClientRect();
@@ -431,44 +423,7 @@
       frame.addEventListener('touchend', () => { isTiltEnabled = false; resetTilt(); });
     }
 
-    /* ---- start screen ---- */
-    function startApp(){
-      startScreen.classList.add('hidden');
-
-      if(backgroundVideo){
-        backgroundVideo.muted = true;
-        backgroundVideo.play().catch(()=>{});
-        setTimeout(()=> backgroundVideo.classList.add('visible'), 100);
-      }
-      if(backgroundMusic){
-        backgroundMusic.volume = 0.28;
-        backgroundMusic.muted = false;
-        backgroundMusic.play().catch(()=>{});
-      }
-      muteToggle.classList.add('visible');
-
-      frame.style.display = 'block';
-      gsap.fromTo(frame, {opacity:0, y:-24}, {opacity:1, y:0, duration:1, ease:'power2.out'});
-      huds.forEach((h,i)=> setTimeout(()=> h.classList.add('visible'), 300 + i*120));
-
-      typeWriterUsername();
-      typeWriterBio();
-      fetchDiscordStatus();
-    }
-    startScreen.addEventListener('click', startApp);
-    startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
-
-    /* ---- mute toggle ---- */
-    muteToggle.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      isMuted = !isMuted;
-      if(backgroundMusic) backgroundMusic.muted = isMuted;
-      muteIcon.innerHTML = isMuted
-        ? '<path class="bar" d="M4 9v6h4l5 5V4L8 9H4z" opacity=".4"/><path class="bar" d="M16.5 12l3.5 3.5-1 1L15.5 13l-3.5 3.5-1-1L14.5 12 11 8.5l1-1 3.5 3.5 3.5-3.5 1 1z"/>'
-        : '<path class="bar" d="M4 9v6h4l5 5V4L8 9H4z"/><path class="bar" d="M16 8.5a5 5 0 0 1 0 7" fill="none" stroke="#fff" stroke-width="1.3"/>';
-    });
-
-    /* ---- username typewriter ---- */
+    // USERNAME TYPING
     const usernameTexts = ["𝔢𝔵𝔬𝔱𝔦𝔠"];
     let usernameIndex = 0, charIndex = 0, isDeleting = false, usernameCursorVisible = true;
     function typeWriterUsername(){
@@ -496,7 +451,7 @@
       }
     }, 500);
 
-    /* ---- bio typewriter ---- */
+    // BIO TYPING
     const bioMessages = ["I created my own.", "DM me.", '<span class="bio-link">guns.lol/javraj</span>'];
     let bioText='', bioIndex=0, bioMessageIndex=0, isBioDeleting=false, bioCursorVisible=true;
     function typeWriterBio(){
@@ -526,7 +481,7 @@
       }
     }, 500);
 
-    /* ---- Discord status (Lanyard) ---- */
+    // DISCORD STATUS
     async function fetchDiscordStatus(){
       const userId = '1019329014369882123';
       const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
