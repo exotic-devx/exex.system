@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exotic Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: url('assets/custom_cursor.png') no-repeat center center;
+            background-size: contain;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
+
+        body:not(.touch-device) {
+            cursor: none;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* VIDEO SFONDO - nascosto all'inizio */
+        #background {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+            z-index: 1;
+            pointer-events: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #background.visible {
+            opacity: 1;
+        }
+
+        .glitch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        #hacker-overlay, #snow-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* PANNELLO PRINCIPALE - con effetto 3D dinamico */
+        #profile-block {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 540px;
+            min-height: 500px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 28px 30px 20px;
+            border-radius: 16px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            pointer-events: auto;
+            opacity: 0;
+            transform-style: preserve-3d;
+            transition: transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
+            will-change: transform;
+            perspective: 800px;
+        }
+
+        /* USERNAME - effetto tremore + più grande */
+        .username-section {
+            text-align: center;
+            margin-bottom: 2px;
+        }
+
+        @font-face {
+            font-family: 'Angel Wish';
+            src: url('assets/Angel_wish.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        #profile-username {
+            font-family: 'Angel Wish', sans-serif;
+            font-size: 40px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: #fff;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
+            min-height: 56px;
+            display: inline-block;
+            animation: tremor 0.08s infinite alternate;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        /* EFFETTO TREMORE */
+        @keyframes tremor {
+            0% {
+                transform: translate(0px, 0px) rotate(0deg);
+                text-shadow: 0 0 5px rgba(255,255,255,0.2);
+            }
+            10% {
+                transform: translate(-1px, 1px) rotate(-0.5deg);
+                text-shadow: 2px 0 red, -2px 0 cyan;
+            }
+            20% {
+                transform: translate(1px, -1px) rotate(0.5deg);
+                text-shadow: -2px 0 red, 2px 0 cyan;
+            }
+            30% {
+                transform: translate(-1px, 0px) rotate(-0.3deg);
+                text-shadow: 0 0 5px rgba(255,255,255,0.2);
+            }
+            40% {
+                transform: translate(1px, 1px) rotate(0.3deg);
+                text-shadow: 3px 0 magenta, -3px 0 lime;
+            }
+            50% {
+                transform: translate(-1px, -1px) rotate(-0.2deg);
+                text-shadow: -3px 0 magenta, 3px 0 lime;
+            }
+            60% {
+                transform: translate(0px, 0px) rotate(0deg);
+                text-shadow: 0 0 5px rgba(255,255,255,0.2);
+            }
+            70% {
+                transform: translate(1px, -1px) rotate(0.4deg);
+                text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff;
+            }
+            80% {
+                transform: translate(-1px, 1px) rotate(-0.4deg);
+                text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff;
+            }
+            90% {
+                transform: translate(0px, 0px) rotate(0deg);
+                text-shadow: 0 0 5px rgba(255,255,255,0.2);
+            }
+            100% {
+                transform: translate(0px, 0px) rotate(0deg);
+                text-shadow: 0 0 5px rgba(255,255,255,0.2);
+            }
+        }
+
+        /* BADGE - senza glow, solo hover normale */
+        .badge-section {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-container {
+            position: relative;
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+        }
+
+        .badge {
+            width: 30px;
+            height: 30px;
+            display: block;
+            border-radius: 6px;
+            object-fit: contain;
+            transition: transform 0.3s;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        .badge:hover {
+            transform: scale(1.15);
+        }
+
+        .badge-container .tooltip {
+            visibility: hidden;
+            width: 100px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 6px 0;
+            position: absolute;
+            z-index: 100;
+            bottom: 110%;
+            left: 50%;
+            margin-left: -50px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 11px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .badge-container:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* BIO */
+        #profile-bio {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 17px;
+            line-height: 1.6;
+            min-height: 2.2em;
+            text-align: center;
+            margin: 8px 0 12px;
+            padding: 0 10px;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        /* SEZIONE FOTO + NOME - con glow animato al hover */
+        .profile-main {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 12px;
+            padding: 12px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            max-width: 420px;
+            margin: 12px auto 8px;
+            width: 100%;
+            position: relative;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+        }
+
+        .profile-main:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2), inset 0 0 30px rgba(255, 255, 255, 0.05);
+            animation: glow-pulse 1.2s ease-in-out 2;
+            transform: scale(1.01);
+        }
+
+        @keyframes glow-pulse {
+            0% {
+                border-color: rgba(255, 255, 255, 0.3);
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            }
+            25% {
+                border-color: rgba(255, 255, 255, 0.7);
+                box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+                transform: scale(1.02);
+            }
+            50% {
+                border-color: rgba(255, 255, 255, 0.4);
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+                transform: scale(1.01);
+            }
+            75% {
+                border-color: rgba(255, 255, 255, 0.6);
+                box-shadow: 0 0 35px rgba(255, 255, 255, 0.25);
+                transform: scale(1.015);
+            }
+            100% {
+                border-color: rgba(255, 255, 255, 0.3);
+                box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+                transform: scale(1);
+            }
+        }
+
+        .profile-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        .profile-picture {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.12);
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        /* CERCHIO DI STATUS SULLA FOTO */
+        .status-ring {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2.5px solid rgba(0, 0, 0, 0.8);
+            background: #80848e;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0px rgba(0,0,0,0);
+        }
+
+        .status-ring.online {
+            background: #23a55a;
+            box-shadow: 0 0 12px rgba(35, 165, 90, 0.7);
+        }
+
+        .status-ring.idle {
+            background: #f0b232;
+            box-shadow: 0 0 12px rgba(240, 178, 50, 0.7);
+        }
+
+        .status-ring.dnd {
+            background: #ed4245;
+            box-shadow: 0 0 12px rgba(237, 66, 69, 0.7);
+        }
+
+        .status-ring.offline {
+            background: #80848e;
+            box-shadow: none;
+        }
+
+        .profile-name-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 140px;
+        }
+
+        .profile-display-name {
+            font-family: 'Angel Wish', sans-serif;
+            font-size: 20px;
+            color: #fff;
+            letter-spacing: 1px;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+            text-align: left;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        .last-seen {
+            font-size: 11px;
+            color: rgba(255,255,255,0.35);
+            font-family: 'Courier New', monospace;
+            margin-top: 3px;
+            text-align: left;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        /* FOOTER */
+        .profile-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        /* SOCIAL LINK */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            align-items: center;
+            padding: 4px 0 6px 0;
+        }
+
+        .social-icon {
+            width: 48px;
+            height: 48px;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.1));
+            border-radius: 0;
+            padding: 0;
+            background: transparent;
+            object-fit: contain;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.5)) brightness(1.2);
+        }
+
+        .social-link-tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .social-link-tooltip .tooltip-text {
+            visibility: hidden;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 100;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 11px;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        .social-link-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* START SCREEN - sfondo nero opaco */
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            cursor: pointer;
+        }
+
+        #start-text {
+            font-family: 'Courier New', monospace;
+            font-size: 26px;
+            color: #fff;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .glitch {
+            animation: glitch 0.2s ease-in-out;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 580px) {
+            #profile-block {
+                width: 94vw;
+                min-height: 440px;
+                padding: 20px 16px 16px;
+            }
+
+            #profile-username {
+                font-size: 32px;
+                min-height: 44px;
+            }
+
+            .profile-main {
+                max-width: 340px;
+                padding: 10px 14px;
+                gap: 14px;
+                margin: 10px auto 6px;
+            }
+
+            .profile-container {
+                width: 68px;
+                height: 68px;
+            }
+
+            .profile-picture {
+                width: 68px;
+                height: 68px;
+            }
+
+            .status-ring {
+                width: 18px;
+                height: 18px;
+                border-width: 2px;
+            }
+
+            .profile-display-name {
+                font-size: 17px;
+            }
+
+            .profile-name-section {
+                min-width: 120px;
+            }
+
+            .last-seen {
+                font-size: 10px;
+            }
+
+            .badge {
+                width: 26px;
+                height: 26px;
+            }
+
+            .badge-section {
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .social-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .social-links {
+                gap: 18px;
+                padding: 2px 0 4px 0;
+            }
+
+            #profile-bio {
+                font-size: 15px;
+                min-height: 2em;
+                margin: 6px 0 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            #profile-block {
+                min-height: 400px;
+                padding: 16px 12px 14px;
+            }
+
+            #profile-username {
+                font-size: 26px;
+                min-height: 38px;
+            }
+
+            .badge {
+                width: 22px;
+                height: 22px;
+            }
+
+            .badge-section {
+                gap: 6px;
+                margin-bottom: 6px;
+            }
+
+            .profile-main {
+                max-width: 280px;
+                padding: 8px 12px;
+                gap: 12px;
+                margin: 8px auto 4px;
+            }
+
+            .profile-container {
+                width: 58px;
+                height: 58px;
+            }
+
+            .profile-picture {
+                width: 58px;
+                height: 58px;
+            }
+
+            .status-ring {
+                width: 16px;
+                height: 16px;
+                border-width: 2px;
+            }
+
+            .profile-display-name {
+                font-size: 15px;
+            }
+
+            .profile-name-section {
+                min-width: 100px;
+            }
+
+            .last-seen {
+                font-size: 9px;
+            }
+
+            #profile-bio {
+                font-size: 14px;
+                min-height: 1.8em;
+                padding: 0 6px;
+                margin: 4px 0 6px;
+            }
+
+            .social-icon {
+                width: 34px;
+                height: 34px;
+            }
+
+            .social-links {
+                gap: 14px;
+                padding: 2px 0 4px 0;
+            }
+        }
+    </style>
+</head>
+<body class="home-theme">
+
+    <!-- CURSOR -->
+    <div class="custom-cursor"></div>
+
+    <!-- START SCREEN - sfondo nero opaco -->
+    <div id="start-screen">
+        <div id="start-text"></div>
+    </div>
+
+    <!-- SFONDO VIDEO DA R2 - nascosto all'inizio -->
+    <video id="background" autoplay loop muted playsinline webkit-playsinline disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback">
+        <source src="https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4" type="video/mp4">
+    </video>
+
+    <!-- OVERLAY -->
+    <div class="glitch-overlay"></div>
+    <div id="hacker-overlay" class="hidden"></div>
+    <div id="snow-overlay" class="hidden"></div>
+
+    <!-- PANNELLO PRINCIPALE -->
+    <div id="profile-block">
+        <!-- USERNAME -->
+        <div class="username-section">
+            <div id="profile-username">𝖊𝖝𝖔𝖙𝖎𝖈</div>
+        </div>
+
+        <!-- BADGE -->
+        <div class="badge-section">
+            <div class="badge-container">
+                <img src="assets/owner.gif" alt="Owner" class="badge">
+                <span class="tooltip">Owner</span>
+            </div>
+            <div class="badge-container">
+                <img src="assets/developer.png" alt="Developer" class="badge">
+                <span class="tooltip">Developer</span>
+            </div>
+            <div class="badge-container">
+                <img src="assets/verified.gif" alt="Verified" class="badge">
+                <span class="tooltip">Verified</span>
+            </div>
+        </div>
+
+        <!-- BIO -->
+        <div id="profile-bio"></div>
+
+        <!-- FOTO + NOME - con glow animato al hover -->
+        <div class="profile-main">
+            <div class="profile-container">
+                <img src="assets/profile.gif" alt="Profile" class="profile-picture">
+                <div class="status-ring online" id="status-ring"></div>
+            </div>
+            <div class="profile-name-section">
+                <span class="profile-display-name">not.exotic.ton</span>
+                <span class="last-seen" id="last-seen">Last seen: 0 hours ago</span>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="profile-footer">
+            <!-- SOCIAL -->
+            <div class="social-links">
+                <a href="https://open.spotify.com/user/lopp05qs775yh0frde45qcf9c?si=84c4e551e4c24951" target="_blank" class="social-link-tooltip">
+                    <img src="assets/spotify.png" alt="Spotify" class="social-icon">
+                    <span class="tooltip-text">Spotify</span>
+                </a>
+                <a href="https://t.me/javph" target="_blank" class="social-link-tooltip">
+                    <img src="assets/telegram.png" alt="Telegram" class="social-icon">
+                    <span class="tooltip-text">Telegram</span>
+                </a>
+                <a href="https://discord.com/users/1019329014369882123" target="_blank" class="social-link-tooltip">
+                    <img src="assets/discord.png" alt="Discord" class="social-icon">
+                    <span class="tooltip-text">Discord</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO DA R2 - nascosto all'inizio -->
+    <audio id="background-music" loop>
+        <source src="https://r2.guns.lol/6556d09a-6fa7-420b-93c5-8ecd37424977.mp3" type="audio/mp3">
+    </audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        (function() {
+            "use strict";
+
+            document.addEventListener('DOMContentLoaded', function() {
+
+                const startScreen = document.getElementById('start-screen');
+                const startText = document.getElementById('start-text');
+                const profileBlock = document.getElementById('profile-block');
+                const profileBio = document.getElementById('profile-bio');
+                const backgroundVideo = document.getElementById('background');
+                const backgroundMusic = document.getElementById('background-music');
+
+                // STATUS ELEMENTI
+                const statusRing = document.getElementById('status-ring');
+                const lastSeen = document.getElementById('last-seen');
+
+                // VARIABILI
+                let isTiltEnabled = false;
+                let tiltTimeout = null;
+
+                // CURSOR
+                const cursor = document.querySelector('.custom-cursor');
+                const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+                if (isTouchDevice) {
+                    document.body.classList.add('touch-device');
+                    cursor.style.display = 'none';
+                } else {
+                    document.addEventListener('mousemove', (e) => {
+                        cursor.style.left = e.clientX + 'px';
+                        cursor.style.top = e.clientY + 'px';
+                        cursor.style.display = 'block';
+                    });
+                    document.addEventListener('mousedown', () => {
+                        cursor.style.transform = 'scale(0.8) translate(-50%, -50%)';
+                    });
+                    document.addEventListener('mouseup', () => {
+                        cursor.style.transform = 'scale(1) translate(-50%, -50%)';
+                    });
+                }
+
+                // EFFETTO 3D DINAMICO PER IL PANNELLO PRINCIPALE
+                function handleTilt(e) {
+                    if (!profileBlock || profileBlock.style.opacity !== '1') return;
+                    
+                    const rect = profileBlock.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    let clientX, clientY;
+                    if (e.type === 'touchmove' || e.type === 'touchstart') {
+                        clientX = e.touches[0].clientX;
+                        clientY = e.touches[0].clientY;
+                    } else {
+                        clientX = e.clientX;
+                        clientY = e.clientY;
+                    }
+
+                    const relX = Math.max(-1, Math.min(1, (clientX - centerX) / (rect.width / 2)));
+                    const relY = Math.max(-1, Math.min(1, (clientY - centerY) / (rect.height / 2)));
+
+                    const maxTilt = 12;
+                    const tiltY = relX * maxTilt;
+                    const tiltX = -relY * maxTilt;
+
+                    profileBlock.style.transition = 'transform 0.08s cubic-bezier(0.2, 0.1, 0.2, 1)';
+                    profileBlock.style.transform = `translate(-50%, -50%) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+                }
+
+                function resetTilt() {
+                    if (!profileBlock) return;
+                    profileBlock.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                    profileBlock.style.transform = 'translate(-50%, -50%) rotateX(0deg) rotateY(0deg)';
+                }
+
+                if (profileBlock) {
+                    profileBlock.addEventListener('mouseenter', () => {
+                        isTiltEnabled = true;
+                        if (tiltTimeout) {
+                            clearTimeout(tiltTimeout);
+                            tiltTimeout = null;
+                        }
+                    });
+
+                    profileBlock.addEventListener('mouseleave', () => {
+                        isTiltEnabled = false;
+                        resetTilt();
+                    });
+
+                    profileBlock.addEventListener('mousemove', (e) => {
+                        if (isTiltEnabled) {
+                            handleTilt(e);
+                        }
+                    });
+
+                    profileBlock.addEventListener('touchstart', (e) => {
+                        isTiltEnabled = true;
+                        if (tiltTimeout) {
+                            clearTimeout(tiltTimeout);
+                            tiltTimeout = null;
+                        }
+                        handleTilt(e);
+                    });
+
+                    profileBlock.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        if (isTiltEnabled) {
+                            handleTilt(e);
+                        }
+                    });
+
+                    profileBlock.addEventListener('touchend', () => {
+                        isTiltEnabled = false;
+                        resetTilt();
+                    });
+                }
+
+                // START SCREEN
+                const startMessage = "Click";
+                let startTextContent = '';
+                let startIndex = 0;
+                let startCursorVisible = true;
+
+                function typeWriterStart() {
+                    if (startIndex < startMessage.length) {
+                        startTextContent = startMessage.slice(0, startIndex + 1);
+                        startIndex++;
+                    }
+                    startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
+                    setTimeout(typeWriterStart, 100);
+                }
+
+                setInterval(() => {
+                    startCursorVisible = !startCursorVisible;
+                    startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
+                }, 500);
+
+                function startApp() {
+                    // Nascondi start screen
+                    startScreen.classList.add('hidden');
+                    
+                    // Avvia il video con fade in
+                    if (backgroundVideo) {
+                        backgroundVideo.muted = true;
+                        backgroundVideo.play().catch(() => {});
+                        setTimeout(() => {
+                            backgroundVideo.classList.add('visible');
+                        }, 100);
+                    }
+                    
+                    // Avvia l'audio
+                    if (backgroundMusic) {
+                        backgroundMusic.volume = 0.3;
+                        backgroundMusic.muted = false;
+                        backgroundMusic.play().catch(() => {});
+                    }
+                    
+                    // Mostra il profilo con animazione
+                    profileBlock.style.display = 'flex';
+                    gsap.fromTo(profileBlock,
+                        { opacity: 0, y: -30 },
+                        { 
+                            opacity: 1, 
+                            y: 0, 
+                            duration: 0.9, 
+                            ease: 'power2.out',
+                            onComplete: () => {
+                                resetTilt();
+                            }
+                        }
+                    );
+                    typeWriterBio();
+                    fetchDiscordStatus();
+                }
+
+                startScreen.addEventListener('click', startApp);
+                startScreen.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    startApp();
+                });
+
+                // BIO TYPING
+                const bioMessages = [
+                    "I created my own.",
+                    "\"DM\""
+                ];
+                let bioText = '';
+                let bioIndex = 0;
+                let bioMessageIndex = 0;
+                let isBioDeleting = false;
+                let bioCursorVisible = true;
+
+                function typeWriterBio() {
+                    if (!isBioDeleting && bioIndex < bioMessages[bioMessageIndex].length) {
+                        bioText = bioMessages[bioMessageIndex].slice(0, bioIndex + 1);
+                        bioIndex++;
+                    } else if (isBioDeleting && bioIndex > 0) {
+                        bioText = bioMessages[bioMessageIndex].slice(0, bioIndex - 1);
+                        bioIndex--;
+                    } else if (bioIndex === bioMessages[bioMessageIndex].length) {
+                        isBioDeleting = true;
+                        setTimeout(typeWriterBio, 2500);
+                        return;
+                    } else if (bioIndex === 0 && isBioDeleting) {
+                        isBioDeleting = false;
+                        bioMessageIndex = (bioMessageIndex + 1) % bioMessages.length;
+                    }
+                    profileBio.textContent = bioText + (bioCursorVisible ? '|' : ' ');
+                    if (Math.random() < 0.06) {
+                        profileBio.classList.add('glitch');
+                        setTimeout(() => profileBio.classList.remove('glitch'), 200);
+                    }
+                    setTimeout(typeWriterBio, isBioDeleting ? 70 : 140);
+                }
+
+                setInterval(() => {
+                    bioCursorVisible = !bioCursorVisible;
+                    profileBio.textContent = bioText + (bioCursorVisible ? '|' : ' ');
+                }, 500);
+
+                // --- FUNZIONE PER PRENDERE LO STATUS DA LANYARD ---
+                async function fetchDiscordStatus() {
+                    const userId = '1019329014369882123';
+                    const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
+
+                    try {
+                        const response = await fetch(apiUrl);
+                        const data = await response.json();
+
+                        if (data.success) {
+                            const status = data.data.discord_status;
+                            const lastSeenDate = data.data.last_seen;
+
+                            if (statusRing) {
+                                statusRing.className = 'status-ring ' + status;
+                            }
+
+                            if (lastSeen) {
+                                if (status === 'online' || status === 'idle' || status === 'dnd') {
+                                    lastSeen.textContent = 'Last seen: Now';
+                                } else if (status === 'offline' && lastSeenDate) {
+                                    const lastSeenObj = new Date(lastSeenDate);
+                                    const now = new Date();
+                                    const diffMs = now - lastSeenObj;
+                                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                                    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                                    let timeAgo = '';
+                                    if (diffHours > 0) {
+                                        timeAgo = `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                                    } else if (diffMinutes > 0) {
+                                        timeAgo = `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
+                                    } else {
+                                        timeAgo = 'Just now';
+                                    }
+                                    lastSeen.textContent = `Last seen: ${timeAgo}`;
+                                } else {
+                                    lastSeen.textContent = 'Last seen: Just now';
+                                }
+                            }
+
+                            console.log('✅ Status Discord aggiornato con Lanyard!');
+                        } else {
+                            console.warn('⚠️ Lanyard non ha restituito success per l\'utente.');
+                            setFallbackStatus();
+                        }
+                    } catch (error) {
+                        console.error('❌ Errore nel fetch da Lanyard:', error);
+                        setFallbackStatus();
+                    }
+                }
+
+                function setFallbackStatus() {
+                    if (statusRing) statusRing.className = 'status-ring online';
+                    if (lastSeen) lastSeen.textContent = 'Last seen: Now';
+                }
+
+                setInterval(fetchDiscordStatus, 30000);
+
+                typeWriterStart();
+                console.log('✅ Profile loaded with all requested changes.');
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
