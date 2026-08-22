@@ -26,13 +26,13 @@
         }
 
         .admin-container {
-            width: 1200px;
-            max-width: 95vw;
-            min-height: 80vh;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(12px);
+            width: 1300px;
+            max-width: 96vw;
+            min-height: 85vh;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(14px);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 30px;
             display: flex;
             gap: 30px;
@@ -40,13 +40,14 @@
 
         /* PANNELLO LATERALE - IMPOSTAZIONI */
         .settings-panel {
-            width: 40%;
-            min-width: 300px;
+            width: 45%;
+            min-width: 320px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
             max-height: 80vh;
             overflow-y: auto;
+            padding-right: 8px;
         }
 
         .settings-panel::-webkit-scrollbar {
@@ -54,32 +55,83 @@
         }
 
         .settings-panel::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 2px;
         }
 
-        .settings-panel h2 {
+        .settings-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 14px;
+            margin-bottom: 4px;
+        }
+
+        .settings-header svg {
+            width: 28px;
+            height: 28px;
+            stroke: rgba(255,255,255,0.6);
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        .settings-header h2 {
             font-size: 20px;
             color: #fff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
-            margin-bottom: 5px;
             letter-spacing: 2px;
+            font-weight: 400;
         }
 
         .setting-group {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border-radius: 12px;
-            padding: 15px 18px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 14px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: border-color 0.3s;
         }
 
-        .setting-group label {
-            display: block;
+        .setting-group:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .setting-group .group-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .setting-group .group-header svg {
+            width: 18px;
+            height: 18px;
+            stroke: rgba(255,255,255,0.4);
+            stroke-width: 1.8;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .setting-group .group-header .label-text {
             font-size: 13px;
             color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            font-weight: 400;
+        }
+
+        .setting-group .value-display {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            float: right;
+            background: rgba(255,255,255,0.06);
+            padding: 0 10px;
+            border-radius: 6px;
+            min-width: 30px;
+            text-align: center;
         }
 
         .setting-group input[type="range"] {
@@ -87,10 +139,11 @@
             height: 4px;
             -webkit-appearance: none;
             appearance: none;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 2px;
             outline: none;
-            margin: 8px 0;
+            margin: 8px 0 4px;
+            transition: background 0.3s;
         }
 
         .setting-group input[type="range"]::-webkit-slider-thumb {
@@ -101,37 +154,37 @@
             border-radius: 50%;
             background: #fff;
             cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 0 20px rgba(255,255,255,0.15);
+        }
+
+        .setting-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
         }
 
         .setting-group input[type="text"],
         .setting-group textarea {
             width: 100%;
             padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
             color: #fff;
             font-family: 'Courier New', monospace;
             font-size: 14px;
             transition: border-color 0.3s;
+            margin-top: 4px;
         }
 
         .setting-group textarea {
             resize: vertical;
-            min-height: 50px;
+            min-height: 40px;
         }
 
         .setting-group input[type="text"]:focus,
         .setting-group textarea:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .setting-group .value-display {
-            font-size: 14px;
-            color: #fff;
-            font-weight: bold;
-            float: right;
+            border-color: rgba(255, 255, 255, 0.25);
         }
 
         .setting-row {
@@ -141,7 +194,7 @@
             flex-wrap: wrap;
         }
 
-        .setting-row label {
+        .setting-row .group-header {
             margin-bottom: 0;
             flex: 1;
             min-width: 120px;
@@ -161,11 +214,17 @@
         .color-picker-row input[type="color"] {
             width: 40px;
             height: 40px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
             background: transparent;
             cursor: pointer;
             padding: 2px;
+        }
+
+        .color-picker-row .color-hex {
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+            font-family: 'Courier New', monospace;
         }
 
         .checkbox-group {
@@ -179,37 +238,82 @@
             height: 18px;
             accent-color: #fff;
             cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .checkbox-group input[type="checkbox"]:hover {
+            opacity: 1;
         }
 
         .checkbox-group label {
-            margin-bottom: 0;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
             cursor: pointer;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+
+        .btn-save, .btn-reset {
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+            flex: 1;
+            justify-content: center;
+            min-width: 120px;
         }
 
         .btn-save {
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: #fff;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
         }
 
         .btn-save:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        /* PREVIEW - a destra */
+        .btn-reset {
+            background: rgba(255, 60, 60, 0.08);
+            border: 1px solid rgba(255, 60, 60, 0.2);
+            color: rgba(255, 150, 150, 0.8);
+        }
+
+        .btn-reset:hover {
+            background: rgba(255, 60, 60, 0.15);
+            border-color: rgba(255, 60, 60, 0.35);
+            color: #fff;
+        }
+
+        .btn-save svg, .btn-reset svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
+        /* PREVIEW */
         .preview-panel {
             flex: 1;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -234,27 +338,44 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.96);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100;
             flex-direction: column;
-            gap: 30px;
+            gap: 24px;
+            backdrop-filter: blur(8px);
+        }
+
+        #login-screen .lock-icon {
+            width: 64px;
+            height: 64px;
+            stroke: rgba(255,255,255,0.3);
+            stroke-width: 1.5;
+            fill: none;
         }
 
         #login-screen h1 {
-            font-size: 36px;
+            font-size: 34px;
             font-family: 'Angel Wish', 'Courier New', monospace;
             letter-spacing: 4px;
             color: #fff;
+            font-weight: 400;
+        }
+
+        #login-screen .subtitle {
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-top: -8px;
         }
 
         #login-screen input[type="password"] {
             padding: 12px 24px;
             width: 280px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             color: #fff;
             font-size: 18px;
@@ -262,15 +383,16 @@
             font-family: 'Courier New', monospace;
             outline: none;
             transition: border-color 0.3s;
+            letter-spacing: 4px;
         }
 
         #login-screen input[type="password"]:focus {
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.25);
         }
 
         #login-screen .error {
             color: #ff4444;
-            font-size: 14px;
+            font-size: 13px;
             display: none;
         }
 
@@ -279,19 +401,21 @@
         }
 
         #login-screen button {
-            padding: 10px 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 44px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 12px;
             color: #fff;
-            font-size: 16px;
+            font-size: 15px;
             font-family: 'Courier New', monospace;
             cursor: pointer;
             transition: all 0.3s;
+            letter-spacing: 1px;
         }
 
         #login-screen button:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         #admin-content {
@@ -301,22 +425,38 @@
             padding: 20px;
         }
 
-        @media (max-width: 900px) {
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
             .admin-container {
                 flex-direction: column;
                 align-items: center;
                 padding: 20px;
+                gap: 20px;
             }
 
             .settings-panel {
                 width: 100%;
                 min-width: auto;
-                max-height: 60vh;
+                max-height: 55vh;
             }
 
             .preview-panel {
                 width: 100%;
-                min-height: 400px;
+                min-height: 380px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .settings-panel {
+                padding-right: 0;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-save, .btn-reset {
+                min-width: auto;
             }
         }
     </style>
@@ -325,11 +465,15 @@
 
     <!-- PASSWORD SCREEN -->
     <div id="login-screen">
-        <h1>🔐 𝔢𝔵𝔬𝔱𝔦𝔠</h1>
-        <p style="color: rgba(255,255,255,0.4); font-size: 14px;">Inserisci la password per accedere</p>
-        <input type="password" id="password-input" placeholder="Password" autofocus>
+        <svg class="lock-icon" viewBox="0 0 24 24" stroke="currentColor">
+            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" fill="none"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" fill="none" stroke-linecap="round"/>
+        </svg>
+        <h1>exotic</h1>
+        <p class="subtitle">INSERISCI LA PASSWORD</p>
+        <input type="password" id="password-input" placeholder="••••••" autofocus>
         <div class="error" id="error-message">Password errata. Riprova.</div>
-        <button id="login-btn">Accedi</button>
+        <button id="login-btn">ACCEDI</button>
     </div>
 
     <!-- ADMIN CONTENT -->
@@ -337,64 +481,169 @@
         <div class="admin-container">
             <!-- PANNELLO IMPOSTAZIONI -->
             <div class="settings-panel">
-                <h2>⚙️ Impostazioni</h2>
 
-                <div class="setting-group">
-                    <label>Altezza pulsanti <span class="value-display" id="btn-height-value">48</span></label>
-                    <input type="range" id="btn-height" min="30" max="70" value="48">
+                <!-- HEADER -->
+                <div class="settings-header">
+                    <svg viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" fill="none"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" fill="none"/>
+                    </svg>
+                    <h2>Impostazioni</h2>
                 </div>
 
+                <!-- PANNELLO -->
                 <div class="setting-group">
-                    <label>Altezza pannello profilo <span class="value-display" id="panel-height-value">500</span></label>
+                    <div class="group-header">
+                        <svg viewBox="0 0 24 24" stroke="currentColor">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" fill="none"/>
+                            <path d="M3 9h18M9 21V9" stroke="currentColor" fill="none"/>
+                        </svg>
+                        <span class="label-text">Pannello profilo</span>
+                    </div>
+                    <label>Altezza <span class="value-display" id="panel-height-value">500</span></label>
                     <input type="range" id="panel-height" min="350" max="700" value="500">
-                </div>
-
-                <div class="setting-group">
-                    <label>Larghezza pannello profilo <span class="value-display" id="panel-width-value">540</span></label>
+                    <label style="margin-top:8px;">Larghezza <span class="value-display" id="panel-width-value">540</span></label>
                     <input type="range" id="panel-width" min="400" max="700" value="540">
                 </div>
 
+                <!-- SFONDO -->
                 <div class="setting-group">
-                    <label>Opacità sfondo <span class="value-display" id="bg-opacity-value">30</span>%</label>
+                    <div class="group-header">
+                        <svg viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M2 4h20v16H2z" stroke="currentColor" fill="none"/>
+                            <path d="m2 8 4 4-4 4" stroke="currentColor" fill="none" stroke-linecap="round"/>
+                            <path d="m22 8-4 4 4 4" stroke="currentColor" fill="none" stroke-linecap="round"/>
+                        </svg>
+                        <span class="label-text">Sfondo pannello</span>
+                    </div>
+                    <label>Opacità <span class="value-display" id="bg-opacity-value">30</span>%</label>
                     <input type="range" id="bg-opacity" min="0" max="100" value="30">
-                </div>
-
-                <div class="setting-group">
-                    <label>Blur sfondo <span class="value-display" id="blur-value">12</span>px</label>
+                    <label style="margin-top:8px;">Blur <span class="value-display" id="blur-value">12</span>px</label>
                     <input type="range" id="blur" min="0" max="25" value="12">
                 </div>
 
+                <!-- BIO -->
                 <div class="setting-group">
-                    <label>Bio - Testo 1</label>
+                    <div class="group-header">
+                        <svg viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M4 6h16M4 12h10M4 18h8" stroke="currentColor" fill="none" stroke-linecap="round"/>
+                            <path d="M18 15v6M21 18h-6" stroke="currentColor" fill="none" stroke-linecap="round"/>
+                        </svg>
+                        <span class="label-text">Bio</span>
+                    </div>
+                    <label>Testo 1</label>
                     <input type="text" id="bio-text-1" value="I created my own.">
-                </div>
-
-                <div class="setting-group">
-                    <label>Bio - Testo 2</label>
-                    <input type="text" id="bio-text-2" value="&quot;DM&quot;">
-                </div>
-
-                <div class="setting-group">
-                    <label>Velocità typing bio (ms) <span class="value-display" id="bio-speed-value">140</span></label>
+                    <label style="margin-top:8px;">Testo 2</label>
+                    <input type="text" id="bio-text-2" value='"DM"'>
+                    <label style="margin-top:8px;">Velocità typing <span class="value-display" id="bio-speed-value">140</span>ms</label>
                     <input type="range" id="bio-speed" min="50" max="300" value="140">
                 </div>
 
+                <!-- SOCIAL & BUTTONS -->
                 <div class="setting-group">
-                    <label>Colore principale</label>
-                    <div class="color-picker-row">
-                        <input type="color" id="primary-color" value="#ffffff">
-                        <span style="color:rgba(255,255,255,0.4); font-size:12px;">#ffffff</span>
+                    <div class="group-header">
+                        <svg viewBox="0 0 24 24" stroke="currentColor">
+                            <circle cx="12" cy="12" r="3" stroke="currentColor" fill="none"/>
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" fill="none" stroke-linecap="round"/>
+                            <circle cx="12" cy="7" r="4" stroke="currentColor" fill="none"/>
+                        </svg>
+                        <span class="label-text">Social & pulsanti</span>
+                    </div>
+                    <label>Dimensione icone social <span class="value-display" id="social-size-value">48</span>px</label>
+                    <input type="range" id="social-size" min="28" max="70" value="48">
+                    <label style="margin-top:8px;">Altezza pulsanti <span class="value-display" id="btn-height-value">48</span>px</label>
+                    <input type="range" id="btn-height" min="30" max="70" value="48">
+                </div>
+
+                <!-- CORNICI -->
+                <div class="setting-group">
+                    <div class="group-header">
+                        <svg viewBox="0 0 24 24" stroke="currentColor">
+                            <rect x="2" y="2" width="20" height="20" rx="2" stroke="currentColor" fill="none"/>
+                            <rect x="6" y="6" width="12" height="12" rx="1" stroke="currentColor" fill="none"/>
+                        </svg>
+                        <span class="label-text">Cornici & bordi</span>
+                    </div>
+                    <label>Spessore bordo <span class="value-display" id="border-width-value">1</span>px</label>
+                    <input type="range" id="border-width" min="0" max="4" value="1" step="0.5">
+                    <label style="margin-top:8px;">Raggio angoli <span class="value-display" id="border-radius-value">16</span>px</label>
+                    <input type="range" id="border-radius" min="0" max="30" value="16">
+                    <div style="margin-top:10px;" class="color-picker-row">
+                        <input type="color" id="border-color" value="#ffffff">
+                        <span class="color-hex" id="border-color-hex">#ffffff</span>
                     </div>
                 </div>
 
+                <!-- COLORI -->
                 <div class="setting-group">
+                    <div class="group-header">
+                        <svg viewBox="0 0 24 24" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" fill="none"/>
+                            <path d="M12 2a10 10 0 0 1 0 20 10 10 0 0 1 0-20z" stroke="currentColor" fill="none"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" fill="none"/>
+                        </svg>
+                        <span class="label-text">Colori</span>
+                    </div>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:120px;">
+                            <label style="font-size:11px; color:rgba(255,255,255,0.3);">Testo principale</label>
+                            <div class="color-picker-row">
+                                <input type="color" id="text-color" value="#ffffff">
+                                <span class="color-hex" id="text-color-hex">#ffffff</span>
+                            </div>
+                        </div>
+                        <div style="flex:1; min-width:120px;">
+                            <label style="font-size:11px; color:rgba(255,255,255,0.3);">Sfondo badge</label>
+                            <div class="color-picker-row">
+                                <input type="color" id="badge-bg-color" value="#000000">
+                                <span class="color-hex" id="badge-bg-color-hex">#000000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOGGLE -->
+                <div class="setting-group">
+                    <div class="group-header">
+                        <svg viewBox="0 0 24 24" stroke="currentColor">
+                            <rect x="2" y="6" width="20" height="12" rx="6" stroke="currentColor" fill="none"/>
+                            <circle cx="16" cy="12" r="4" stroke="currentColor" fill="none"/>
+                        </svg>
+                        <span class="label-text">Opzioni visive</span>
+                    </div>
                     <div class="checkbox-group">
                         <input type="checkbox" id="show-views" checked>
                         <label>Mostra visualizzazioni</label>
                     </div>
+                    <div class="checkbox-group" style="margin-top:6px;">
+                        <input type="checkbox" id="show-glitch" checked>
+                        <label>Effetto glitch su username</label>
+                    </div>
+                    <div class="checkbox-group" style="margin-top:6px;">
+                        <input type="checkbox" id="show-tooltips" checked>
+                        <label>Mostra tooltip su badge/social</label>
+                    </div>
                 </div>
 
-                <button class="btn-save" id="save-settings">💾 Salva Impostazioni</button>
+                <!-- BOTTONI -->
+                <div class="btn-group">
+                    <button class="btn-save" id="save-settings">
+                        <svg viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" fill="none"/>
+                            <polyline points="17 21 17 13 7 13 7 21" stroke="currentColor" fill="none"/>
+                            <polyline points="7 3 7 8 15 8" stroke="currentColor" fill="none"/>
+                        </svg>
+                        Salva
+                    </button>
+                    <button class="btn-reset" id="reset-settings">
+                        <svg viewBox="0 0 24 24" stroke="currentColor">
+                            <polyline points="1 4 1 10 7 10" stroke="currentColor" fill="none" stroke-linecap="round"/>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" stroke="currentColor" fill="none" stroke-linecap="round"/>
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+
             </div>
 
             <!-- PREVIEW -->
@@ -424,6 +673,7 @@
                     errorMsg.classList.add('show');
                     passwordInput.value = '';
                     passwordInput.focus();
+                    setTimeout(() => errorMsg.classList.remove('show'), 3000);
                 }
             }
 
@@ -436,60 +686,109 @@
             function initSettings() {
                 const previewFrame = document.getElementById('preview-frame');
 
-                // Riferimenti agli elementi
-                const btnHeight = document.getElementById('btn-height');
-                const btnHeightVal = document.getElementById('btn-height-value');
-                const panelHeight = document.getElementById('panel-height');
-                const panelHeightVal = document.getElementById('panel-height-value');
-                const panelWidth = document.getElementById('panel-width');
-                const panelWidthVal = document.getElementById('panel-width-value');
-                const bgOpacity = document.getElementById('bg-opacity');
-                const bgOpacityVal = document.getElementById('bg-opacity-value');
-                const blur = document.getElementById('blur');
-                const blurVal = document.getElementById('blur-value');
-                const bio1 = document.getElementById('bio-text-1');
-                const bio2 = document.getElementById('bio-text-2');
-                const bioSpeed = document.getElementById('bio-speed');
-                const bioSpeedVal = document.getElementById('bio-speed-value');
-                const primaryColor = document.getElementById('primary-color');
+                // Riferimenti
+                const elements = {
+                    panelHeight: document.getElementById('panel-height'),
+                    panelHeightVal: document.getElementById('panel-height-value'),
+                    panelWidth: document.getElementById('panel-width'),
+                    panelWidthVal: document.getElementById('panel-width-value'),
+                    bgOpacity: document.getElementById('bg-opacity'),
+                    bgOpacityVal: document.getElementById('bg-opacity-value'),
+                    blur: document.getElementById('blur'),
+                    blurVal: document.getElementById('blur-value'),
+                    bio1: document.getElementById('bio-text-1'),
+                    bio2: document.getElementById('bio-text-2'),
+                    bioSpeed: document.getElementById('bio-speed'),
+                    bioSpeedVal: document.getElementById('bio-speed-value'),
+                    socialSize: document.getElementById('social-size'),
+                    socialSizeVal: document.getElementById('social-size-value'),
+                    btnHeight: document.getElementById('btn-height'),
+                    btnHeightVal: document.getElementById('btn-height-value'),
+                    borderWidth: document.getElementById('border-width'),
+                    borderWidthVal: document.getElementById('border-width-value'),
+                    borderRadius: document.getElementById('border-radius'),
+                    borderRadiusVal: document.getElementById('border-radius-value'),
+                    borderColor: document.getElementById('border-color'),
+                    borderColorHex: document.getElementById('border-color-hex'),
+                    textColor: document.getElementById('text-color'),
+                    textColorHex: document.getElementById('text-color-hex'),
+                    badgeBgColor: document.getElementById('badge-bg-color'),
+                    badgeBgColorHex: document.getElementById('badge-bg-color-hex'),
+                    showViews: document.getElementById('show-views'),
+                    showGlitch: document.getElementById('show-glitch'),
+                    showTooltips: document.getElementById('show-tooltips'),
+                };
 
-                // Funzione per applicare le impostazioni al preview
+                // Aggiorna colori hex
+                elements.borderColor.addEventListener('input', () => {
+                    elements.borderColorHex.textContent = elements.borderColor.value;
+                });
+                elements.textColor.addEventListener('input', () => {
+                    elements.textColorHex.textContent = elements.textColor.value;
+                });
+                elements.badgeBgColor.addEventListener('input', () => {
+                    elements.badgeBgColorHex.textContent = elements.badgeBgColor.value;
+                });
+
+                // Funzione per applicare le impostazioni
                 function applySettings() {
                     const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
                     if (!previewDoc) return;
 
-                    // Modifica direttamente gli stili dell'iframe
+                    // Crea lo stile da iniettare
                     const style = previewDoc.createElement('style');
+                    const borderColor = elements.borderColor.value;
+                    const textColor = elements.textColor.value;
+                    const badgeBg = elements.badgeBgColor.value;
+
                     style.textContent = `
-                        /* Altezza pulsanti (social) */
+                        /* Pannello */
+                        #profile-block {
+                            min-height: ${parseInt(elements.panelHeight.value)}px !important;
+                            width: ${parseInt(elements.panelWidth.value)}px !important;
+                            background: rgba(0, 0, 0, ${parseInt(elements.bgOpacity.value) / 100}) !important;
+                            backdrop-filter: blur(${parseInt(elements.blur.value)}px) !important;
+                            -webkit-backdrop-filter: blur(${parseInt(elements.blur.value)}px) !important;
+                            border-width: ${parseFloat(elements.borderWidth.value)}px !important;
+                            border-radius: ${parseInt(elements.borderRadius.value)}px !important;
+                            border-color: ${borderColor} !important;
+                        }
+
+                        /* Testo */
+                        #profile-username, .profile-display-name, #profile-bio {
+                            color: ${textColor} !important;
+                        }
+
+                        /* Badge sfondo */
+                        .badge-section {
+                            background: ${badgeBg} !important;
+                            padding: 6px 10px !important;
+                            border-radius: 10px !important;
+                        }
+
+                        /* Social icons */
                         .social-icon {
-                            width: ${parseInt(btnHeight.value)}px !important;
-                            height: ${parseInt(btnHeight.value)}px !important;
+                            width: ${parseInt(elements.socialSize.value)}px !important;
+                            height: ${parseInt(elements.socialSize.value)}px !important;
                         }
 
-                        /* Altezza pannello */
-                        #profile-block {
-                            min-height: ${parseInt(panelHeight.value)}px !important;
-                            width: ${parseInt(panelWidth.value)}px !important;
+                        /* Pulsanti social */
+                        .social-link-tooltip .tooltip-text {
+                            ${!elements.showTooltips.checked ? 'display: none !important;' : ''}
+                        }
+                        .badge-container .tooltip {
+                            ${!elements.showTooltips.checked ? 'display: none !important;' : ''}
                         }
 
-                        /* Opacità sfondo */
-                        #profile-block {
-                            background: rgba(0, 0, 0, ${parseInt(bgOpacity.value) / 100}) !important;
+                        /* Glitch */
+                        #profile-username {
+                            ${!elements.showGlitch.checked ? 'animation: none !important;' : ''}
                         }
 
-                        /* Blur sfondo */
-                        #profile-block {
-                            backdrop-filter: blur(${parseInt(blur.value)}px) !important;
-                            -webkit-backdrop-filter: blur(${parseInt(blur.value)}px) !important;
+                        /* Visualizzazioni */
+                        .visitor-counter {
+                            ${!elements.showViews.checked ? 'display: none !important;' : ''}
                         }
-
-                        /* Colore principale */
-                        :root {
-                            --primary-color: ${primaryColor.value} !important;
-                        }
-
-                        /* Modifica bio - i testi sono gestiti da JS, ma forziamo il refresh */
                     `;
 
                     // Rimuovi stili vecchi
@@ -499,78 +798,151 @@
                     style.id = 'admin-style-override';
                     previewDoc.head.appendChild(style);
 
-                    // Modifica i testi della bio (forzando il refresh)
-                    const bioMessages = [bio1.value, bio2.value];
-                    // Forza il refresh della pagina per applicare i nuovi testi bio
-                    // (purtroppo il typing è gestito da JS, quindi ricarichiamo l'iframe)
-                    // In alternativa possiamo ricaricare l'iframe con i nuovi parametri
+                    // Modifica bio testi e velocità
+                    const bioMessages = [elements.bio1.value, elements.bio2.value];
+                    const bioSpeed = parseInt(elements.bioSpeed.value);
+
+                    // Forza il refresh delle variabili bio nell'iframe
+                    // (la bio è gestita da JS, ricarichiamo l'iframe per applicare)
                 }
 
-                // Ricarica l'iframe con i nuovi parametri quando si cambia qualcosa
+                // Ricarica preview
                 function reloadPreview() {
-                    // Ricarica l'iframe con i parametri attuali
                     const url = `index.html?t=${Date.now()}`;
                     previewFrame.src = url;
-                    // Attendiamo il caricamento per applicare le impostazioni
                     previewFrame.onload = function() {
-                        setTimeout(applySettings, 500);
+                        setTimeout(applySettings, 600);
+                        // Applica anche le bio dopo il caricamento
+                        setTimeout(() => {
+                            const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+                            if (previewDoc) {
+                                // Forza il refresh delle variabili bio                                const bioMessages = [elements.bio1.value, elements.bio2.value];
+                                // Se la pagina ha una funzione per settare le bio, la chiamiamo
+                                if (previewDoc.setBioMessages) {
+                                    previewDoc.setBioMessages(bioMessages);
+                                }
+                            }
+                        }, 800);
                     };
                 }
 
                 // Event listeners
-                btnHeight.addEventListener('input', () => {
-                    btnHeightVal.textContent = btnHeight.value;
-                    applySettings();
+                const rangeInputs = [
+                    'panelHeight', 'panelWidth', 'bgOpacity', 'blur', 'bioSpeed',
+                    'socialSize', 'btnHeight', 'borderWidth', 'borderRadius'
+                ];
+
+                rangeInputs.forEach(id => {
+                    const el = elements[id];
+                    const valEl = elements[id + 'Val'];
+                    if (el && valEl) {
+                        el.addEventListener('input', () => {
+                            valEl.textContent = el.value;
+                            applySettings();
+                        });
+                    }
                 });
 
-                panelHeight.addEventListener('input', () => {
-                    panelHeightVal.textContent = panelHeight.value;
-                    applySettings();
+                // Colori
+                ['borderColor', 'textColor', 'badgeBgColor'].forEach(id => {
+                    const el = elements[id];
+                    if (el) {
+                        el.addEventListener('input', applySettings);
+                    }
                 });
 
-                panelWidth.addEventListener('input', () => {
-                    panelWidthVal.textContent = panelWidth.value;
-                    applySettings();
+                // Checkbox
+                ['showViews', 'showGlitch', 'showTooltips'].forEach(id => {
+                    const el = elements[id];
+                    if (el) {
+                        el.addEventListener('change', applySettings);
+                    }
                 });
 
-                bgOpacity.addEventListener('input', () => {
-                    bgOpacityVal.textContent = bgOpacity.value;
-                    applySettings();
-                });
-
-                blur.addEventListener('input', () => {
-                    blurVal.textContent = blur.value;
-                    applySettings();
-                });
-
-                primaryColor.addEventListener('input', () => {
-                    applySettings();
-                });
-
-                bio1.addEventListener('change', () => {
-                    // Ricarica il preview per cambiare i testi bio
-                    reloadPreview();
-                });
-
-                bio2.addEventListener('change', () => {
-                    reloadPreview();
-                });
-
-                bioSpeed.addEventListener('input', () => {
-                    bioSpeedVal.textContent = bioSpeed.value;
-                    // Ricarica per applicare la nuova velocità
-                    reloadPreview();
+                // Bio testi - ricarica preview
+                ['bio1', 'bio2'].forEach(id => {
+                    const el = elements[id];
+                    if (el) {
+                        el.addEventListener('change', reloadPreview);
+                    }
                 });
 
                 // Salva impostazioni
                 document.getElementById('save-settings').addEventListener('click', () => {
-                    alert('✅ Impostazioni salvate! (Ricorda: le modifiche sono locali al preview)');
                     applySettings();
+                    // Salva in localStorage per persistenza
+                    const settings = {};
+                    Object.keys(elements).forEach(key => {
+                        const el = elements[key];
+                        if (el) {
+                            if (el.type === 'checkbox') {
+                                settings[key] = el.checked;
+                            } else if (el.type === 'color') {
+                                settings[key] = el.value;
+                            } else if (el.type === 'range' || el.type === 'text') {
+                                settings[key] = el.value;
+                            }
+                        }
+                    });
+                    localStorage.setItem('exotic_admin_settings', JSON.stringify(settings));
+                    alert('✅ Impostazioni salvate con successo!');
                 });
 
-                // Carica iniziale
+                // Reset impostazioni
+                document.getElementById('reset-settings').addEventListener('click', () => {
+                    if (confirm('⚠️ Resettare tutte le impostazioni ai valori predefiniti?')) {
+                        localStorage.removeItem('exotic_admin_settings');
+                        // Ricarica la pagina per ripristinare i default
+                        location.reload();
+                    }
+                });
+
+                // Carica impostazioni salvate
+                const saved = localStorage.getItem('exotic_admin_settings');
+                if (saved) {
+                    try {
+                        const settings = JSON.parse(saved);
+                        Object.keys(settings).forEach(key => {
+                            const el = elements[key];
+                            if (el) {
+                                if (el.type === 'checkbox') {
+                                    el.checked = settings[key];
+                                } else if (el.type === 'color') {
+                                    el.value = settings[key];
+                                    if (el.id + 'Hex' in elements) {
+                                        document.getElementById(el.id + '-hex').textContent = settings[key];
+                                    }
+                                } else {
+                                    el.value = settings[key];
+                                    if (el.id + 'Val' in elements) {
+                                        document.getElementById(el.id + '-value').textContent = settings[key];
+                                    }
+                                }
+                            }
+                        });
+                        // Applica dopo il caricamento
+                        setTimeout(applySettings, 500);
+                    } catch(e) {}
+                }
+
+                // Caricamento iniziale
                 previewFrame.onload = function() {
                     setTimeout(applySettings, 500);
+                };
+
+                // Esponi funzione per le bio
+                previewFrame.onload = function() {
+                    setTimeout(() => {
+                        const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+                        if (previewDoc) {
+                            previewDoc.setBioMessages = function(messages) {
+                                // Override delle variabili bio nel contesto dell'iframe
+                                if (previewDoc.bioMessages) {
+                                    previewDoc.bioMessages = messages;
+                                }
+                            };
+                        }
+                    }, 500);
                 };
             }
         });
