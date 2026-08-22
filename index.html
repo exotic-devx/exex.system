@@ -39,12 +39,6 @@
             cursor: default;
         }
 
-        /* Sul pannello il cursore personalizzato è attivo */
-        #profile-block:hover ~ .custom-cursor,
-        .custom-cursor.active {
-            display: block;
-        }
-
         body {
             background-color: #000;
             color: #fff;
@@ -122,7 +116,7 @@
             pointer-events: auto;
             opacity: 0;
             transform-style: preserve-3d;
-            transition: transform 0.12s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
             will-change: transform;
             perspective: 600px;
             cursor: none;
@@ -820,7 +814,7 @@
                     const tiltY = relX * maxTilt;
                     const tiltX = -relY * maxTilt;
 
-                    profileBlock.style.transition = 'transform 0.12s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                    profileBlock.style.transition = 'transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1)';
                     profileBlock.style.transform = `translate(-50%, -50%) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
                 }
 
