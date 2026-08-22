@@ -3,11 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- Open Graph per anteprima -->
+<meta property="og:title" content="𝔢𝔵𝔬𝔱𝔦𝔠 — Exotic Profile">
+<meta property="og:description" content="Personal profile page with live Discord status">
+<meta property="og:image" content="https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4">
+<meta property="og:url" content="https://ex0tic.sytes.net">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+
 <title>𝔢𝔵𝔬𝔱𝔦𝔠</title>
 <link rel="icon" type="image/jpg" href="assets/icony.jpg">
+
+<!-- Preload font e immagini critiche -->
+<link rel="preload" as="font" href="assets/Angel_wish.ttf" type="font/ttf" crossorigin>
+<link rel="preload" as="image" href="assets/custom_cursor.png">
+<link rel="preload" as="image" href="assets/profile.gif">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
   :root{
     --void:#000000;
@@ -38,14 +54,28 @@
     -webkit-font-smoothing:antialiased;
   }
 
-  /* ---------- background video ---------- */
+  /* ---------- background video con parallax ---------- */
+  #background-wrapper{
+    position:fixed; inset:0; z-index:1; overflow:hidden;
+    pointer-events:none;
+  }
   #background{
-    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-    min-width:100%; min-height:100%; width:auto; height:auto; object-fit:cover;
-    z-index:1; pointer-events:none; opacity:0;
+    position:absolute; top:50%; left:50%;
+    min-width:110%; min-height:110%; width:auto; height:auto;
+    object-fit:cover; opacity:0;
     transition:opacity 1.4s ease;
+    transform:translate(-50%, -50%) scale(1.05);
+    will-change:transform;
   }
   #background.visible{opacity:0.7;}
+
+  /* ---------- custom cursor ---------- */
+  .custom-cursor{
+    position:fixed; width:40px; height:40px;
+    background:url('assets/custom_cursor.png') no-repeat center center; background-size:contain;
+    pointer-events:none; z-index:9999; transform:translate(-50%,-50%);
+    display:block;
+  }
 
   /* ---------- HUD ---------- */
   .hud{
@@ -55,7 +85,7 @@
   }
   .hud.visible{opacity:1;}
   .hud-tl{top:22px; left:26px;}
-  .hud-bl{bottom:22px; left:26px;}
+  .hud-tr{top:22px; right:26px; text-align:right;}
   .hud b{color:var(--mist); font-weight:500;}
   @media (max-width:700px){ .hud{display:none;} }
 
@@ -72,37 +102,61 @@
     pointer-events:none;
   }
   #start-text{
-    font-family:var(--font-ui); font-size:26px; letter-spacing:2px; color:#fff;
+    font-family:'Angel Wish', serif; font-size:32px; letter-spacing:3px; color:#fff;
     position:relative; z-index:2;
   }
 
-  /* ---------- profile card frame ---------- */
+  /* ---------- profile card ---------- */
   .stage{
     position:fixed; inset:0; z-index:20; display:flex; align-items:center; justify-content:center;
+    perspective:1200px;
   }
-  .frame{
-    position:relative; width:520px; max-width:92vw; opacity:0;
+  .card-wrapper{
+    position:relative; width:520px; max-width:92vw; height:620px;
+    transform-style:preserve-3d; transition:transform 0.8s cubic-bezier(.25,.1,.25,1);
+    opacity:0;
   }
-
-  #profile-block{
-    position:relative; width:100%;
+  .card-wrapper.flipped{
+    transform:rotateY(180deg);
+  }
+  .card-face{
+    position:absolute; inset:0; backface-visibility:hidden;
+    border-radius:12px;
+  }
+  .card-front{
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); border-radius:12px;
-    padding:34px 34px 24px; display:flex; flex-direction:column; gap:4px;
-    transform-style:preserve-3d; will-change:transform; perspective:700px;
+    border:1px solid var(--hair); padding:34px 34px 24px;
+    display:flex; flex-direction:column; gap:4px;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
   }
+  .card-back{
+    transform:rotateY(180deg);
+    background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--hair); padding:30px;
+    display:flex; flex-direction:column; gap:18px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
+    overflow-y:auto;
+  }
 
+  /* ---- flip trigger ---- */
+  .flip-trigger{
+    position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+    font-size:10px; letter-spacing:2px; color:var(--ash);
+    text-transform:uppercase; cursor:none;
+    transition:color .3s ease;
+    z-index:10; pointer-events:auto;
+  }
+  .flip-trigger:hover{ color:var(--mist); }
+
+  /* ---- FRONT ---- */
   .username-section{ text-align:center; min-height:58px; position:relative; }
   #profile-username{
     font-family:var(--font-display); font-size:42px; font-weight:400; letter-spacing:3px;
     color:#fff; filter:drop-shadow(0 0 18px rgba(255,255,255,.35)); display:inline-block; min-height:56px;
   }
-
   .rule{
     width:56px; height:1px; margin:16px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
   }
-
   .badge-section{
     display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap;
     margin-bottom:16px; padding:2px 0;
@@ -114,7 +168,6 @@
     transition:transform .3s cubic-bezier(.25,.1,.25,1), filter .3s ease, opacity .3s ease;
   }
   .badge:hover{ transform:translateY(-3px) scale(1.12); filter:grayscale(0) brightness(1.15) drop-shadow(0 0 10px rgba(255,255,255,.5)); opacity:1; }
-
   .tooltip{
     visibility:hidden; opacity:0; background:rgba(0,0,0,.6); backdrop-filter:blur(14px);
     color:#fff; text-align:center; border-radius:4px; padding:5px 10px; position:absolute;
@@ -130,31 +183,17 @@
     margin:2px 0 18px; padding:0 6px; letter-spacing:.2px;
   }
   #profile-bio .bio-link{
-    color:#4fc3f7;
-    text-decoration:none;
+    color:#4fc3f7; text-decoration:none;
     background:linear-gradient(90deg, #4fc3f7, #ffffff, #4fc3f7);
-    background-size:200% 100%;
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    animation:shimmer-text 3s ease-in-out infinite;
-    font-weight:bold;
-    cursor:pointer;
+    background-size:200% 100%; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    animation:shimmer-text 3s ease-in-out infinite; font-weight:bold; cursor:pointer;
     transition:filter .3s ease;
   }
-  #profile-bio .bio-link:hover{
-    filter:drop-shadow(0 0 12px rgba(79,195,247,0.6));
-  }
-  @keyframes shimmer-text{
-    0%{background-position:200% 0;}
-    100%{background-position:-200% 0;}
-  }
+  #profile-bio .bio-link:hover{ filter:drop-shadow(0 0 12px rgba(79,195,247,0.6)); }
+  @keyframes shimmer-text{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 
   .glitch{ animation:glitch .18s ease-in-out; }
-  @keyframes glitch{
-    0%{transform:translate(0);} 25%{transform:translate(-1px,1px);}
-    50%{transform:translate(1px,-1px);} 75%{transform:translate(-1px,-1px);}
-    100%{transform:translate(0);}
-  }
+  @keyframes glitch{ 0%{transform:translate(0);} 25%{transform:translate(-1px,1px);} 50%{transform:translate(1px,-1px);} 75%{transform:translate(-1px,-1px);} 100%{transform:translate(0);} }
 
   .profile-main{
     display:flex; align-items:center; gap:16px; background:rgba(255,255,255,.03);
@@ -165,7 +204,6 @@
     border-color:rgba(255,255,255,.35);
     box-shadow:0 0 30px rgba(255,255,255,.08);
   }
-
   .profile-container{ position:relative; width:56px; height:56px; flex-shrink:0; }
   .profile-picture{
     width:56px; height:56px; border-radius:50%; object-fit:cover; display:block;
@@ -186,7 +224,6 @@
   }
   .last-seen{ font-size:10px; color:var(--ash); margin-top:4px; text-align:left; letter-spacing:.5px; }
 
-  /* SOCIAL LINK */
   .social-links{
     display:flex; justify-content:center; gap:26px; align-items:center; padding:2px 0 0;
   }
@@ -207,16 +244,64 @@
   }
   .social-link-tooltip:hover .tooltip-text{ visibility:visible; opacity:1; transform:translateX(-50%) translateY(0); }
 
+  /* ---- BACK ---- */
+  .back-title{
+    font-size:11px; letter-spacing:3px; color:var(--ash); text-transform:uppercase;
+    text-align:center; margin-bottom:4px;
+  }
+  .back-divider{
+    width:40px; height:1px; margin:4px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+  }
+
+  /* Orologio */
+  .clock-panel{
+    background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
+    padding:16px 20px; display:flex; align-items:center; gap:18px;
+  }
+  .clock-panel .clock-svg{ width:60px; height:60px; flex-shrink:0; }
+  .clock-panel .clock-info{ flex:1; }
+  .clock-panel .clock-time{ font-size:28px; font-weight:300; letter-spacing:2px; font-family:var(--font-display); color:#fff; }
+  .clock-panel .clock-date{ font-size:11px; color:var(--ash); letter-spacing:1px; margin-top:2px; }
+  .clock-panel .clock-location{ font-size:10px; color:var(--ash); letter-spacing:1px; margin-top:6px; display:flex; align-items:center; gap:6px; }
+  .clock-panel .clock-location svg{ width:12px; height:12px; stroke:var(--ash); fill:none; }
+
+  /* Spotify */
+  .spotify-panel, .game-panel{
+    background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
+    padding:12px 16px; display:flex; align-items:center; gap:14px;
+  }
+  .spotify-panel .cover, .game-panel .cover{
+    width:50px; height:50px; border-radius:6px; object-fit:cover; flex-shrink:0;
+    background:rgba(255,255,255,.05);
+  }
+  .spotify-panel .info, .game-panel .info{ flex:1; overflow:hidden; }
+  .spotify-panel .track-name, .game-panel .game-name{
+    font-size:13px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .spotify-panel .artist-name, .game-panel .game-detail{
+    font-size:10.5px; color:var(--ash); letter-spacing:.3px; margin-top:2px;
+  }
+  .spotify-panel .progress-bar{
+    margin-top:6px; height:2px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden; width:100%;
+  }
+  .spotify-panel .progress-bar .progress-fill{
+    height:100%; width:0%; background:linear-gradient(90deg, #4fc3f7, #fff); border-radius:2px; transition:width .5s;
+  }
+
   .hidden{ display:none !important; }
 
   @media (max-width:580px){
-    #profile-block{ padding:26px 20px 18px; border-radius:10px; }
+    .card-wrapper{ height:auto; min-height:560px; }
+    .card-front, .card-back{ padding:20px 16px 16px; }
     #profile-username{ font-size:32px; min-height:44px; }
     .profile-main{ max-width:340px; padding:10px 14px; gap:12px; border-radius:6px; }
     .profile-container,.profile-picture{ width:48px; height:48px; }
     .profile-display-name{ font-size:15px; }
     .badge,.badge-container{ width:27px; height:27px; }
     .social-icon{ width:28px; height:28px; }
+    .clock-panel .clock-time{ font-size:22px; }
+    .clock-panel .clock-svg{ width:44px; height:44px; }
+    .spotify-panel .cover, .game-panel .cover{ width:40px; height:40px; }
   }
 </style>
 </head>
@@ -224,28 +309,28 @@
 
 <div class="custom-cursor" id="customCursor"></div>
 
-<!-- HUD: solo clock e uptime -->
 <div class="hud hud-tl" id="hudTl"><b>CLOCK</b> <span id="clock">00:00:00</span></div>
-<div class="hud hud-bl" id="hudBl"><b>UPTIME</b> <span id="uptime">00:00</span></div>
+<div class="hud hud-tr" id="hudTr"><b>UPTIME</b> <span id="uptime">00:00</span></div>
 
 <div id="start-screen">
   <div id="start-text"></div>
 </div>
 
-<video id="background" autoplay loop muted playsinline webkit-playsinline disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback">
-  <source src="https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4" type="video/mp4">
-</video>
+<div id="background-wrapper">
+  <video id="background" autoplay loop muted playsinline webkit-playsinline disablePictureInPicture controlslist="nodownload nofullscreen noremoteplayback">
+    <source src="https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4" type="video/mp4">
+  </video>
+</div>
 
 <div class="stage">
-  <div class="frame" id="frame">
+  <div class="card-wrapper" id="cardWrapper">
 
-    <div id="profile-block">
+    <!-- FRONT -->
+    <div class="card-face card-front" id="cardFront">
       <div class="username-section">
         <div id="profile-username"></div>
       </div>
-
       <div class="rule"></div>
-
       <div class="badge-section">
         <div class="badge-container"><img src="assets/owner.gif" alt="Owner" class="badge"><span class="tooltip">Owner</span></div>
         <div class="badge-container"><img src="assets/developer.png" alt="Developer" class="badge"><span class="tooltip">Developer</span></div>
@@ -256,9 +341,7 @@
         <div class="badge-container"><img src="assets/what.gif" alt="What" class="badge"><span class="tooltip">What</span></div>
         <div class="badge-container"><img src="assets/dragon.gif" alt="Dragon" class="badge"><span class="tooltip">Dragon</span></div>
       </div>
-
       <div id="profile-bio"></div>
-
       <div class="profile-main">
         <div class="profile-container">
           <img src="assets/profile.gif" alt="Profile" class="profile-picture">
@@ -269,7 +352,6 @@
           <span class="last-seen" id="last-seen">Last seen: —</span>
         </div>
       </div>
-
       <div class="social-links">
         <a href="https://open.spotify.com/user/lopp05qs775yh0frde45qcf9c?si=84c4e551e4c24951" target="_blank" class="social-link-tooltip">
           <img src="assets/spotify.png" alt="Spotify" class="social-icon"><span class="tooltip-text">Spotify</span>
@@ -281,6 +363,55 @@
           <img src="assets/discord.png" alt="Discord" class="social-icon"><span class="tooltip-text">Discord</span>
         </a>
       </div>
+      <div class="flip-trigger" id="flipFront">↻ click to flip</div>
+    </div>
+
+    <!-- BACK -->
+    <div class="card-face card-back" id="cardBack">
+
+      <div class="back-title">↻ INFO</div>
+      <div class="back-divider"></div>
+
+      <!-- OROLOGIO -->
+      <div class="clock-panel">
+        <svg class="clock-svg" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.08)" stroke-width="2" fill="none"/>
+          <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.04)" stroke-width="1" fill="none"/>
+          <line id="hourHand" x1="50" y1="50" x2="50" y2="25" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round"/>
+          <line id="minHand" x1="50" y1="50" x2="50" y2="18" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round"/>
+          <line id="secHand" x1="50" y1="50" x2="50" y2="12" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="3" fill="rgba(255,255,255,0.3)"/>
+        </svg>
+        <div class="clock-info">
+          <div class="clock-time" id="backClock">00:00:00</div>
+          <div class="clock-date" id="backDate">12 Dec 2026</div>
+          <div class="clock-location">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="9" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+            Italy
+          </div>
+        </div>
+      </div>
+
+      <!-- SPOTIFY -->
+      <div class="spotify-panel" id="spotifyPanel">
+        <img class="cover" id="spotifyCover" src="assets/spotify.png" alt="cover">
+        <div class="info">
+          <div class="track-name" id="spotifyTrack">Nessuna canzone in riproduzione</div>
+          <div class="artist-name" id="spotifyArtist">Ultima canzone ascoltata</div>
+          <div class="progress-bar"><div class="progress-fill" id="spotifyProgress" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <!-- GAME -->
+      <div class="game-panel" id="gamePanel">
+        <img class="cover" id="gameCover" src="assets/developer.png" alt="game cover">
+        <div class="info">
+          <div class="game-name" id="gameName">Nessun gioco in esecuzione</div>
+          <div class="game-detail" id="gameDetail">Ultimo gioco giocato</div>
+        </div>
+      </div>
+
+      <div class="flip-trigger" id="flipBack">↻ click to flip back</div>
     </div>
   </div>
 </div>
@@ -293,12 +424,14 @@
 <script>
 (function(){
   "use strict";
+
   document.addEventListener('DOMContentLoaded', function(){
 
+    // ----- ELEMENTI -----
     const startScreen   = document.getElementById('start-screen');
     const startText     = document.getElementById('start-text');
-    const frame         = document.getElementById('frame');
-    const profileBlock  = document.getElementById('profile-block');
+    const cardWrapper   = document.getElementById('cardWrapper');
+    const profileBlock  = document.querySelector('.card-front');
     const profileUsername = document.getElementById('profile-username');
     const profileBio    = document.getElementById('profile-bio');
     const backgroundVideo = document.getElementById('background');
@@ -308,30 +441,49 @@
     const lastSeen      = document.getElementById('last-seen');
     const clockEl       = document.getElementById('clock');
     const uptimeEl      = document.getElementById('uptime');
-    const huds          = [document.getElementById('hudTl'), document.getElementById('hudBl')];
+    const backClockEl   = document.getElementById('backClock');
+    const backDateEl    = document.getElementById('backDate');
+    const huds          = [document.getElementById('hudTl'), document.getElementById('hudTr')];
 
     let isTiltEnabled = false;
     const bootTime = Date.now();
 
-    // CURSOR
+    // ----- CURSOR -----
     document.addEventListener('mousemove', (e) => {
       customCursor.style.left = e.clientX + 'px';
       customCursor.style.top = e.clientY + 'px';
     });
 
-    // CLOCK / UPTIME
+    // ----- CLOCK / UPTIME -----
     function pad(n){ return n.toString().padStart(2,'0'); }
     function tickClock(){
       const d = new Date();
-      clockEl.textContent = pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+      const h = pad(d.getHours()), m = pad(d.getMinutes()), s = pad(d.getSeconds());
+      clockEl.textContent = h+':'+m+':'+s;
+      // Back clock (sempre Italia)
+      backClockEl.textContent = h+':'+m+':'+s;
+      // Data
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      backDateEl.textContent = d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
+      // Uptime
       const diff = Math.floor((Date.now()-bootTime)/1000);
-      const m = Math.floor(diff/60), s = diff%60;
-      uptimeEl.textContent = pad(m)+':'+pad(s);
+      const mm = Math.floor(diff/60), ss = diff%60;
+      uptimeEl.textContent = pad(mm)+':'+pad(ss);
+      // Orologio SVG
+      const hourDeg = (d.getHours()%12)*30 + d.getMinutes()*0.5;
+      const minDeg = d.getMinutes()*6 + d.getSeconds()*0.1;
+      const secDeg = d.getSeconds()*6;
+      const hourHand = document.getElementById('hourHand');
+      const minHand = document.getElementById('minHand');
+      const secHand = document.getElementById('secHand');
+      if(hourHand) hourHand.setAttribute('transform', `rotate(${hourDeg},50,50)`);
+      if(minHand) minHand.setAttribute('transform', `rotate(${minDeg},50,50)`);
+      if(secHand) secHand.setAttribute('transform', `rotate(${secDeg},50,50)`);
     }
     setInterval(tickClock, 1000);
     tickClock();
 
-    // START SCREEN - "click" con typing e deleting
+    // ----- START SCREEN -----
     const startMessage = "click here...";
     let startTextContent = '';
     let startIndex = 0;
@@ -356,18 +508,15 @@
       }
       startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
     }
-
     setInterval(() => {
       startCursorVisible = !startCursorVisible;
       startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
     }, 500);
-
     typeWriterStart();
 
-    // START APP
+    // ----- START APP -----
     function startApp() {
       startScreen.classList.add('hidden');
-
       if (backgroundVideo) {
         backgroundVideo.muted = true;
         backgroundVideo.play().catch(()=>{});
@@ -378,22 +527,41 @@
         backgroundMusic.muted = false;
         backgroundMusic.play().catch(()=>{});
       }
-
-      frame.style.display = 'block';
-      gsap.fromTo(frame, {opacity:0, y:-24}, {opacity:1, y:0, duration:1, ease:'power2.out'});
+      cardWrapper.style.opacity = '1';
+      gsap.fromTo(cardWrapper, {opacity:0, y:-24}, {opacity:1, y:0, duration:1, ease:'power2.out'});
       huds.forEach((h,i)=> setTimeout(()=> h.classList.add('visible'), 300 + i*120));
-
       typeWriterUsername();
       typeWriterBio();
       fetchDiscordStatus();
+      fetchSpotifyGame();
     }
-
     startScreen.addEventListener('click', startApp);
     startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
 
-    // 3D TILT
+    // ----- FLIP CARD -----
+    let isFlipped = false;
+    document.getElementById('flipFront').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      isFlipped = !isFlipped;
+      cardWrapper.classList.toggle('flipped');
+    });
+    document.getElementById('flipBack').addEventListener('click', (e)=>{
+      e.stopPropagation();
+      isFlipped = !isFlipped;
+      cardWrapper.classList.toggle('flipped');
+    });
+
+    // ----- PARALLAX VIDEO -----
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 8;
+      const y = (e.clientY / window.innerHeight - 0.5) * 4;
+      backgroundVideo.style.transform = `translate(-50%, -50%) scale(1.05) translate(${x}px, ${y}px)`;
+    });
+
+    // ----- 3D TILT -----
+    const frame = document.querySelector('.card-front');
     function handleTilt(e){
-      if(!profileBlock) return;
+      if(!frame || isFlipped) return;
       const rect = frame.getBoundingClientRect();
       const centerX = rect.left + rect.width/2;
       const centerY = rect.top + rect.height/2;
@@ -403,27 +571,27 @@
       } else { clientX = e.clientX; clientY = e.clientY; }
       const relX = Math.max(-1, Math.min(1, (clientX-centerX)/(rect.width/2)));
       const relY = Math.max(-1, Math.min(1, (clientY-centerY)/(rect.height/2)));
-      const maxTilt = 18;
+      const maxTilt = 14;
       const tiltY = relX * maxTilt;
       const tiltX = -relY * maxTilt;
-      profileBlock.style.transition = 'transform .08s cubic-bezier(.2,.1,.2,1)';
-      profileBlock.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+      frame.style.transition = 'transform .08s cubic-bezier(.2,.1,.2,1)';
+      frame.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
     }
     function resetTilt(){
-      if(!profileBlock) return;
-      profileBlock.style.transition = 'transform .6s cubic-bezier(.25,.1,.25,1)';
-      profileBlock.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      if(!frame) return;
+      frame.style.transition = 'transform .6s cubic-bezier(.25,.1,.25,1)';
+      frame.style.transform = 'rotateX(0deg) rotateY(0deg)';
     }
     if(frame){
       frame.addEventListener('mouseenter', () => { isTiltEnabled = true; });
       frame.addEventListener('mouseleave', () => { isTiltEnabled = false; resetTilt(); });
-      frame.addEventListener('mousemove', (e) => { if(isTiltEnabled) handleTilt(e); });
-      frame.addEventListener('touchstart', (e) => { isTiltEnabled = true; handleTilt(e); });
-      frame.addEventListener('touchmove', (e) => { e.preventDefault(); if(isTiltEnabled) handleTilt(e); });
+      frame.addEventListener('mousemove', (e) => { if(isTiltEnabled && !isFlipped) handleTilt(e); });
+      frame.addEventListener('touchstart', (e) => { isTiltEnabled = true; if(!isFlipped) handleTilt(e); });
+      frame.addEventListener('touchmove', (e) => { e.preventDefault(); if(isTiltEnabled && !isFlipped) handleTilt(e); });
       frame.addEventListener('touchend', () => { isTiltEnabled = false; resetTilt(); });
     }
 
-    // USERNAME TYPING
+    // ----- USERNAME TYPING -----
     const usernameTexts = ["𝔢𝔵𝔬𝔱𝔦𝔠"];
     let usernameIndex = 0, charIndex = 0, isDeleting = false, usernameCursorVisible = true;
     function typeWriterUsername(){
@@ -451,7 +619,7 @@
       }
     }, 500);
 
-    // BIO TYPING
+    // ----- BIO TYPING -----
     const bioMessages = ["I created my own.", "DM me.", '<span class="bio-link">guns.lol/javraj</span>'];
     let bioText='', bioIndex=0, bioMessageIndex=0, isBioDeleting=false, bioCursorVisible=true;
     function typeWriterBio(){
@@ -481,7 +649,7 @@
       }
     }, 500);
 
-    // DISCORD STATUS
+    // ----- DISCORD STATUS -----
     async function fetchDiscordStatus(){
       const userId = '1019329014369882123';
       const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
@@ -505,14 +673,82 @@
               lastSeen.textContent = 'Last seen: just now';
             }
           }
+          // Aggiorna Spotify e Game dalla stessa risposta
+          updateSpotifyGame(data.data);
         } else { setFallbackStatus(); }
       } catch(err){ setFallbackStatus(); }
     }
+
     function setFallbackStatus(){
       if(statusRing) statusRing.className = 'status-ring online';
       if(lastSeen) lastSeen.textContent = 'Last seen: now';
     }
+
+    // ----- SPOTIFY & GAME -----
+    function updateSpotifyGame(data){
+      const spotify = data.spotify;
+      const activities = data.activities || [];
+
+      // Spotify
+      const spotifyCover = document.getElementById('spotifyCover');
+      const spotifyTrack = document.getElementById('spotifyTrack');
+      const spotifyArtist = document.getElementById('spotifyArtist');
+      const spotifyProgress = document.getElementById('spotifyProgress');
+
+      if(spotify && spotify.song){
+        spotifyCover.src = spotify.album_art_url || 'assets/spotify.png';
+        spotifyTrack.textContent = spotify.song;
+        spotifyArtist.textContent = spotify.artist;
+        if(spotify.timestamps){
+          const start = spotify.timestamps.start;
+          const end = spotify.timestamps.end;
+          const now = Date.now();
+          const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+          spotifyProgress.style.width = progress + '%';
+        }
+      } else {
+        spotifyCover.src = 'assets/spotify.png';
+        spotifyTrack.textContent = 'Nessuna canzone in riproduzione';
+        spotifyArtist.textContent = 'Ultima canzone ascoltata';
+        spotifyProgress.style.width = '0%';
+      }
+
+      // Game (cerca attività di tipo "Playing")
+      const gameActivity = activities.find(a => a.type === 0);
+      const gameCover = document.getElementById('gameCover');
+      const gameName = document.getElementById('gameName');
+      const gameDetail = document.getElementById('gameDetail');
+
+      if(gameActivity && gameActivity.name){
+        gameCover.src = 'assets/developer.png'; // fallback
+        gameName.textContent = gameActivity.name;
+        let details = '';
+        if(gameActivity.details) details += gameActivity.details + ' ';
+        if(gameActivity.state) details += gameActivity.state;
+        gameDetail.textContent = details || 'Giocando ora';
+        if(gameActivity.timestamps && gameActivity.timestamps.start){
+          const elapsed = Math.floor((Date.now() - gameActivity.timestamps.start) / 60000);
+          gameDetail.textContent += ` (${elapsed}m)`;
+        }
+      } else {
+        gameCover.src = 'assets/developer.png';
+        gameName.textContent = 'Nessun gioco in esecuzione';
+        gameDetail.textContent = 'Ultimo gioco giocato';
+      }
+    }
+
+    async function fetchSpotifyGame(){
+      const userId = '1019329014369882123';
+      const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
+      try{
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        if(data.success) updateSpotifyGame(data.data);
+      } catch(err){ console.warn('Spotify/Game fetch fallita'); }
+    }
+
     setInterval(fetchDiscordStatus, 30000);
+    setInterval(fetchSpotifyGame, 30000);
 
   });
 })();
