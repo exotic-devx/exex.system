@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<!-- Open Graph per anteprima -->
+<!-- Open Graph -->
 <meta property="og:title" content="𝔢𝔵𝔬𝔱𝔦𝔠 — Exotic Profile">
 <meta property="og:description" content="Personal profile page with live Discord status">
 <meta property="og:image" content="https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4">
@@ -15,7 +15,7 @@
 <title>𝔢𝔵𝔬𝔱𝔦𝔠</title>
 <link rel="icon" type="image/jpg" href="assets/icony.jpg">
 
-<!-- Preload font e immagini critiche -->
+<!-- Preload -->
 <link rel="preload" as="font" href="assets/Angel_wish.ttf" type="font/ttf" crossorigin>
 <link rel="preload" as="image" href="assets/custom_cursor.png">
 <link rel="preload" as="image" href="assets/profile.gif">
@@ -112,8 +112,8 @@
     perspective:1200px;
   }
   .card-wrapper{
-    position:relative; width:520px; max-width:92vw; height:620px;
-    transform-style:preserve-3d; transition:transform 0.8s cubic-bezier(.25,.1,.25,1);
+    position:relative; width:520px; max-width:92vw; min-height:620px;
+    transform-style:preserve-3d; transition:transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
     opacity:0;
   }
   .card-wrapper.flipped{
@@ -122,29 +122,31 @@
   .card-face{
     position:absolute; inset:0; backface-visibility:hidden;
     border-radius:12px;
+    min-height:620px;
   }
   .card-front{
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
     border:1px solid var(--hair); padding:34px 34px 24px;
-    display:flex; flex-direction:column; gap:4px;
+    display:flex; flex-direction:column;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
   }
   .card-back{
     transform:rotateY(180deg);
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
     border:1px solid var(--hair); padding:30px;
-    display:flex; flex-direction:column; gap:18px;
+    display:flex; flex-direction:column; gap:14px;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
     overflow-y:auto;
   }
 
   /* ---- flip trigger ---- */
   .flip-trigger{
-    position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+    position:absolute; bottom:14px; left:50%; transform:translateX(-50%);
     font-size:10px; letter-spacing:2px; color:var(--ash);
-    text-transform:uppercase; cursor:none;
+    text-transform:uppercase; 
     transition:color .3s ease;
     z-index:10; pointer-events:auto;
+    cursor:none;
   }
   .flip-trigger:hover{ color:var(--mist); }
 
@@ -159,7 +161,7 @@
   }
   .badge-section{
     display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap;
-    margin-bottom:16px; padding:2px 0;
+    margin-bottom:20px; padding:2px 0;
   }
   .badge-container{ position:relative; width:32px; height:32px; }
   .badge{
@@ -180,7 +182,7 @@
 
   #profile-bio{
     color:var(--mist); font-size:15.5px; line-height:1.6; min-height:2.1em; text-align:center;
-    margin:2px 0 18px; padding:0 6px; letter-spacing:.2px;
+    margin:6px 0 20px; padding:0 6px; letter-spacing:.2px;
   }
   #profile-bio .bio-link{
     color:#4fc3f7; text-decoration:none;
@@ -198,7 +200,7 @@
   .profile-main{
     display:flex; align-items:center; gap:16px; background:rgba(255,255,255,.03);
     border:1px solid var(--hair); border-radius:8px; padding:13px 18px; max-width:420px;
-    margin:4px auto 14px; width:100%; transition:border-color .4s ease, box-shadow .4s ease;
+    margin:0 auto 18px; width:100%; transition:border-color .4s ease, box-shadow .4s ease;
   }
   .profile-main:hover{
     border-color:rgba(255,255,255,.35);
@@ -225,7 +227,8 @@
   .last-seen{ font-size:10px; color:var(--ash); margin-top:4px; text-align:left; letter-spacing:.5px; }
 
   .social-links{
-    display:flex; justify-content:center; gap:26px; align-items:center; padding:2px 0 0;
+    display:flex; justify-content:center; gap:26px; align-items:center; padding:6px 0 0;
+    margin-top:6px;
   }
   .social-link-tooltip{ position:relative; display:inline-block; }
   .social-icon{
@@ -247,42 +250,40 @@
   /* ---- BACK ---- */
   .back-title{
     font-size:11px; letter-spacing:3px; color:var(--ash); text-transform:uppercase;
-    text-align:center; margin-bottom:4px;
+    text-align:center; margin-bottom:2px;
   }
   .back-divider{
     width:40px; height:1px; margin:4px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
   }
 
-  /* Orologio */
   .clock-panel{
     background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
-    padding:16px 20px; display:flex; align-items:center; gap:18px;
+    padding:14px 18px; display:flex; align-items:center; gap:16px;
   }
-  .clock-panel .clock-svg{ width:60px; height:60px; flex-shrink:0; }
+  .clock-panel .clock-svg{ width:56px; height:56px; flex-shrink:0; }
   .clock-panel .clock-info{ flex:1; }
-  .clock-panel .clock-time{ font-size:28px; font-weight:300; letter-spacing:2px; font-family:var(--font-display); color:#fff; }
+  .clock-panel .clock-time{ font-size:26px; font-weight:300; letter-spacing:2px; font-family:var(--font-display); color:#fff; }
   .clock-panel .clock-date{ font-size:11px; color:var(--ash); letter-spacing:1px; margin-top:2px; }
-  .clock-panel .clock-location{ font-size:10px; color:var(--ash); letter-spacing:1px; margin-top:6px; display:flex; align-items:center; gap:6px; }
+  .clock-panel .clock-location{ font-size:10px; color:var(--ash); letter-spacing:1px; margin-top:4px; display:flex; align-items:center; gap:6px; }
   .clock-panel .clock-location svg{ width:12px; height:12px; stroke:var(--ash); fill:none; }
 
-  /* Spotify */
   .spotify-panel, .game-panel{
     background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:8px;
-    padding:12px 16px; display:flex; align-items:center; gap:14px;
+    padding:10px 14px; display:flex; align-items:center; gap:12px;
   }
   .spotify-panel .cover, .game-panel .cover{
-    width:50px; height:50px; border-radius:6px; object-fit:cover; flex-shrink:0;
+    width:46px; height:46px; border-radius:6px; object-fit:cover; flex-shrink:0;
     background:rgba(255,255,255,.05);
   }
   .spotify-panel .info, .game-panel .info{ flex:1; overflow:hidden; }
   .spotify-panel .track-name, .game-panel .game-name{
-    font-size:13px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-size:12.5px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .spotify-panel .artist-name, .game-panel .game-detail{
-    font-size:10.5px; color:var(--ash); letter-spacing:.3px; margin-top:2px;
+    font-size:10px; color:var(--ash); letter-spacing:.3px; margin-top:2px;
   }
   .spotify-panel .progress-bar{
-    margin-top:6px; height:2px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden; width:100%;
+    margin-top:4px; height:2px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden; width:100%;
   }
   .spotify-panel .progress-bar .progress-fill{
     height:100%; width:0%; background:linear-gradient(90deg, #4fc3f7, #fff); border-radius:2px; transition:width .5s;
@@ -291,17 +292,20 @@
   .hidden{ display:none !important; }
 
   @media (max-width:580px){
-    .card-wrapper{ height:auto; min-height:560px; }
-    .card-front, .card-back{ padding:20px 16px 16px; }
+    .card-wrapper{ min-height:auto; }
+    .card-front, .card-back{ padding:20px 16px 16px; min-height:auto; }
+    .card-back{ gap:12px; }
     #profile-username{ font-size:32px; min-height:44px; }
     .profile-main{ max-width:340px; padding:10px 14px; gap:12px; border-radius:6px; }
     .profile-container,.profile-picture{ width:48px; height:48px; }
     .profile-display-name{ font-size:15px; }
     .badge,.badge-container{ width:27px; height:27px; }
     .social-icon{ width:28px; height:28px; }
-    .clock-panel .clock-time{ font-size:22px; }
-    .clock-panel .clock-svg{ width:44px; height:44px; }
-    .spotify-panel .cover, .game-panel .cover{ width:40px; height:40px; }
+    .clock-panel .clock-time{ font-size:20px; }
+    .clock-panel .clock-svg{ width:40px; height:40px; }
+    .spotify-panel .cover, .game-panel .cover{ width:36px; height:36px; }
+    .spotify-panel, .game-panel{ padding:8px 12px; gap:10px; }
+    .flip-trigger{ bottom:10px; font-size:9px; }
   }
 </style>
 </head>
@@ -368,7 +372,6 @@
 
     <!-- BACK -->
     <div class="card-face card-back" id="cardBack">
-
       <div class="back-title">↻ INFO</div>
       <div class="back-divider"></div>
 
@@ -431,7 +434,7 @@
     const startScreen   = document.getElementById('start-screen');
     const startText     = document.getElementById('start-text');
     const cardWrapper   = document.getElementById('cardWrapper');
-    const profileBlock  = document.querySelector('.card-front');
+    const cardFront     = document.getElementById('cardFront');
     const profileUsername = document.getElementById('profile-username');
     const profileBio    = document.getElementById('profile-bio');
     const backgroundVideo = document.getElementById('background');
@@ -445,7 +448,7 @@
     const backDateEl    = document.getElementById('backDate');
     const huds          = [document.getElementById('hudTl'), document.getElementById('hudTr')];
 
-    let isTiltEnabled = false;
+    let isFlipped = false;
     const bootTime = Date.now();
 
     // ----- CURSOR -----
@@ -460,12 +463,9 @@
       const d = new Date();
       const h = pad(d.getHours()), m = pad(d.getMinutes()), s = pad(d.getSeconds());
       clockEl.textContent = h+':'+m+':'+s;
-      // Back clock (sempre Italia)
       backClockEl.textContent = h+':'+m+':'+s;
-      // Data
       const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       backDateEl.textContent = d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
-      // Uptime
       const diff = Math.floor((Date.now()-bootTime)/1000);
       const mm = Math.floor(diff/60), ss = diff%60;
       uptimeEl.textContent = pad(mm)+':'+pad(ss);
@@ -533,19 +533,17 @@
       typeWriterUsername();
       typeWriterBio();
       fetchDiscordStatus();
-      fetchSpotifyGame();
     }
     startScreen.addEventListener('click', startApp);
     startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
 
-    // ----- FLIP CARD -----
-    let isFlipped = false;
-    document.getElementById('flipFront').addEventListener('click', (e)=>{
+    // ----- FLIP CARD (CORRETTO) -----
+    document.getElementById('flipFront').addEventListener('click', function(e){
       e.stopPropagation();
       isFlipped = !isFlipped;
       cardWrapper.classList.toggle('flipped');
     });
-    document.getElementById('flipBack').addEventListener('click', (e)=>{
+    document.getElementById('flipBack').addEventListener('click', function(e){
       e.stopPropagation();
       isFlipped = !isFlipped;
       cardWrapper.classList.toggle('flipped');
@@ -558,37 +556,38 @@
       backgroundVideo.style.transform = `translate(-50%, -50%) scale(1.05) translate(${x}px, ${y}px)`;
     });
 
-    // ----- 3D TILT -----
-    const frame = document.querySelector('.card-front');
+    // ----- 3D TILT (SENZA TREMOLII) -----
     function handleTilt(e){
-      if(!frame || isFlipped) return;
-      const rect = frame.getBoundingClientRect();
+      if(!cardFront || isFlipped) return;
+      const rect = cardFront.getBoundingClientRect();
       const centerX = rect.left + rect.width/2;
       const centerY = rect.top + rect.height/2;
       let clientX, clientY;
       if(e.type === 'touchmove' || e.type === 'touchstart'){
         clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
       } else { clientX = e.clientX; clientY = e.clientY; }
-      const relX = Math.max(-1, Math.min(1, (clientX-centerX)/(rect.width/2)));
-      const relY = Math.max(-1, Math.min(1, (clientY-centerY)/(rect.height/2)));
-      const maxTilt = 14;
+      const relX = Math.max(-0.9, Math.min(0.9, (clientX-centerX)/(rect.width/2)));
+      const relY = Math.max(-0.9, Math.min(0.9, (clientY-centerY)/(rect.height/2)));
+      const maxTilt = 10;
       const tiltY = relX * maxTilt;
       const tiltX = -relY * maxTilt;
-      frame.style.transition = 'transform .08s cubic-bezier(.2,.1,.2,1)';
-      frame.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+      // Non applicare transizione durante il movimento per evitare tremolii
+      cardFront.style.transition = 'none';
+      cardFront.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
     }
     function resetTilt(){
-      if(!frame) return;
-      frame.style.transition = 'transform .6s cubic-bezier(.25,.1,.25,1)';
-      frame.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      if(!cardFront) return;
+      // Transizione fluida solo per il reset
+      cardFront.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+      cardFront.style.transform = 'rotateX(0deg) rotateY(0deg)';
     }
-    if(frame){
-      frame.addEventListener('mouseenter', () => { isTiltEnabled = true; });
-      frame.addEventListener('mouseleave', () => { isTiltEnabled = false; resetTilt(); });
-      frame.addEventListener('mousemove', (e) => { if(isTiltEnabled && !isFlipped) handleTilt(e); });
-      frame.addEventListener('touchstart', (e) => { isTiltEnabled = true; if(!isFlipped) handleTilt(e); });
-      frame.addEventListener('touchmove', (e) => { e.preventDefault(); if(isTiltEnabled && !isFlipped) handleTilt(e); });
-      frame.addEventListener('touchend', () => { isTiltEnabled = false; resetTilt(); });
+    if(cardFront){
+      cardFront.addEventListener('mouseenter', () => {});
+      cardFront.addEventListener('mouseleave', () => { resetTilt(); });
+      cardFront.addEventListener('mousemove', (e) => { if(!isFlipped) handleTilt(e); });
+      cardFront.addEventListener('touchstart', (e) => { if(!isFlipped) handleTilt(e); });
+      cardFront.addEventListener('touchmove', (e) => { e.preventDefault(); if(!isFlipped) handleTilt(e); });
+      cardFront.addEventListener('touchend', () => { resetTilt(); });
     }
 
     // ----- USERNAME TYPING -----
@@ -649,7 +648,7 @@
       }
     }, 500);
 
-    // ----- DISCORD STATUS -----
+    // ----- DISCORD STATUS + SPOTIFY + GAME -----
     async function fetchDiscordStatus(){
       const userId = '1019329014369882123';
       const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
@@ -673,7 +672,7 @@
               lastSeen.textContent = 'Last seen: just now';
             }
           }
-          // Aggiorna Spotify e Game dalla stessa risposta
+          // Aggiorna Spotify e Game
           updateSpotifyGame(data.data);
         } else { setFallbackStatus(); }
       } catch(err){ setFallbackStatus(); }
@@ -684,7 +683,6 @@
       if(lastSeen) lastSeen.textContent = 'Last seen: now';
     }
 
-    // ----- SPOTIFY & GAME -----
     function updateSpotifyGame(data){
       const spotify = data.spotify;
       const activities = data.activities || [];
@@ -713,14 +711,14 @@
         spotifyProgress.style.width = '0%';
       }
 
-      // Game (cerca attività di tipo "Playing")
+      // Game
       const gameActivity = activities.find(a => a.type === 0);
       const gameCover = document.getElementById('gameCover');
       const gameName = document.getElementById('gameName');
       const gameDetail = document.getElementById('gameDetail');
 
       if(gameActivity && gameActivity.name){
-        gameCover.src = 'assets/developer.png'; // fallback
+        gameCover.src = 'assets/developer.png';
         gameName.textContent = gameActivity.name;
         let details = '';
         if(gameActivity.details) details += gameActivity.details + ' ';
@@ -737,18 +735,7 @@
       }
     }
 
-    async function fetchSpotifyGame(){
-      const userId = '1019329014369882123';
-      const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
-      try{
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        if(data.success) updateSpotifyGame(data.data);
-      } catch(err){ console.warn('Spotify/Game fetch fallita'); }
-    }
-
     setInterval(fetchDiscordStatus, 30000);
-    setInterval(fetchSpotifyGame, 30000);
 
   });
 })();
