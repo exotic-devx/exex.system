@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exotic Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4');
+            background-size: cover;
+            background-position: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .admin-container {
+            width: 1200px;
+            max-width: 95vw;
+            min-height: 80vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            display: flex;
+            gap: 30px;
+        }
+
+        /* PANNELLO LATERALE - IMPOSTAZIONI */
+        .settings-panel {
+            width: 40%;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .settings-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .settings-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .settings-panel h2 {
+            font-size: 20px;
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        .setting-group {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .setting-group label {
+            display: block;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .setting-group input[type="range"] {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            margin: 8px 0;
+        }
+
+        .setting-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .setting-group input[type="text"],
+        .setting-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .setting-group textarea {
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        .setting-group input[type="text"]:focus,
+        .setting-group textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .setting-group .value-display {
+            font-size: 14px;
+            color: #fff;
+            font-weight: bold;
+            float: right;
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .setting-row label {
+            margin-bottom: 0;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .setting-row input[type="text"] {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .color-picker-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .color-picker-row input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #fff;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-save:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* PREVIEW - a destra */
+        .preview-panel {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-panel iframe {
+            width: 100%;
+            height: 100%;
+            min-height: 500px;
+            border: none;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        /* PASSWORD SCREEN */
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        #login-screen h1 {
+            font-size: 36px;
+            font-family: 'Angel Wish', 'Courier New', monospace;
+            letter-spacing: 4px;
+            color: #fff;
+        }
+
+        #login-screen input[type="password"] {
+            padding: 12px 24px;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #login-screen input[type="password"]:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        #login-screen .error {
+            color: #ff4444;
+            font-size: 14px;
+            display: none;
+        }
+
+        #login-screen .error.show {
+            display: block;
+        }
+
+        #login-screen button {
+            padding: 10px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #login-screen button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        #admin-content {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .admin-container {
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .settings-panel {
+                width: 100%;
+                min-width: auto;
+                max-height: 60vh;
+            }
+
+            .preview-panel {
+                width: 100%;
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PASSWORD SCREEN -->
+    <div id="login-screen">
+        <h1>🔐 𝔢𝔵𝔬𝔱𝔦𝔠</h1>
+        <p style="color: rgba(255,255,255,0.4); font-size: 14px;">Inserisci la password per accedere</p>
+        <input type="password" id="password-input" placeholder="Password" autofocus>
+        <div class="error" id="error-message">Password errata. Riprova.</div>
+        <button id="login-btn">Accedi</button>
+    </div>
+
+    <!-- ADMIN CONTENT -->
+    <div id="admin-content">
+        <div class="admin-container">
+            <!-- PANNELLO IMPOSTAZIONI -->
+            <div class="settings-panel">
+                <h2>⚙️ Impostazioni</h2>
+
+                <div class="setting-group">
+                    <label>Altezza pulsanti <span class="value-display" id="btn-height-value">48</span></label>
+                    <input type="range" id="btn-height" min="30" max="70" value="48">
+                </div>
+
+                <div class="setting-group">
+                    <label>Altezza pannello profilo <span class="value-display" id="panel-height-value">500</span></label>
+                    <input type="range" id="panel-height" min="350" max="700" value="500">
+                </div>
+
+                <div class="setting-group">
+                    <label>Larghezza pannello profilo <span class="value-display" id="panel-width-value">540</span></label>
+                    <input type="range" id="panel-width" min="400" max="700" value="540">
+                </div>
+
+                <div class="setting-group">
+                    <label>Opacità sfondo <span class="value-display" id="bg-opacity-value">30</span>%</label>
+                    <input type="range" id="bg-opacity" min="0" max="100" value="30">
+                </div>
+
+                <div class="setting-group">
+                    <label>Blur sfondo <span class="value-display" id="blur-value">12</span>px</label>
+                    <input type="range" id="blur" min="0" max="25" value="12">
+                </div>
+
+                <div class="setting-group">
+                    <label>Bio - Testo 1</label>
+                    <input type="text" id="bio-text-1" value="I created my own.">
+                </div>
+
+                <div class="setting-group">
+                    <label>Bio - Testo 2</label>
+                    <input type="text" id="bio-text-2" value="&quot;DM&quot;">
+                </div>
+
+                <div class="setting-group">
+                    <label>Velocità typing bio (ms) <span class="value-display" id="bio-speed-value">140</span></label>
+                    <input type="range" id="bio-speed" min="50" max="300" value="140">
+                </div>
+
+                <div class="setting-group">
+                    <label>Colore principale</label>
+                    <div class="color-picker-row">
+                        <input type="color" id="primary-color" value="#ffffff">
+                        <span style="color:rgba(255,255,255,0.4); font-size:12px;">#ffffff</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="show-views" checked>
+                        <label>Mostra visualizzazioni</label>
+                    </div>
+                </div>
+
+                <button class="btn-save" id="save-settings">💾 Salva Impostazioni</button>
+            </div>
+
+            <!-- PREVIEW -->
+            <div class="preview-panel">
+                <iframe id="preview-frame" src="index.html"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== PASSWORD =====
+        const PASSWORD = "exo";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginScreen = document.getElementById('login-screen');
+            const adminContent = document.getElementById('admin-content');
+            const passwordInput = document.getElementById('password-input');
+            const loginBtn = document.getElementById('login-btn');
+            const errorMsg = document.getElementById('error-message');
+
+            function login() {
+                if (passwordInput.value === PASSWORD) {
+                    loginScreen.style.display = 'none';
+                    adminContent.style.display = 'block';
+                    initSettings();
+                } else {
+                    errorMsg.classList.add('show');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+
+            loginBtn.addEventListener('click', login);
+            passwordInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') login();
+            });
+
+            // ===== IMPOSTAZIONI =====
+            function initSettings() {
+                const previewFrame = document.getElementById('preview-frame');
+
+                // Riferimenti agli elementi
+                const btnHeight = document.getElementById('btn-height');
+                const btnHeightVal = document.getElementById('btn-height-value');
+                const panelHeight = document.getElementById('panel-height');
+                const panelHeightVal = document.getElementById('panel-height-value');
+                const panelWidth = document.getElementById('panel-width');
+                const panelWidthVal = document.getElementById('panel-width-value');
+                const bgOpacity = document.getElementById('bg-opacity');
+                const bgOpacityVal = document.getElementById('bg-opacity-value');
+                const blur = document.getElementById('blur');
+                const blurVal = document.getElementById('blur-value');
+                const bio1 = document.getElementById('bio-text-1');
+                const bio2 = document.getElementById('bio-text-2');
+                const bioSpeed = document.getElementById('bio-speed');
+                const bioSpeedVal = document.getElementById('bio-speed-value');
+                const primaryColor = document.getElementById('primary-color');
+
+                // Funzione per applicare le impostazioni al preview
+                function applySettings() {
+                    const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+                    if (!previewDoc) return;
+
+                    // Modifica direttamente gli stili dell'iframe
+                    const style = previewDoc.createElement('style');
+                    style.textContent = `
+                        /* Altezza pulsanti (social) */
+                        .social-icon {
+                            width: ${parseInt(btnHeight.value)}px !important;
+                            height: ${parseInt(btnHeight.value)}px !important;
+                        }
+
+                        /* Altezza pannello */
+                        #profile-block {
+                            min-height: ${parseInt(panelHeight.value)}px !important;
+                            width: ${parseInt(panelWidth.value)}px !important;
+                        }
+
+                        /* Opacità sfondo */
+                        #profile-block {
+                            background: rgba(0, 0, 0, ${parseInt(bgOpacity.value) / 100}) !important;
+                        }
+
+                        /* Blur sfondo */
+                        #profile-block {
+                            backdrop-filter: blur(${parseInt(blur.value)}px) !important;
+                            -webkit-backdrop-filter: blur(${parseInt(blur.value)}px) !important;
+                        }
+
+                        /* Colore principale */
+                        :root {
+                            --primary-color: ${primaryColor.value} !important;
+                        }
+
+                        /* Modifica bio - i testi sono gestiti da JS, ma forziamo il refresh */
+                    `;
+
+                    // Rimuovi stili vecchi
+                    const oldStyle = previewDoc.getElementById('admin-style-override');
+                    if (oldStyle) oldStyle.remove();
+
+                    style.id = 'admin-style-override';
+                    previewDoc.head.appendChild(style);
+
+                    // Modifica i testi della bio (forzando il refresh)
+                    const bioMessages = [bio1.value, bio2.value];
+                    // Forza il refresh della pagina per applicare i nuovi testi bio
+                    // (purtroppo il typing è gestito da JS, quindi ricarichiamo l'iframe)
+                    // In alternativa possiamo ricaricare l'iframe con i nuovi parametri
+                }
+
+                // Ricarica l'iframe con i nuovi parametri quando si cambia qualcosa
+                function reloadPreview() {
+                    // Ricarica l'iframe con i parametri attuali
+                    const url = `index.html?t=${Date.now()}`;
+                    previewFrame.src = url;
+                    // Attendiamo il caricamento per applicare le impostazioni
+                    previewFrame.onload = function() {
+                        setTimeout(applySettings, 500);
+                    };
+                }
+
+                // Event listeners
+                btnHeight.addEventListener('input', () => {
+                    btnHeightVal.textContent = btnHeight.value;
+                    applySettings();
+                });
+
+                panelHeight.addEventListener('input', () => {
+                    panelHeightVal.textContent = panelHeight.value;
+                    applySettings();
+                });
+
+                panelWidth.addEventListener('input', () => {
+                    panelWidthVal.textContent = panelWidth.value;
+                    applySettings();
+                });
+
+                bgOpacity.addEventListener('input', () => {
+                    bgOpacityVal.textContent = bgOpacity.value;
+                    applySettings();
+                });
+
+                blur.addEventListener('input', () => {
+                    blurVal.textContent = blur.value;
+                    applySettings();
+                });
+
+                primaryColor.addEventListener('input', () => {
+                    applySettings();
+                });
+
+                bio1.addEventListener('change', () => {
+                    // Ricarica il preview per cambiare i testi bio
+                    reloadPreview();
+                });
+
+                bio2.addEventListener('change', () => {
+                    reloadPreview();
+                });
+
+                bioSpeed.addEventListener('input', () => {
+                    bioSpeedVal.textContent = bioSpeed.value;
+                    // Ricarica per applicare la nuova velocità
+                    reloadPreview();
+                });
+
+                // Salva impostazioni
+                document.getElementById('save-settings').addEventListener('click', () => {
+                    alert('✅ Impostazioni salvate! (Ricorda: le modifiche sono locali al preview)');
+                    applySettings();
+                });
+
+                // Carica iniziale
+                previewFrame.onload = function() {
+                    setTimeout(applySettings, 500);
+                };
+            }
+        });
+    </script>
+
+</body>
+</html>
