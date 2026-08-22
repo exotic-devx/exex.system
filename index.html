@@ -113,10 +113,13 @@
   .card-wrapper{
     position:relative; width:460px; max-width:92vw; min-height:520px;
     transform-style:preserve-3d; transition:transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-    opacity:0;
     transform:rotateX(0deg) rotateY(0deg);
     will-change:transform;
     display:block;
+    opacity:0;
+  }
+  .card-wrapper.visible{
+    opacity:1;
   }
   .card-wrapper.flipped{
     transform:rotateY(180deg);
@@ -486,7 +489,6 @@
     const startScreen   = document.getElementById('start-screen');
     const startText     = document.getElementById('start-text');
     const cardWrapper   = document.getElementById('cardWrapper');
-    const cardFront     = document.getElementById('cardFront');
     const profileUsername = document.getElementById('profile-username');
     const profileBio    = document.getElementById('profile-bio');
     const backgroundVideo = document.getElementById('background');
@@ -503,13 +505,13 @@
     let isFlipped = false;
     const bootTime = Date.now();
 
-    // ----- CURSOR -----
+    // CURSOR
     document.addEventListener('mousemove', (e) => {
       customCursor.style.left = e.clientX + 'px';
       customCursor.style.top = e.clientY + 'px';
     });
 
-    // ----- CLOCK / UPTIME -----
+    // CLOCK / UPTIME
     function pad(n){ return n.toString().padStart(2,'0'); }
     function tickClock(){
       const d = new Date();
@@ -530,13 +532,12 @@
       if(hourHand) hourHand.setAttribute('transform', `rotate(${hourDeg},50,50)`);
       if(minHand) minHand.setAttribute('transform', `rotate(${minDeg},50,50)`);
       if(secHand) secHand.setAttribute('transform', `rotate(${secDeg},50,50)`);
-
       updateSpotifyProgress();
     }
     setInterval(tickClock, 1000);
     tickClock();
 
-    // ----- START SCREEN -----
+    // START SCREEN
     const startMessage = "click here...";
     let startTextContent = '';
     let startIndex = 0;
@@ -567,7 +568,7 @@
     }, 500);
     typeWriterStart();
 
-    // ----- START APP -----
+    // START APP
     function startApp() {
       startScreen.classList.add('hidden');
       if (backgroundVideo) {
@@ -580,8 +581,14 @@
         backgroundMusic.muted = false;
         backgroundMusic.play().catch(()=>{});
       }
-      cardWrapper.style.opacity = '1';
-      gsap.fromTo(cardWrapper, {opacity:0, y:-20, scale:0.96}, {opacity:1, y:0, scale:1, duration:0.9, ease:'power2.out'});
+      
+      // Mostra la card con GSAP
+      cardWrapper.classList.add('visible');
+      gsap.fromTo(cardWrapper, 
+        { opacity:0, y:-20, scale:0.96 }, 
+        { opacity:1, y:0, scale:1, duration:0.9, ease:'power2.out' }
+      );
+      
       huds.forEach((h,i)=> setTimeout(()=> h.classList.add('visible'), 300 + i*120));
       typeWriterUsername();
       typeWriterBio();
@@ -590,7 +597,7 @@
     startScreen.addEventListener('click', startApp);
     startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
 
-    // ----- FLIP CARD -----
+    // FLIP CARD
     function toggleFlip(e) {
       if(e) e.stopPropagation();
       isFlipped = !isFlipped;
@@ -607,7 +614,7 @@
       }
     });
 
-    // ----- EFFETTO 3D SULLO SFONDO -----
+    // EFFETTO 3D SULLO SFONDO
     let tiltX = 0, tiltY = 0;
     let targetTiltX = 0, targetTiltY = 0;
     let isMouseOnCard = false;
@@ -657,7 +664,7 @@
 
     animateTilt();
 
-    // ----- USERNAME TYPING -----
+    // USERNAME TYPING
     const usernameTexts = ["𝔢𝔵𝔬𝔱𝔦𝔠"];
     let usernameIndex = 0, charIndex = 0, isDeleting = false, usernameCursorVisible = true;
     function typeWriterUsername(){
@@ -685,7 +692,7 @@
       }
     }, 500);
 
-    // ----- BIO TYPING -----
+    // BIO TYPING
     const bioMessages = ["I created my own.", "DM me.", '<span class="bio-link">guns.lol/javraj</span>'];
     let bioText='', bioIndex=0, bioMessageIndex=0, isBioDeleting=false, bioCursorVisible=true;
     function typeWriterBio(){
@@ -715,7 +722,7 @@
       }
     }, 500);
 
-    // ----- SPOTIFY PROGRESS -----
+    // SPOTIFY PROGRESS
     let spotifyData = null;
 
     function updateSpotifyProgress() {
@@ -749,7 +756,7 @@
       return m + ':' + (s < 10 ? '0' : '') + s;
     }
 
-    // ----- DISCORD STATUS + SPOTIFY + GAME -----
+    // DISCORD STATUS + SPOTIFY + GAME
     async function fetchDiscordStatus(){
       const userId = '1019329014369882123';
       const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
