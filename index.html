@@ -94,7 +94,7 @@
             display: none !important;
         }
 
-        /* PANNELLO PRINCIPALE */
+        /* PANNELLO PRINCIPALE - effetto 3D che segue il mouse */
         #profile-block {
             position: fixed;
             top: 50%;
@@ -105,7 +105,7 @@
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 2px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 28px 30px 20px;
             border-radius: 16px;
             z-index: 20;
@@ -115,91 +115,17 @@
             pointer-events: auto;
             opacity: 0;
             transform-style: preserve-3d;
-            transition: transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.5s ease;
+            transition: transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
             will-change: transform;
             perspective: 600px;
             cursor: none;
-            animation: float-panel 4s ease-in-out infinite;
         }
 
-        /* FLUTUAZIONE PANNELLO */
-        @keyframes float-panel {
-            0%,
-            100% {
-                transform: translate(-50%, -50%) translateY(0px);
-            }
-            50% {
-                transform: translate(-50%, -50%) translateY(-8px);
-            }
-        }
-
-        /* LUCI GLOW SUL BORDO - 2 luci che girano */
-        #profile-block::before,
-        #profile-block::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 18px;
-            background: conic-gradient(from 0deg,
-                    transparent 0deg,
-                    rgba(255, 255, 255, 0.5) 10deg,
-                    transparent 20deg,
-                    transparent 340deg,
-                    rgba(255, 255, 255, 0.5) 350deg,
-                    transparent 360deg);
-            z-index: -1;
-            animation: rotate-glow 6s linear infinite;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.6s ease;
-        }
-
-        #profile-block::after {
-            background: conic-gradient(from 180deg,
-                    transparent 0deg,
-                    rgba(255, 255, 255, 0.4) 10deg,
-                    transparent 20deg,
-                    transparent 340deg,
-                    rgba(255, 255, 255, 0.4) 350deg,
-                    transparent 360deg);
-            animation: rotate-glow 6s linear infinite reverse;
-        }
-
-        /* Le luci sono visibili SOLO quando il mouse NON è sul pannello */
-        #profile-block:not(:hover)::before,
-        #profile-block:not(:hover)::after {
-            opacity: 1;
-        }
-
-        #profile-block:hover::before,
-        #profile-block:hover::after {
-            opacity: 0;
-        }
-
-        @keyframes rotate-glow {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Effetto scia delle luci */
-        #profile-block::before {
-            filter: blur(8px);
-        }
-        #profile-block::after {
-            filter: blur(8px);
-        }
-
+        /* USERNAME - effetto typing e deleting */
         .username-section {
             text-align: center;
             margin-bottom: 2px;
-            min-height: 50px;
+            min-height: 60px;
             position: relative;
             z-index: 30;
         }
@@ -218,7 +144,7 @@
             letter-spacing: 4px;
             color: #fff;
             filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
-            min-height: 50px;
+            min-height: 56px;
             display: inline-block;
             user-select: none;
             -webkit-user-drag: none;
@@ -264,7 +190,7 @@
             filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
         }
 
-        /* TOOLTIP BADGE - ora visibile */
+        /* TOOLTIP BADGE - SOTTO il badge */
         .badge-container .tooltip {
             visibility: hidden;
             opacity: 0;
@@ -279,9 +205,9 @@
             padding: 6px 16px;
             position: absolute;
             z-index: 9999;
-            bottom: calc(100% + 16px);
+            top: calc(100% + 12px);
             left: 50%;
-            transform: translateX(-50%) scale(0.85) translateY(8px);
+            transform: translateX(-50%) scale(0.85) translateY(-8px);
             transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0.3s;
             font-size: 12px;
             white-space: nowrap;
@@ -296,11 +222,11 @@
         .badge-container .tooltip::after {
             content: '';
             position: absolute;
-            top: 100%;
+            bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
             border: 6px solid transparent;
-            border-top-color: rgba(0, 0, 0, 0.65);
+            border-bottom-color: rgba(0, 0, 0, 0.65);
         }
 
         .badge-container:hover .tooltip {
@@ -309,12 +235,12 @@
             transform: translateX(-50%) scale(1) translateY(0);
         }
 
-        /* BIO CON TESTO CLICCABILE */
+        /* BIO - con effetto typing e deleting */
         #profile-bio {
             color: rgba(255, 255, 255, 0.8);
             font-size: 17px;
-            line-height: 1.8;
-            min-height: 2.8em;
+            line-height: 1.6;
+            min-height: 2.2em;
             text-align: center;
             margin: 8px 0 12px;
             padding: 0 10px;
@@ -323,15 +249,10 @@
             user-drag: none;
         }
 
-        #profile-bio .bio-line {
-            display: block;
-            margin: 2px 0;
-        }
-
         #profile-bio .bio-link {
             color: #4fc3f7;
             text-decoration: none;
-            background: linear-gradient(90deg, #4fc3f7, #81d4fa, #4fc3f7);
+            background: linear-gradient(90deg, #4fc3f7, #ffffff, #4fc3f7);
             background-size: 200% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -667,7 +588,7 @@
             }
             #profile-bio {
                 font-size: 15px;
-                min-height: 2.6em;
+                min-height: 2em;
                 margin: 6px 0 8px;
             }
         }
@@ -723,7 +644,7 @@
             }
             #profile-bio {
                 font-size: 14px;
-                min-height: 2.4em;
+                min-height: 1.8em;
                 padding: 0 6px;
                 margin: 4px 0 6px;
             }
@@ -756,7 +677,7 @@
 
     <div id="profile-block">
         <div class="username-section">
-            <div id="profile-username">𝔢𝔵𝔬𝔱𝔦𝔠</div>
+            <div id="profile-username"></div>
         </div>
 
         <div class="badge-section">
@@ -794,11 +715,7 @@
             </div>
         </div>
 
-        <div id="profile-bio">
-            <span class="bio-line">I created my own.</span>
-            <span class="bio-line">DM me.</span>
-            <span class="bio-line"><a href="https://guns.lol/javraj" target="_blank" class="bio-link">guns.lol/javraj</a></span>
-        </div>
+        <div id="profile-bio"></div>
 
         <div class="profile-main">
             <div class="profile-container">
@@ -844,12 +761,12 @@
                 const startScreen = document.getElementById('start-screen');
                 const startText = document.getElementById('start-text');
                 const profileBlock = document.getElementById('profile-block');
+                const profileUsername = document.getElementById('profile-username');
                 const profileBio = document.getElementById('profile-bio');
                 const backgroundVideo = document.getElementById('background');
                 const backgroundMusic = document.getElementById('background-music');
                 const customCursor = document.getElementById('customCursor');
 
-                // STATUS ELEMENTI
                 const statusRing = document.getElementById('status-ring');
                 const lastSeen = document.getElementById('last-seen');
 
@@ -873,7 +790,7 @@
                     }
                 });
 
-                // EFFETTO 3D
+                // EFFETTO 3D - insegue il mouse
                 function handleTilt(e) {
                     if (!profileBlock || profileBlock.style.opacity !== '1') return;
 
@@ -997,6 +914,8 @@
                             resetTilt();
                         }
                     });
+                    typeWriterUsername();
+                    typeWriterBio();
                     fetchDiscordStatus();
                 }
 
@@ -1005,6 +924,92 @@
                     e.preventDefault();
                     startApp();
                 });
+
+                // USERNAME TYPING E DELETING
+                const usernameTexts = ["𝔢𝔵𝔬𝔱𝔦𝔠"];
+                let usernameIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                let usernameCursorVisible = true;
+
+                function typeWriterUsername() {
+                    const currentText = usernameTexts[usernameIndex];
+
+                    if (!isDeleting && charIndex <= currentText.length) {
+                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ?
+                            '|' : ' ');
+                        charIndex++;
+                        setTimeout(typeWriterUsername, isDeleting ? 80 : 150);
+                    } else if (isDeleting && charIndex >= 0) {
+                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ?
+                            '|' : ' ');
+                        charIndex--;
+                        setTimeout(typeWriterUsername, 60);
+                    } else if (!isDeleting && charIndex > currentText.length) {
+                        isDeleting = true;
+                        setTimeout(typeWriterUsername, 2000);
+                    } else if (isDeleting && charIndex < 0) {
+                        isDeleting = false;
+                        usernameIndex = (usernameIndex + 1) % usernameTexts.length;
+                        setTimeout(typeWriterUsername, 500);
+                    }
+                }
+
+                setInterval(() => {
+                    usernameCursorVisible = !usernameCursorVisible;
+                    const currentText = usernameTexts[usernameIndex];
+                    if (charIndex >= 0 && charIndex <= currentText.length) {
+                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ?
+                            '|' : ' ');
+                    }
+                }, 500);
+
+                // BIO TYPING E DELETING - con 3 testi
+                const bioMessages = [
+                    "I created my own.",
+                    "DM me.",
+                    '<span class="bio-link">guns.lol/javraj</span>'
+                ];
+                let bioText = '';
+                let bioIndex = 0;
+                let bioMessageIndex = 0;
+                let isBioDeleting = false;
+                let bioCursorVisible = true;
+
+                function typeWriterBio() {
+                    const currentMessage = bioMessages[bioMessageIndex];
+
+                    if (!isBioDeleting && bioIndex < currentMessage.length) {
+                        bioText = currentMessage.slice(0, bioIndex + 1);
+                        bioIndex++;
+                    } else if (isBioDeleting && bioIndex > 0) {
+                        bioText = currentMessage.slice(0, bioIndex - 1);
+                        bioIndex--;
+                    } else if (bioIndex === currentMessage.length) {
+                        isBioDeleting = true;
+                        setTimeout(typeWriterBio, 2500);
+                        return;
+                    } else if (bioIndex === 0 && isBioDeleting) {
+                        isBioDeleting = false;
+                        bioMessageIndex = (bioMessageIndex + 1) % bioMessages.length;
+                        setTimeout(typeWriterBio, 500);
+                        return;
+                    }
+                    profileBio.innerHTML = bioText + (bioCursorVisible ? '|' : ' ');
+                    if (Math.random() < 0.06) {
+                        profileBio.classList.add('glitch');
+                        setTimeout(() => profileBio.classList.remove('glitch'), 200);
+                    }
+                    setTimeout(typeWriterBio, isBioDeleting ? 70 : 140);
+                }
+
+                setInterval(() => {
+                    bioCursorVisible = !bioCursorVisible;
+                    const currentMessage = bioMessages[bioMessageIndex];
+                    if (bioIndex >= 0 && bioIndex <= currentMessage.length) {
+                        profileBio.innerHTML = bioText + (bioCursorVisible ? '|' : ' ');
+                    }
+                }, 500);
 
                 // --- DISCORD STATUS ---
                 async function fetchDiscordStatus() {
