@@ -110,11 +110,17 @@
   .stage{
     position:fixed; inset:0; z-index:20; display:flex; align-items:center; justify-content:center;
     perspective:1200px;
+    pointer-events:none;
+  }
+  .stage .card-wrapper{
+    pointer-events:auto;
   }
   .card-wrapper{
     position:relative; width:520px; max-width:92vw; min-height:620px;
     transform-style:preserve-3d; transition:transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
     opacity:0;
+    transform:rotateX(0deg) rotateY(0deg);
+    will-change:transform;
   }
   .card-wrapper.flipped{
     transform:rotateY(180deg);
@@ -537,7 +543,7 @@
     startScreen.addEventListener('click', startApp);
     startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
 
-    // ----- FLIP CARD (CORRETTO) -----
+    // ----- FLIP CARD -----
     document.getElementById('flipFront').addEventListener('click', function(e){
       e.stopPropagation();
       isFlipped = !isFlipped;
@@ -549,46 +555,62 @@
       cardWrapper.classList.toggle('flipped');
     });
 
-    // ----- PARALLAX VIDEO -----
+    // ----- EFFETTO 3D: INSEGUE IL MOUSE SULLO SFONDO (NON SULLA CARD) -----
+    let tiltX = 0, tiltY = 0;
+    let targetTiltX = 0, targetTiltY = 0;
+
     document.addEventListener('mousemove', (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 8;
-      const y = (e.clientY / window.innerHeight - 0.5) * 4;
-      backgroundVideo.style.transform = `translate(-50%, -50%) scale(1.05) translate(${x}px, ${y}px)`;
+      // Calcola la posizione del mouse rispetto al centro dello schermo
+      const rect = document.body.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const relX = Math.max(-1, Math.min(1, (e.clientX - centerX) / centerX));
+      const relY = Math.max(-1, Math.min(1, (e.clientY - centerY) / centerY));
+      const maxTilt = 8;
+      targetTiltX = relY * maxTilt;
+      targetTiltY = -relX * maxTilt;
+
+      // Aggiorna anche il parallax del video
+      const px = (e.clientX / window.innerWidth - 0.5) * 8;
+      const py = (e.clientY / window.innerHeight - 0.5) * 4;
+      backgroundVideo.style.transform = `translate(-50%, -50%) scale(1.05) translate(${px}px, ${py}px)`;
     });
 
-    // ----- 3D TILT (SENZA TREMOLII) -----
-    function handleTilt(e){
-      if(!cardFront || isFlipped) return;
-      const rect = cardFront.getBoundingClientRect();
-      const centerX = rect.left + rect.width/2;
-      const centerY = rect.top + rect.height/2;
-      let clientX, clientY;
-      if(e.type === 'touchmove' || e.type === 'touchstart'){
-        clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
-      } else { clientX = e.clientX; clientY = e.clientY; }
-      const relX = Math.max(-0.9, Math.min(0.9, (clientX-centerX)/(rect.width/2)));
-      const relY = Math.max(-0.9, Math.min(0.9, (clientY-centerY)/(rect.height/2)));
-      const maxTilt = 10;
-      const tiltY = relX * maxTilt;
-      const tiltX = -relY * maxTilt;
-      // Non applicare transizione durante il movimento per evitare tremolii
-      cardFront.style.transition = 'none';
-      cardFront.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+    // Anima fluentemente il tilt della card
+    function animateTilt() {
+      tiltX += (targetTiltX - tiltX) * 0.08;
+      tiltY += (targetTiltY - tiltY) * 0.08;
+      // Applica solo se la card NON è girata e se il mouse NON è sulla card
+      if (!isFlipped && !isMouseOnCard) {
+        cardWrapper.style.transition = 'none';
+        cardWrapper.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+        // Mantieni il flip se è attivo
+        if (isFlipped) {
+          cardWrapper.style.transform += ` rotateY(180deg)`;
+        }
+      }
+      requestAnimationFrame(animateTilt);
     }
-    function resetTilt(){
-      if(!cardFront) return;
-      // Transizione fluida solo per il reset
-      cardFront.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
-      cardFront.style.transform = 'rotateX(0deg) rotateY(0deg)';
-    }
-    if(cardFront){
-      cardFront.addEventListener('mouseenter', () => {});
-      cardFront.addEventListener('mouseleave', () => { resetTilt(); });
-      cardFront.addEventListener('mousemove', (e) => { if(!isFlipped) handleTilt(e); });
-      cardFront.addEventListener('touchstart', (e) => { if(!isFlipped) handleTilt(e); });
-      cardFront.addEventListener('touchmove', (e) => { e.preventDefault(); if(!isFlipped) handleTilt(e); });
-      cardFront.addEventListener('touchend', () => { resetTilt(); });
-    }
+
+    let isMouseOnCard = false;
+
+    cardWrapper.addEventListener('mouseenter', () => {
+      isMouseOnCard = true;
+    });
+    cardWrapper.addEventListener('mouseleave', () => {
+      isMouseOnCard = false;
+      // Reset dolce
+      cardWrapper.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)';
+      if (!isFlipped) {
+        cardWrapper.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      } else {
+        cardWrapper.style.transform = 'rotateY(180deg)';
+      }
+      tiltX = 0; tiltY = 0;
+      targetTiltX = 0; targetTiltY = 0;
+    });
+
+    animateTilt();
 
     // ----- USERNAME TYPING -----
     const usernameTexts = ["𝔢𝔵𝔬𝔱𝔦𝔠"];
@@ -672,7 +694,6 @@
               lastSeen.textContent = 'Last seen: just now';
             }
           }
-          // Aggiorna Spotify e Game
           updateSpotifyGame(data.data);
         } else { setFallbackStatus(); }
       } catch(err){ setFallbackStatus(); }
