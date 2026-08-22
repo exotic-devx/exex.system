@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exotic Profile</title>
+    <title>𝔢𝔵𝔬𝔱𝔦𝔠</title>
+    <link rel="icon" type="image/jpg" href="assets/icony.jpg">
     <style>
         * {
             margin: 0;
@@ -39,7 +40,7 @@
             font-family: 'Courier New', monospace;
         }
 
-        /* VIDEO SFONDO - nascosto all'inizio */
+        /* VIDEO SFONDO - leggermente opaco */
         #background {
             position: fixed;
             top: 50%;
@@ -59,7 +60,7 @@
         }
 
         #background.visible {
-            opacity: 1;
+            opacity: 0.7;
         }
 
         .glitch-overlay {
@@ -88,7 +89,7 @@
             display: none !important;
         }
 
-        /* PANNELLO PRINCIPALE - con effetto 3D dinamico */
+        /* PANNELLO PRINCIPALE - con effetto 3D dinamico più pronunciato */
         #profile-block {
             position: fixed;
             top: 50%;
@@ -109,15 +110,16 @@
             pointer-events: auto;
             opacity: 0;
             transform-style: preserve-3d;
-            transition: transform 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: transform 0.08s cubic-bezier(0.2, 0.1, 0.2, 1);
             will-change: transform;
-            perspective: 800px;
+            perspective: 600px;
         }
 
-        /* USERNAME - effetto tremore + più grande */
+        /* USERNAME - effetto typing e deleting */
         .username-section {
             text-align: center;
             margin-bottom: 2px;
+            min-height: 60px;
         }
 
         @font-face {
@@ -136,67 +138,21 @@
             filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
             min-height: 56px;
             display: inline-block;
-            animation: tremor 0.08s infinite alternate;
             user-select: none;
             -webkit-user-drag: none;
             user-drag: none;
         }
 
-        /* EFFETTO TREMORE */
-        @keyframes tremor {
-            0% {
-                transform: translate(0px, 0px) rotate(0deg);
-                text-shadow: 0 0 5px rgba(255,255,255,0.2);
-            }
-            10% {
-                transform: translate(-1px, 1px) rotate(-0.5deg);
-                text-shadow: 2px 0 red, -2px 0 cyan;
-            }
-            20% {
-                transform: translate(1px, -1px) rotate(0.5deg);
-                text-shadow: -2px 0 red, 2px 0 cyan;
-            }
-            30% {
-                transform: translate(-1px, 0px) rotate(-0.3deg);
-                text-shadow: 0 0 5px rgba(255,255,255,0.2);
-            }
-            40% {
-                transform: translate(1px, 1px) rotate(0.3deg);
-                text-shadow: 3px 0 magenta, -3px 0 lime;
-            }
-            50% {
-                transform: translate(-1px, -1px) rotate(-0.2deg);
-                text-shadow: -3px 0 magenta, 3px 0 lime;
-            }
-            60% {
-                transform: translate(0px, 0px) rotate(0deg);
-                text-shadow: 0 0 5px rgba(255,255,255,0.2);
-            }
-            70% {
-                transform: translate(1px, -1px) rotate(0.4deg);
-                text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff;
-            }
-            80% {
-                transform: translate(-1px, 1px) rotate(-0.4deg);
-                text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff;
-            }
-            90% {
-                transform: translate(0px, 0px) rotate(0deg);
-                text-shadow: 0 0 5px rgba(255,255,255,0.2);
-            }
-            100% {
-                transform: translate(0px, 0px) rotate(0deg);
-                text-shadow: 0 0 5px rgba(255,255,255,0.2);
-            }
-        }
-
-        /* BADGE - senza glow, solo hover normale */
+        /* BADGE - tutti allineati al centro senza andare a capo */
         .badge-section {
             display: flex;
             justify-content: center;
+            align-items: center;
             gap: 10px;
             margin-bottom: 12px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 4px 0;
         }
 
         .badge-container {
@@ -204,6 +160,7 @@
             display: inline-block;
             width: 30px;
             height: 30px;
+            flex-shrink: 0;
         }
 
         .badge {
@@ -678,7 +635,7 @@
     <div id="profile-block">
         <!-- USERNAME -->
         <div class="username-section">
-            <div id="profile-username">𝖊𝖝𝖔𝖙𝖎𝖈</div>
+            <div id="profile-username"></div>
         </div>
 
         <!-- BADGE -->
@@ -694,6 +651,26 @@
             <div class="badge-container">
                 <img src="assets/verified.gif" alt="Verified" class="badge">
                 <span class="tooltip">Verified</span>
+            </div>
+            <div class="badge-container">
+                <img src="assets/nothing.gif" alt="Nothing" class="badge">
+                <span class="tooltip">Nothing</span>
+            </div>
+            <div class="badge-container">
+                <img src="assets/meow.gif" alt="Meow" class="badge">
+                <span class="tooltip">Meow</span>
+            </div>
+            <div class="badge-container">
+                <img src="assets/knife.webp" alt="Knife" class="badge">
+                <span class="tooltip">Knife</span>
+            </div>
+            <div class="badge-container">
+                <img src="assets/what.gif" alt="What" class="badge">
+                <span class="tooltip">What</span>
+            </div>
+            <div class="badge-container">
+                <img src="assets/dragon.gif" alt="Dragon" class="badge">
+                <span class="tooltip">Dragon</span>
             </div>
         </div>
 
@@ -748,6 +725,7 @@
                 const startScreen = document.getElementById('start-screen');
                 const startText = document.getElementById('start-text');
                 const profileBlock = document.getElementById('profile-block');
+                const profileUsername = document.getElementById('profile-username');
                 const profileBio = document.getElementById('profile-bio');
                 const backgroundVideo = document.getElementById('background');
                 const backgroundMusic = document.getElementById('background-music');
@@ -780,7 +758,7 @@
                     });
                 }
 
-                // EFFETTO 3D DINAMICO PER IL PANNELLO PRINCIPALE
+                // EFFETTO 3D DINAMICO PER IL PANNELLO PRINCIPALE - più pronunciato
                 function handleTilt(e) {
                     if (!profileBlock || profileBlock.style.opacity !== '1') return;
                     
@@ -800,17 +778,18 @@
                     const relX = Math.max(-1, Math.min(1, (clientX - centerX) / (rect.width / 2)));
                     const relY = Math.max(-1, Math.min(1, (clientY - centerY) / (rect.height / 2)));
 
-                    const maxTilt = 12;
+                    // Massima inclinazione aumentata a 18 gradi per più movimento
+                    const maxTilt = 18;
                     const tiltY = relX * maxTilt;
                     const tiltX = -relY * maxTilt;
 
-                    profileBlock.style.transition = 'transform 0.08s cubic-bezier(0.2, 0.1, 0.2, 1)';
+                    profileBlock.style.transition = 'transform 0.06s cubic-bezier(0.15, 0.1, 0.15, 1)';
                     profileBlock.style.transform = `translate(-50%, -50%) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
                 }
 
                 function resetTilt() {
                     if (!profileBlock) return;
-                    profileBlock.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+                    profileBlock.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)';
                     profileBlock.style.transform = 'translate(-50%, -50%) rotateX(0deg) rotateY(0deg)';
                 }
 
@@ -910,6 +889,7 @@
                             }
                         }
                     );
+                    typeWriterUsername();
                     typeWriterBio();
                     fetchDiscordStatus();
                 }
@@ -919,6 +899,42 @@
                     e.preventDefault();
                     startApp();
                 });
+
+                // USERNAME TYPING E DELETING
+                const usernameTexts = ["𝔢𝔵𝔬𝔱𝔦𝔠"];
+                let usernameIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                let usernameCursorVisible = true;
+
+                function typeWriterUsername() {
+                    const currentText = usernameTexts[usernameIndex];
+                    
+                    if (!isDeleting && charIndex <= currentText.length) {
+                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ? '|' : ' ');
+                        charIndex++;
+                        setTimeout(typeWriterUsername, isDeleting ? 80 : 150);
+                    } else if (isDeleting && charIndex >= 0) {
+                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ? '|' : ' ');
+                        charIndex--;
+                        setTimeout(typeWriterUsername, 60);
+                    } else if (!isDeleting && charIndex > currentText.length) {
+                        isDeleting = true;
+                        setTimeout(typeWriterUsername, 2000);
+                    } else if (isDeleting && charIndex < 0) {
+                        isDeleting = false;
+                        usernameIndex = (usernameIndex + 1) % usernameTexts.length;
+                        setTimeout(typeWriterUsername, 500);
+                    }
+                }
+
+                setInterval(() => {
+                    usernameCursorVisible = !usernameCursorVisible;
+                    const currentText = usernameTexts[usernameIndex];
+                    if (charIndex >= 0 && charIndex <= currentText.length) {
+                        profileUsername.textContent = currentText.substring(0, charIndex) + (usernameCursorVisible ? '|' : ' ');
+                    }
+                }, 500);
 
                 // BIO TYPING
                 const bioMessages = [
