@@ -109,6 +109,18 @@
     position:fixed; inset:0; z-index:2; pointer-events:none;
   }
 
+  /* ---- FLOATING QUOTES ---- */
+  #quotes-layer{
+    position:fixed; inset:0; z-index:3; pointer-events:none; overflow:hidden;
+  }
+  .floating-quote{
+    position:absolute; max-width:260px; font-family:var(--font-ui); font-size:12px;
+    font-style:italic; color:rgba(255,255,255,0.55); letter-spacing:.4px; line-height:1.5;
+    text-align:center; opacity:0; transition:opacity 2.2s ease;
+    text-shadow:0 0 12px rgba(0,0,0,.8);
+  }
+  .floating-quote.visible{ opacity:1; }
+
   .stage{
     position:fixed; inset:0; z-index:20; display:flex; align-items:center; justify-content:center;
     perspective:1200px;
@@ -118,7 +130,7 @@
     pointer-events:auto;
   }
   .card-wrapper{
-    position:relative; width:480px; max-width:92vw; min-height:480px;
+    position:relative; width:480px; max-width:92vw; min-height:520px;
     transform-style:preserve-3d; transition:transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
     opacity:0;
     transform:rotateX(0deg) rotateY(0deg);
@@ -130,7 +142,7 @@
   .card-face{
     position:absolute; inset:0; backface-visibility:hidden;
     border-radius:14px;
-    min-height:480px;
+    min-height:520px;
   }
   .card-front{
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
@@ -142,10 +154,19 @@
     transform:rotateY(180deg);
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
     border:1px solid var(--hair); padding:26px 26px 54px;
-    display:flex; flex-direction:column; gap:18px;
+    display:flex; flex-direction:column; gap:16px;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
     overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,.4) transparent;
   }
+  .card-back::-webkit-scrollbar{ width:5px; }
+  .card-back::-webkit-scrollbar-track{ background:transparent; }
+  .card-back::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.35); border-radius:10px;
+    box-shadow:0 0 8px rgba(255,255,255,.6);
+  }
+  .card-back::-webkit-scrollbar-thumb:hover{ background:rgba(255,255,255,.6); }
 
   /* ---- flip trigger panel ---- */
   .flip-panel{
@@ -153,50 +174,86 @@
     background:rgba(255,255,255,0.04); border:1px solid var(--hair);
     border-radius:20px; padding:8px 20px; z-index:10;
     pointer-events:auto; cursor:none;
-    transition:background .3s ease, border-color .3s ease;
+    transition:background .3s ease, border-color .3s ease, transform .15s ease, box-shadow .3s ease;
     backdrop-filter:blur(4px);
     -webkit-backdrop-filter:blur(4px);
     text-align:center;
+    animation:panelBreathe 4.5s ease-in-out infinite;
   }
   .flip-panel:hover{
     background:rgba(255,255,255,0.08);
-    border-color:rgba(255,255,255,0.2);
+    border-color:rgba(255,255,255,0.3);
+    box-shadow:0 0 24px rgba(255,255,255,.15);
+    animation-play-state:paused;
   }
+  .flip-panel:active{ transform:scale(.97); }
   .flip-panel .flip-text{
     font-size:10px; letter-spacing:2px; color:var(--ash);
     text-transform:uppercase; transition:color .3s ease;
   }
   .flip-panel:hover .flip-text{ color:var(--mist); }
+  .flip-panel .flip-count{
+    font-size:9px; letter-spacing:1.5px; color:rgba(255,255,255,.22); margin-top:3px;
+    text-transform:uppercase;
+  }
 
   /* ---- FRONT ---- */
   .username-section{ text-align:center; min-height:52px; position:relative; }
   #profile-username{
     font-family:var(--font-display); font-size:38px; font-weight:400; letter-spacing:3px;
-    color:#fff; filter:drop-shadow(0 0 18px rgba(255,255,255,.35)); display:inline-block; min-height:48px;
+    color:#fff; display:inline-block; min-height:48px;
+    animation:usernameGlow 3.2s ease-in-out infinite;
+  }
+  @keyframes usernameGlow{
+    0%,100%{ filter:drop-shadow(0 0 14px rgba(255,255,255,.3)); }
+    50%{ filter:drop-shadow(0 0 26px rgba(255,255,255,.6)); }
   }
   .rule{
-    width:48px; height:1px; margin:22px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+    width:48px; height:1px; margin:22px auto;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+    background-size:200% 100%;
+    animation:ruleShimmer 3.5s ease-in-out infinite;
+  }
+  @keyframes ruleShimmer{
+    0%{ background-position:200% 0; }
+    100%{ background-position:-200% 0; }
   }
   .badge-section{
     display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap;
     margin-bottom:24px; padding:2px 0;
   }
-  .badge-container{ position:relative; width:30px; height:30px; }
+  .badge-container{
+    position:relative; width:30px; height:30px;
+    opacity:0; transform:translateY(10px) scale(.7);
+  }
+  .badge-section.in .badge-container{
+    animation:badgePopIn .5s cubic-bezier(.34,1.56,.64,1) forwards, badgeFloat 3.6s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 70ms), calc(.5s + var(--i, 0) * 70ms);
+  }
+  @keyframes badgePopIn{
+    0%{ opacity:0; transform:translateY(10px) scale(.7); }
+    100%{ opacity:.85; transform:translateY(0) scale(1); }
+  }
+  @keyframes badgeFloat{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-3px); }
+  }
   .badge{
     width:30px; height:30px; display:block; border-radius:4px; object-fit:contain;
     filter:grayscale(.55) brightness(1.05); opacity:.85;
     transition:transform .3s cubic-bezier(.25,.1,.25,1), filter .3s ease, opacity .3s ease;
   }
-  .badge:hover{ transform:translateY(-3px) scale(1.12); filter:grayscale(0) brightness(1.15) drop-shadow(0 0 10px rgba(255,255,255,.5)); opacity:1; }
+  .badge:hover{ transform:translateY(-3px) scale(1.18) rotate(-4deg); filter:grayscale(0) brightness(1.15) drop-shadow(0 0 12px rgba(255,255,255,.6)); opacity:1; }
   .tooltip{
     visibility:hidden; opacity:0; background:rgba(0,0,0,.6); backdrop-filter:blur(14px);
     color:#fff; text-align:center; border-radius:4px; padding:5px 10px; position:absolute;
     z-index:9999; bottom:calc(100% + 10px); left:50%;
-    transform:translateX(-50%) translateY(4px); transition:.22s cubic-bezier(.25,.1,.25,1);
+    transform:translateX(-50%) translateY(8px) scale(.85); transition:.25s cubic-bezier(.34,1.56,.64,1);
     font-size:10px; letter-spacing:1px; white-space:nowrap; border:1px solid var(--hair);
     pointer-events:none; text-transform:uppercase;
+    box-shadow:0 0 14px rgba(255,255,255,.15);
   }
-  .badge-container:hover .tooltip{ visibility:visible; opacity:1; transform:translateX(-50%) translateY(0); }
+  .badge-container:hover .tooltip{ visibility:visible; opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
 
   #profile-bio{
     color:var(--mist); font-size:15px; line-height:1.6; min-height:2em; text-align:center;
@@ -225,15 +282,28 @@
     box-shadow:0 0 30px rgba(255,255,255,.08);
   }
   .profile-container{ position:relative; width:52px; height:52px; flex-shrink:0; }
-  .profile-picture{
-    width:52px; height:52px; border-radius:50%; object-fit:cover; display:block;
-    border:1px solid rgba(255,255,255,.18); filter:grayscale(.2);
+  .profile-container::before{
+    content:''; position:absolute; inset:-3px; border-radius:50%;
+    background:conic-gradient(rgba(255,255,255,0), rgba(255,255,255,.6), rgba(255,255,255,0));
+    animation:ringSpin 3.5s linear infinite; opacity:.5;
   }
+  @keyframes ringSpin{ 100%{ transform:rotate(360deg); } }
+  .profile-picture{
+    position:relative; width:52px; height:52px; border-radius:50%; object-fit:cover; display:block;
+    border:1px solid rgba(255,255,255,.18); filter:grayscale(.2);
+    transition:transform .3s ease;
+  }
+  .profile-main:hover .profile-picture{ transform:scale(1.06); }
   .status-ring{
     position:absolute; bottom:-1px; right:-1px; width:14px; height:14px; border-radius:50%;
-    border:2px solid #000; background:#3a3a3a; transition:all .3s ease;
+    border:2px solid #000; background:#3a3a3a; transition:all .3s ease; z-index:2;
   }
-  .status-ring.online{ background:#fff; box-shadow:0 0 10px rgba(255,255,255,.9); }
+  .status-ring.online{ background:#fff; box-shadow:0 0 10px rgba(255,255,255,.9); animation:statusPing 1.8s ease-out infinite; }
+  @keyframes statusPing{
+    0%{ box-shadow:0 0 0 0 rgba(255,255,255,.6), 0 0 10px rgba(255,255,255,.9); }
+    70%{ box-shadow:0 0 0 7px rgba(255,255,255,0), 0 0 10px rgba(255,255,255,.9); }
+    100%{ box-shadow:0 0 0 0 rgba(255,255,255,0), 0 0 10px rgba(255,255,255,.9); }
+  }
   .status-ring.idle{ background:#cfcfcf; box-shadow:0 0 8px rgba(255,255,255,.5); }
   .status-ring.dnd{ background:#8a8a8a; box-shadow:0 0 6px rgba(255,255,255,.3); }
   .status-ring.offline{ background:#3a3a3a; box-shadow:none; }
@@ -248,14 +318,22 @@
     display:flex; justify-content:center; gap:24px; align-items:center; padding:4px 0 0;
     margin-top:4px;
   }
-  .social-link-tooltip{ position:relative; display:inline-block; }
+  .social-link-tooltip{
+    position:relative; display:inline-block;
+    opacity:0; transform:translateY(8px) scale(.8);
+  }
+  .social-links.in .social-link-tooltip{
+    animation:badgePopIn .5s cubic-bezier(.34,1.56,.64,1) forwards;
+    animation-delay: calc(var(--j, 0) * 90ms);
+  }
   .social-icon{
     width:30px; height:30px; opacity:.7; filter:grayscale(1) brightness(2) drop-shadow(0 0 0 rgba(255,255,255,0));
-    transition:transform .3s ease, filter .3s ease, opacity .3s ease;
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1), filter .3s ease, opacity .3s ease;
   }
   .social-link-tooltip:hover .social-icon{
-    opacity:1; transform:translateY(-3px); filter:grayscale(1) brightness(2) drop-shadow(0 0 14px rgba(255,255,255,.7));
+    opacity:1; transform:translateY(-4px) scale(1.1) rotate(-6deg); filter:grayscale(1) brightness(2) drop-shadow(0 0 16px rgba(255,255,255,.8));
   }
+  .social-link-tooltip:active .social-icon{ transform:translateY(-1px) scale(.94); }
   .social-link-tooltip .tooltip-text{
     visibility:hidden; opacity:0; background:rgba(0,0,0,.6); backdrop-filter:blur(14px);
     color:#fff; text-align:center; border-radius:4px; padding:5px 10px; position:absolute;
@@ -274,14 +352,25 @@
     width:36px; height:1px; margin:4px auto; background:linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
   }
 
-  .clock-panel, .spotify-panel, .game-panel{
+  .clock-panel, .spotify-panel, .weather-panel, .tz-panel{
     background:rgba(255,255,255,.03); border:1px solid var(--hair); border-radius:10px;
     display:flex; align-items:center; gap:14px;
-    transition:border-color .3s ease, box-shadow .3s ease, background .3s ease;
+    transition:border-color .3s ease, box-shadow .3s ease, background .3s ease, transform .25s ease;
+    animation:panelBreathe 5s ease-in-out infinite;
   }
-  .clock-panel:hover, .spotify-panel:hover, .game-panel:hover{
-    border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.045);
-    box-shadow:0 0 24px rgba(255,255,255,.06);
+  .clock-panel:hover, .spotify-panel:hover, .weather-panel:hover, .tz-panel:hover{
+    border-color:rgba(255,255,255,.3); background:rgba(255,255,255,.06);
+    box-shadow:0 0 30px rgba(255,255,255,.14);
+    transform:translateY(-2px);
+    animation-play-state:paused;
+  }
+  .tz-panel{ animation-delay:.4s; }
+  .weather-panel{ animation-delay:.8s; }
+  .spotify-panel{ animation-delay:1.2s; }
+
+  @keyframes panelBreathe{
+    0%,100%{ box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 0 14px rgba(255,255,255,.04); }
+    50%{ box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 26px rgba(255,255,255,.10); }
   }
 
   .clock-panel{ padding:14px 18px; }
@@ -292,16 +381,34 @@
   .clock-panel .clock-location{ font-size:9.5px; color:var(--ash); letter-spacing:1px; margin-top:5px; display:flex; align-items:center; gap:5px; }
   .clock-panel .clock-location svg{ width:11px; height:11px; stroke:var(--ash); fill:none; }
 
-  .spotify-panel, .game-panel{ padding:12px 16px; }
-  .spotify-panel .cover, .game-panel .cover{
+  /* ---- TIMEZONE PANEL ---- */
+  .tz-panel{ padding:12px 16px; flex-direction:column; align-items:flex-start; gap:4px; }
+  .tz-panel .tz-label{ font-size:9px; letter-spacing:2px; color:var(--ash); text-transform:uppercase; }
+  .tz-panel .tz-message{ font-size:11.5px; color:var(--mist); line-height:1.5; letter-spacing:.2px; transition:opacity .5s ease; }
+
+  /* ---- WEATHER PANEL ---- */
+  .weather-panel{ padding:12px 16px; }
+  .weather-panel .weather-icon{
+    font-size:34px; line-height:1; flex-shrink:0; width:52px; text-align:center;
+    animation:badgeFloat 3s ease-in-out infinite;
+    filter:drop-shadow(0 0 8px rgba(255,255,255,.25));
+  }
+  .weather-panel .info{ flex:1; }
+  .weather-panel .weather-temp{ font-size:20px; font-weight:300; letter-spacing:1px; font-family:var(--font-display); color:#fff; }
+  .weather-panel .weather-desc{ font-size:10px; color:var(--ash); letter-spacing:.4px; margin-top:2px; text-transform:capitalize; }
+
+  .spotify-panel{ padding:12px 16px; }
+  .spotify-panel .cover{
     width:52px; height:52px; border-radius:8px; object-fit:cover; flex-shrink:0;
     background:rgba(255,255,255,.05); border:1px solid var(--hair);
+    transition:transform .3s ease;
   }
-  .spotify-panel .info, .game-panel .info{ flex:1; overflow:hidden; }
-  .spotify-panel .track-name, .game-panel .game-name{
+  .spotify-panel:hover .cover{ transform:scale(1.05) rotate(-1deg); }
+  .spotify-panel .info{ flex:1; overflow:hidden; }
+  .spotify-panel .track-name{
     font-size:13px; font-weight:500; color:#fff; letter-spacing:.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
-  .spotify-panel .artist-name, .game-panel .game-detail{
+  .spotify-panel .artist-name{
     font-size:10px; color:var(--ash); letter-spacing:.3px; margin-top:2px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
@@ -312,9 +419,11 @@
     flex:1; height:3px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden;
   }
   .spotify-panel .progress-bar .progress-fill{
-    height:100%; width:0%; background:linear-gradient(90deg, #4fc3f7, #fff);
+    height:100%; width:0%; background:linear-gradient(90deg, #4fc3f7, #fff, #4fc3f7);
+    background-size:200% 100%;
     border-radius:2px; transition:width .3s ease;
     box-shadow:0 0 12px rgba(79,195,247,0.3);
+    animation:shimmer-text 2.4s ease-in-out infinite;
   }
   .spotify-panel .progress-time{
     font-size:8.5px; color:var(--ash); font-family:var(--font-ui); min-width:32px; text-align:center;
@@ -325,7 +434,7 @@
   @media (max-width:580px){
     .card-wrapper{ min-height:auto; width:440px; }
     .card-front{ padding:20px 16px 50px; min-height:auto; }
-    .card-back{ padding:18px 14px 50px; min-height:auto; gap:12px; }
+    .card-back{ padding:18px 14px 50px; min-height:auto; gap:10px; }
     #profile-username{ font-size:30px; min-height:40px; }
     .rule{ margin:16px auto; }
     .badge-section{ margin-bottom:16px; }
@@ -338,11 +447,14 @@
     .clock-panel{ padding:10px 12px; gap:10px; }
     .clock-panel .clock-time{ font-size:20px; }
     .clock-panel .clock-svg{ width:40px; height:40px; }
-    .spotify-panel .cover, .game-panel .cover{ width:38px; height:38px; }
-    .spotify-panel, .game-panel{ padding:8px 10px; gap:10px; }
-    .spotify-panel .track-name, .game-panel .game-name{ font-size:11.5px; }
+    .spotify-panel .cover{ width:38px; height:38px; }
+    .spotify-panel{ padding:8px 10px; gap:10px; }
+    .spotify-panel .track-name{ font-size:11.5px; }
     .flip-panel{ padding:6px 14px; bottom:10px; left:10px; right:10px; }
     .flip-panel .flip-text{ font-size:9px; }
+    .floating-quote{ font-size:11px; max-width:200px; }
+    .weather-panel .weather-icon{ font-size:28px; width:44px; }
+    .weather-panel .weather-temp{ font-size:17px; }
   }
 
   @media (max-width:400px){
@@ -374,6 +486,7 @@
 </div>
 
 <canvas id="particles-canvas"></canvas>
+<div id="quotes-layer"></div>
 
 <div class="stage">
   <div class="card-wrapper" id="cardWrapper">
@@ -385,14 +498,14 @@
       </div>
       <div class="rule"></div>
       <div class="badge-section">
-        <div class="badge-container"><img src="assets/owner.gif" alt="Owner" class="badge"><span class="tooltip">ball</span></div>
-        <div class="badge-container"><img src="assets/developer.gif" alt="Developer" class="badge"><span class="tooltip">spid</span></div>
-        <div class="badge-container"><img src="assets/verified.gif" alt="Verified" class="badge"><span class="tooltip">CD</span></div>
-        <div class="badge-container"><img src="assets/nothing.gif" alt="Nothing" class="badge"><span class="tooltip">Nothing</span></div>
-        <div class="badge-container"><img src="assets/meow.gif" alt="Meow" class="badge"><span class="tooltip">Meow</span></div>
-        <div class="badge-container"><img src="assets/knife.webp" alt="Knife" class="badge"><span class="tooltip">Knife</span></div>
-        <div class="badge-container"><img src="assets/what.gif" alt="What" class="badge"><span class="tooltip">What</span></div>
-        <div class="badge-container"><img src="assets/dragon.gif" alt="Dragon" class="badge"><span class="tooltip">Dragon</span></div>
+        <div class="badge-container" style="--i:0"><img src="assets/owner.gif" alt="Owner" class="badge"><span class="tooltip">ball</span></div>
+        <div class="badge-container" style="--i:1"><img src="assets/developer.gif" alt="Developer" class="badge"><span class="tooltip">spid</span></div>
+        <div class="badge-container" style="--i:2"><img src="assets/verified.gif" alt="Verified" class="badge"><span class="tooltip">CD</span></div>
+        <div class="badge-container" style="--i:3"><img src="assets/nothing.gif" alt="Nothing" class="badge"><span class="tooltip">Nothing</span></div>
+        <div class="badge-container" style="--i:4"><img src="assets/meow.gif" alt="Meow" class="badge"><span class="tooltip">Meow</span></div>
+        <div class="badge-container" style="--i:5"><img src="assets/knife.webp" alt="Knife" class="badge"><span class="tooltip">Knife</span></div>
+        <div class="badge-container" style="--i:6"><img src="assets/what.gif" alt="What" class="badge"><span class="tooltip">What</span></div>
+        <div class="badge-container" style="--i:7"><img src="assets/dragon.gif" alt="Dragon" class="badge"><span class="tooltip">Dragon</span></div>
       </div>
       <div id="profile-bio"></div>
       <div class="profile-main">
@@ -406,18 +519,19 @@
         </div>
       </div>
       <div class="social-links">
-        <a href="https://open.spotify.com/user/lopp05qs775yh0frde45qcf9c?si=84c4e551e4c24951" target="_blank" class="social-link-tooltip">
+        <a href="https://open.spotify.com/user/lopp05qs775yh0frde45qcf9c?si=84c4e551e4c24951" target="_blank" class="social-link-tooltip" style="--j:0">
           <img src="assets/spotify.png" alt="Spotify" class="social-icon"><span class="tooltip-text">Spotify</span>
         </a>
-        <a href="https://t.me/javph" target="_blank" class="social-link-tooltip">
+        <a href="https://t.me/javph" target="_blank" class="social-link-tooltip" style="--j:1">
           <img src="assets/telegram.png" alt="Telegram" class="social-icon"><span class="tooltip-text">Telegram</span>
         </a>
-        <a href="https://discord.com/users/1019329014369882123" target="_blank" class="social-link-tooltip">
+        <a href="https://discord.com/users/1019329014369882123" target="_blank" class="social-link-tooltip" style="--j:2">
           <img src="assets/discord.png" alt="Discord" class="social-icon"><span class="tooltip-text">Discord</span>
         </a>
       </div>
       <div class="flip-panel" id="flipFrontPanel">
         <span class="flip-text">↻ click to flip — or press SPACE</span>
+        <div class="flip-count hidden" id="flipCount"></div>
       </div>
     </div>
 
@@ -446,6 +560,21 @@
         </div>
       </div>
 
+      <!-- TIMEZONE COMPARISON -->
+      <div class="tz-panel" id="tzPanel">
+        <span class="tz-label">Timezone check</span>
+        <span class="tz-message" id="tzMessage">—</span>
+      </div>
+
+      <!-- WEATHER -->
+      <div class="weather-panel" id="weatherPanel">
+        <div class="weather-icon" id="weatherIcon">—</div>
+        <div class="info">
+          <div class="weather-temp" id="weatherTemp">— °C</div>
+          <div class="weather-desc" id="weatherDesc">Loading weather…</div>
+        </div>
+      </div>
+
       <!-- SPOTIFY -->
       <div class="spotify-panel" id="spotifyPanel">
         <img class="cover" id="spotifyCover" src="assets/gift.png" alt="cover">
@@ -457,15 +586,6 @@
             <div class="progress-bar"><div class="progress-fill" id="spotifyProgress" style="width:0%"></div></div>
             <span class="progress-time" id="progressTotal">0:00</span>
           </div>
-        </div>
-      </div>
-
-      <!-- GAME -->
-      <div class="game-panel" id="gamePanel">
-        <img class="cover" id="gameCover" src="assets/gift.png" alt="game cover">
-        <div class="info">
-          <div class="game-name" id="gameName">No game running</div>
-          <div class="game-detail" id="gameDetail">—</div>
         </div>
       </div>
 
@@ -589,12 +709,26 @@
       typeWriterUsername();
       typeWriterBio();
       fetchDiscordStatus();
+      startFloatingQuotes();
+      const badgeSection = document.querySelector('.badge-section');
+      if(badgeSection) setTimeout(()=> badgeSection.classList.add('in'), 400);
+      const socialLinksEl = document.querySelector('.social-links');
+      if(socialLinksEl) setTimeout(()=> socialLinksEl.classList.add('in'), 700);
     }
     startScreen.addEventListener('click', startApp);
     startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
 
     // ----- FLIP CARD (click su pannello, click sulla card, o tasto SPACE) -----
     let flipAnimating = false;
+    let flipCount = 0;
+    const flipCountEl = document.getElementById('flipCount');
+    const flipJokes = [
+      "ok ok you get how this works 😂",
+      "still flipping, huh?",
+      "the card isn't getting any more interesting",
+      "at this point you're just exercising your finger",
+      "achievement unlocked: professional card flipper"
+    ];
     function toggleFlip(e) {
       if(e) e.stopPropagation();
       isFlipped = !isFlipped;
@@ -607,6 +741,13 @@
       }
       cardWrapper.style.transform = transform;
       setTimeout(() => { flipAnimating = false; }, 820);
+
+      flipCount++;
+      if(flipCount >= 5 && flipCountEl){
+        flipCountEl.classList.remove('hidden');
+        const jokeIndex = Math.min(flipJokes.length - 1, Math.floor((flipCount - 5) / 5));
+        flipCountEl.textContent = `flips: ${flipCount} — ${flipJokes[jokeIndex]}`;
+      }
     }
 
     document.getElementById('flipFrontPanel').addEventListener('click', toggleFlip);
@@ -805,39 +946,6 @@
         progressCurrent.textContent = '0:00';
         progressTotal.textContent = '0:00';
       }
-
-      // Game
-      const gameActivity = activities.find(a => a.type === 0);
-      const gameCover = document.getElementById('gameCover');
-      const gameName = document.getElementById('gameName');
-      const gameDetail = document.getElementById('gameDetail');
-
-      if(gameActivity && gameActivity.name){
-        if(gameActivity.assets && gameActivity.assets.large_image) {
-          gameCover.src = `https://cdn.discordapp.com/app-assets/${gameActivity.application_id}/${gameActivity.assets.large_image}.png`;
-        } else {
-          gameCover.src = 'assets/gift.png';
-        }
-        gameName.textContent = gameActivity.name;
-        let details = '';
-        if(gameActivity.details) details += gameActivity.details + ' ';
-        if(gameActivity.state) details += gameActivity.state;
-        gameDetail.textContent = details || 'Playing now';
-        if(gameActivity.timestamps && gameActivity.timestamps.start){
-          const elapsed = Math.floor((Date.now() - gameActivity.timestamps.start) / 60000);
-          const hours = Math.floor(elapsed / 60);
-          const minutes = Math.floor(elapsed % 60);
-          if(hours > 0) {
-            gameDetail.textContent += ` (${hours}:${minutes.toString().padStart(2, '0')}h)`;
-          } else {
-            gameDetail.textContent += ` (${minutes}m)`;
-          }
-        }
-      } else {
-        gameCover.src = 'assets/gift.png';
-        gameName.textContent = 'No game running';
-        gameDetail.textContent = '—';
-      }
     }
 
     function formatTime(seconds){
@@ -847,6 +955,147 @@
     }
 
     setInterval(fetchDiscordStatus, 30000);
+
+    // ================= TIMEZONE COMPARISON =================
+    const tzMessageEl = document.getElementById('tzMessage');
+    function updateTimezoneWidget(){
+      if(!tzMessageEl) return;
+      const now = new Date();
+      const ownerTime = now.toLocaleTimeString('en-GB', { timeZone:'Europe/Rome', hour:'2-digit', minute:'2-digit' });
+      const visitorHour = now.getHours(); // local browser hour = visitor's own hour
+      let msg;
+      if(visitorHour >= 0 && visitorHour < 6){
+        msg = `It's ${ownerTime} here — you're probably asleep right now 😴`;
+      } else if(visitorHour >= 6 && visitorHour < 9){
+        msg = `It's ${ownerTime} here — you might just be waking up`;
+      } else if(visitorHour >= 9 && visitorHour < 12){
+        msg = `It's ${ownerTime} here — hope your morning's going well`;
+      } else if(visitorHour >= 12 && visitorHour < 14){
+        msg = `It's ${ownerTime} here — lunch time for you too?`;
+      } else if(visitorHour >= 14 && visitorHour < 18){
+        msg = `It's ${ownerTime} here — same afternoon, different sky`;
+      } else if(visitorHour >= 18 && visitorHour < 22){
+        msg = `It's ${ownerTime} here — evening's settling in for you too`;
+      } else {
+        msg = `It's ${ownerTime} here — kind of late where you are, isn't it?`;
+      }
+      tzMessageEl.style.opacity = '0';
+      setTimeout(() => {
+        tzMessageEl.textContent = msg;
+        tzMessageEl.style.opacity = '1';
+      }, 250);
+    }
+    updateTimezoneWidget();
+    setInterval(updateTimezoneWidget, 60000);
+
+    // ================= WEATHER (Ponte San Pietro, BG) =================
+    const weatherIconEl = document.getElementById('weatherIcon');
+    const weatherTempEl = document.getElementById('weatherTemp');
+    const weatherDescEl = document.getElementById('weatherDesc');
+    const WEATHER_LAT = 45.6897;
+    const WEATHER_LON = 9.6134;
+
+    const weatherCodeMap = {
+      0:  ['☀️','Clear sky'],
+      1:  ['🌤️','Mostly clear'],
+      2:  ['⛅','Partly cloudy'],
+      3:  ['☁️','Overcast'],
+      45: ['🌫️','Foggy'],
+      48: ['🌫️','Icy fog'],
+      51: ['🌦️','Light drizzle'],
+      53: ['🌦️','Drizzle'],
+      55: ['🌦️','Dense drizzle'],
+      56: ['🌧️','Freezing drizzle'],
+      57: ['🌧️','Freezing drizzle'],
+      61: ['🌧️','Light rain'],
+      63: ['🌧️','Rain'],
+      65: ['🌧️','Heavy rain'],
+      66: ['🌧️','Freezing rain'],
+      67: ['🌧️','Freezing rain'],
+      71: ['🌨️','Light snow'],
+      73: ['🌨️','Snow'],
+      75: ['❄️','Heavy snow'],
+      77: ['❄️','Snow grains'],
+      80: ['🌦️','Rain showers'],
+      81: ['🌧️','Rain showers'],
+      82: ['⛈️','Violent showers'],
+      85: ['🌨️','Snow showers'],
+      86: ['❄️','Heavy snow showers'],
+      95: ['⛈️','Thunderstorm'],
+      96: ['⛈️','Thunderstorm w/ hail'],
+      99: ['⛈️','Severe thunderstorm']
+    };
+
+    async function fetchWeather(){
+      if(!weatherIconEl) return;
+      try{
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}&current_weather=true`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if(data && data.current_weather){
+          const temp = Math.round(data.current_weather.temperature);
+          const code = data.current_weather.weathercode;
+          const mapped = weatherCodeMap[code] || ['🌡️','Weather'];
+          weatherIconEl.textContent = mapped[0];
+          weatherTempEl.textContent = `${temp}°C`;
+          weatherDescEl.textContent = mapped[1];
+        } else {
+          weatherDescEl.textContent = 'Weather unavailable';
+        }
+      } catch(err){
+        weatherDescEl.textContent = 'Weather unavailable';
+      }
+    }
+    fetchWeather();
+    setInterval(fetchWeather, 15 * 60000);
+
+    // ================= FLOATING QUOTES ON BACKGROUND =================
+    const quotes = [
+      "Small steps still move you forward.",
+      "Discipline beats motivation.",
+      "Done is better than perfect.",
+      "Start before you're ready.",
+      "Consistency compounds.",
+      "You don't need permission to begin.",
+      "Focus on what you can control.",
+      "Progress, not perfection.",
+      "Comfort rarely builds anything.",
+      "The work speaks louder than the words.",
+      "Bad days are still data.",
+      "Show up. Especially when it's boring.",
+      "Momentum is built, not found.",
+      "Your future self is watching.",
+      "Quiet effort beats loud excuses."
+    ];
+    let quotesInterval = null;
+    function spawnQuote(){
+      const layer = document.getElementById('quotes-layer');
+      if(!layer) return;
+      const text = quotes[Math.floor(Math.random() * quotes.length)];
+      const el = document.createElement('div');
+      el.className = 'floating-quote';
+      el.textContent = text;
+
+      const margin = 0.12; // keep away from extreme edges
+      const left = margin + Math.random() * (1 - margin * 2);
+      const top = margin + Math.random() * (1 - margin * 2);
+      el.style.left = (left * 100) + 'vw';
+      el.style.top = (top * 100) + 'vh';
+      el.style.transform = 'translate(-50%, -50%)';
+
+      layer.appendChild(el);
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
+
+      setTimeout(() => {
+        el.classList.remove('visible');
+        setTimeout(() => el.remove(), 2200);
+      }, 5200);
+    }
+    function startFloatingQuotes(){
+      if(quotesInterval) return;
+      setTimeout(spawnQuote, 3000);
+      quotesInterval = setInterval(spawnQuote, 8000);
+    }
 
     // ================= BADGE DA JSON =================
     const DEFAULT_BADGES = [
@@ -945,7 +1194,7 @@
       observer.observe(startScreen, { attributes:true, attributeFilter:['class'] });
     })();
 
-    // ================= PARTICELLE AL PASSAGGIO DEL MOUSE =================
+    // ================= PARTICELLE AL PASSAGGIO DEL MOUSE (cursor trail) =================
     (function particles(){
       const canvas = document.getElementById('particles-canvas');
       if(!canvas) return;
@@ -960,8 +1209,6 @@
       resize();
       window.addEventListener('resize', resize);
 
-      const colors = ['255,255,255', '150,220,255', '200,180,255'];
-
       document.addEventListener('mousemove', (e) => {
         const now = Date.now();
         if(now - lastSpawn < 30) return;
@@ -971,10 +1218,9 @@
             x: e.clientX, y: e.clientY,
             vx: (Math.random() - 0.5) * 1.2,
             vy: (Math.random() - 0.5) * 1.2 - 0.3,
-            r: Math.random() * 2 + 0.8,
+            r: Math.random() * 2.4 + 1,
             life: 1,
-            decay: 0.012 + Math.random() * 0.015,
-            color: colors[Math.floor(Math.random() * colors.length)]
+            decay: 0.012 + Math.random() * 0.015
           });
         }
         if(particlesList.length > 160) particlesList.splice(0, particlesList.length - 160);
@@ -988,8 +1234,8 @@
           if(p.life <= 0){ particlesList.splice(i,1); continue; }
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${p.color},${(p.life*0.8).toFixed(3)})`;
-          ctx.shadowBlur = 8; ctx.shadowColor = `rgba(${p.color},0.6)`;
+          ctx.fillStyle = `rgba(255,255,255,${(p.life*0.9).toFixed(3)})`;
+          ctx.shadowBlur = 14; ctx.shadowColor = `rgba(255,255,255,0.9)`;
           ctx.fill();
         }
         requestAnimationFrame(draw);
