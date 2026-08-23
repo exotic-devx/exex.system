@@ -2,12 +2,13 @@
   "name": "exex-system",
   "version": "1.0.0",
   "private": true,
-  "description": "Backend minimo per il sito exotic: serve i file statici e registra le visite (IP) per la pagina /v.",
+  "description": "Personal profile page with live Discord status",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.19.2"
-  }
+  },
+  "type": "module"
 }
