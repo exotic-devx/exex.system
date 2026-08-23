@@ -66,7 +66,14 @@
     transform:translate(-50%, -50%) scale(1.05);
     will-change:transform;
   }
-  #background.visible{opacity:0.7;}
+  #background.visible{opacity:0.4;}
+
+  #background-wrapper::after{
+    content:'';
+    position:fixed; inset:0; z-index:2;
+    background:rgba(0,0,0,0.3);
+    pointer-events:none;
+  }
 
   .custom-cursor{
     position:fixed; width:40px; height:40px;
@@ -146,14 +153,14 @@
   }
   .card-front{
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); padding:30px 30px 54px;
+    border:1px solid var(--hair); padding:30px 30px 50px;
     display:flex; flex-direction:column;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
   }
   .card-back{
     transform:rotateY(180deg);
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); padding:26px 26px 54px;
+    border:1px solid var(--hair); padding:26px 26px 50px;
     display:flex; flex-direction:column; gap:16px;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
     overflow-y:auto;
@@ -314,9 +321,92 @@
   }
   .last-seen{ font-size:10px; color:var(--ash); margin-top:3px; text-align:left; letter-spacing:.5px; }
 
+  /* ---- CARD TICKER (2 crypto affiancate) ---- */
+  .card-ticker{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    min-height:60px;
+    margin-top:6px;
+    padding:8px 14px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--hair);
+    border-radius:10px;
+    opacity:0;
+    transition:opacity .5s ease;
+  }
+  .card-ticker.visible{ opacity:1; }
+  .card-ticker .ticker-item{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:rgba(255,255,255,0.02);
+    border-radius:8px;
+    padding:6px 10px;
+    border:1px solid rgba(255,255,255,0.04);
+    transition:border-color .3s ease;
+  }
+  .card-ticker .ticker-item:hover{
+    border-color:rgba(255,255,255,0.15);
+  }
+  .ticker-logo{
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    flex-shrink:0;
+    background:rgba(255,255,255,0.06);
+  }
+  .ticker-info{
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+    min-width:0;
+    flex:1;
+  }
+  .ticker-row{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .ticker-symbol{
+    font-family:var(--font-ui);
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:0.5px;
+    color:var(--mist);
+  }
+  .ticker-price{
+    font-family:var(--font-ui);
+    font-size:10px;
+    color:var(--paper);
+    letter-spacing:.2px;
+  }
+  .ticker-change{
+    font-size:9px;
+    letter-spacing:.2px;
+    font-weight:500;
+  }
+  .ticker-change.up{ color:#5fe0a5; }
+  .ticker-change.down{ color:#ff6b6b; }
+  .ticker-chart{
+    width:56px;
+    height:18px;
+    display:block;
+    flex-shrink:0;
+  }
+  .ticker-chart polyline{
+    fill:none;
+    stroke-width:1.4;
+  }
+  .ticker-chart.up polyline{ stroke:#5fe0a5; }
+  .ticker-chart.down polyline{ stroke:#ff6b6b; }
+
   .social-links{
     display:flex; justify-content:center; gap:24px; align-items:center; padding:4px 0 0;
-    margin-top:4px;
+    margin-top:12px;
   }
   .social-link-tooltip{
     position:relative; display:inline-block;
@@ -381,12 +471,10 @@
   .clock-panel .clock-location{ font-size:9.5px; color:var(--ash); letter-spacing:1px; margin-top:5px; display:flex; align-items:center; gap:5px; }
   .clock-panel .clock-location svg{ width:11px; height:11px; stroke:var(--ash); fill:none; }
 
-  /* ---- TIMEZONE PANEL ---- */
   .tz-panel{ padding:12px 16px; flex-direction:column; align-items:flex-start; gap:4px; }
   .tz-panel .tz-label{ font-size:9px; letter-spacing:2px; color:var(--ash); text-transform:uppercase; }
   .tz-panel .tz-message{ font-size:11.5px; color:var(--mist); line-height:1.5; letter-spacing:.2px; transition:opacity .5s ease; }
 
-  /* ---- WEATHER PANEL ---- */
   .weather-panel{ padding:12px 16px; }
   .weather-panel .weather-icon{
     font-size:34px; line-height:1; flex-shrink:0; width:52px; text-align:center;
@@ -455,6 +543,8 @@
     .floating-quote{ font-size:11px; max-width:200px; }
     .weather-panel .weather-icon{ font-size:28px; width:44px; }
     .weather-panel .weather-temp{ font-size:17px; }
+    .card-ticker{ flex-direction:column; gap:6px; padding:6px 10px; }
+    .card-ticker .ticker-item{ width:100%; }
   }
 
   @media (max-width:400px){
@@ -518,6 +608,37 @@
           <span class="last-seen" id="last-seen">Last seen: —</span>
         </div>
       </div>
+
+      <!-- CARD TICKER 2 COINS -->
+      <div class="card-ticker" id="cardTicker">
+        <div class="ticker-item" id="tickerItem1">
+          <img class="ticker-logo" id="tickerLogo1" src="" alt="">
+          <div class="ticker-info">
+            <div class="ticker-row">
+              <span class="ticker-symbol" id="tickerSymbol1">—</span>
+              <span class="ticker-price" id="tickerPrice1">—</span>
+              <span class="ticker-change" id="tickerChange1"></span>
+            </div>
+            <svg class="ticker-chart" id="tickerChart1" viewBox="0 0 100 30" preserveAspectRatio="none">
+              <polyline id="tickerPolyline1" points=""></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="ticker-item" id="tickerItem2">
+          <img class="ticker-logo" id="tickerLogo2" src="" alt="">
+          <div class="ticker-info">
+            <div class="ticker-row">
+              <span class="ticker-symbol" id="tickerSymbol2">—</span>
+              <span class="ticker-price" id="tickerPrice2">—</span>
+              <span class="ticker-change" id="tickerChange2"></span>
+            </div>
+            <svg class="ticker-chart" id="tickerChart2" viewBox="0 0 100 30" preserveAspectRatio="none">
+              <polyline id="tickerPolyline2" points=""></polyline>
+            </svg>
+          </div>
+        </div>
+      </div>
+
       <div class="social-links">
         <a href="https://open.spotify.com/user/lopp05qs775yh0frde45qcf9c?si=84c4e551e4c24951" target="_blank" class="social-link-tooltip" style="--j:0">
           <img src="assets/spotify.png" alt="Spotify" class="social-icon"><span class="tooltip-text">Spotify</span>
@@ -529,8 +650,9 @@
           <img src="assets/discord.png" alt="Discord" class="social-icon"><span class="tooltip-text">Discord</span>
         </a>
       </div>
+
       <div class="flip-panel" id="flipFrontPanel">
-        <span class="flip-text">↻ click to flip — or press SPACE</span>
+        <span class="flip-text">click to flip — or press SPACE</span>
         <div class="flip-count hidden" id="flipCount"></div>
       </div>
     </div>
@@ -590,7 +712,7 @@
       </div>
 
       <div class="flip-panel" id="flipBackPanel">
-        <span class="flip-text">↻ click to flip back — or press SPACE</span>
+        <span class="flip-text">click to flip back — or press SPACE</span>
       </div>
     </div>
   </div>
@@ -632,7 +754,7 @@
     document.addEventListener('mousemove', (e) => {
       customCursor.style.left = e.clientX + 'px';
       customCursor.style.top = e.clientY + 'px';
-    });
+    }, { passive: true });
 
     // ----- CLOCK / UPTIME -----
     function pad(n){ return n.toString().padStart(2,'0'); }
@@ -710,6 +832,7 @@
       typeWriterBio();
       fetchDiscordStatus();
       startFloatingQuotes();
+      startCardTicker();
       const badgeSection = document.querySelector('.badge-section');
       if(badgeSection) setTimeout(()=> badgeSection.classList.add('in'), 400);
       const socialLinksEl = document.querySelector('.social-links');
@@ -723,7 +846,7 @@
     let flipCount = 0;
     const flipCountEl = document.getElementById('flipCount');
     const flipJokes = [
-      "ok ok you get how this works 😂",
+      "ok ok you get how this works",
       "still flipping, huh?",
       "the card isn't getting any more interesting",
       "at this point you're just exercising your finger",
@@ -786,12 +909,16 @@
       const px = (e.clientX / window.innerWidth - 0.5) * 8;
       const py = (e.clientY / window.innerHeight - 0.5) * 4;
       backgroundVideo.style.transform = `translate(-50%, -50%) scale(1.05) translate(${px}px, ${py}px)`;
-    });
+    }, { passive: true });
 
+    let lastTiltX = null, lastTiltY = null;
     function animateTilt() {
+      if(document.hidden){ requestAnimationFrame(animateTilt); return; }
       tiltX += (targetTiltX - tiltX) * 0.08;
       tiltY += (targetTiltY - tiltY) * 0.08;
-      if (!isMouseOnCard && !flipAnimating) {
+      const changed = lastTiltX === null || Math.abs(tiltX - lastTiltX) > 0.02 || Math.abs(tiltY - lastTiltY) > 0.02;
+      if (!isMouseOnCard && !flipAnimating && changed) {
+        lastTiltX = tiltX; lastTiltY = tiltY;
         cardWrapper.style.transition = 'none';
         let transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
         if (isFlipped) {
@@ -815,6 +942,7 @@
       }
       tiltX = 0; tiltY = 0;
       targetTiltX = 0; targetTiltY = 0;
+      lastTiltX = 0; lastTiltY = 0;
     });
 
     animateTilt();
@@ -962,7 +1090,7 @@
       if(!tzMessageEl) return;
       const now = new Date();
       const ownerTime = now.toLocaleTimeString('en-GB', { timeZone:'Europe/Rome', hour:'2-digit', minute:'2-digit' });
-      const visitorHour = now.getHours(); // local browser hour = visitor's own hour
+      const visitorHour = now.getHours();
       let msg;
       if(visitorHour >= 0 && visitorHour < 6){
         msg = `It's ${ownerTime} here — you're probably asleep right now 😴`;
@@ -1076,7 +1204,7 @@
       el.className = 'floating-quote';
       el.textContent = text;
 
-      const margin = 0.12; // keep away from extreme edges
+      const margin = 0.12;
       const left = margin + Math.random() * (1 - margin * 2);
       const top = margin + Math.random() * (1 - margin * 2);
       el.style.left = (left * 100) + 'vw';
@@ -1097,31 +1225,94 @@
       quotesInterval = setInterval(spawnQuote, 8000);
     }
 
-    // ================= BADGE DA JSON =================
-    const DEFAULT_BADGES = [
-      { icon:"assets/owner.gif", alt:"Owner", tooltip:"ball" },
-      { icon:"assets/developer.gif", alt:"Developer", tooltip:"spid" },
-      { icon:"assets/verified.gif", alt:"Verified", tooltip:"CD" },
-      { icon:"assets/nothing.gif", alt:"Nothing", tooltip:"Nothing" },
-      { icon:"assets/meow.gif", alt:"Meow", tooltip:"Meow" },
-      { icon:"assets/knife.webp", alt:"Knife", tooltip:"Knife" },
-      { icon:"assets/what.gif", alt:"What", tooltip:"What" },
-      { icon:"assets/dragon.gif", alt:"Dragon", tooltip:"Dragon" }
-    ];
-    function renderBadges(list){
-      const section = document.querySelector('.badge-section');
-      if(!section) return;
-      section.innerHTML = '';
-      list.forEach(b => {
-        const wrap = document.createElement('div');
-        wrap.className = 'badge-container';
-        const img = document.createElement('img');
-        img.src = b.icon; img.alt = b.alt || ''; img.className = 'badge';
-        const tip = document.createElement('span');
-        tip.className = 'tooltip'; tip.textContent = b.tooltip || b.alt || '';
-        wrap.appendChild(img); wrap.appendChild(tip);
-        section.appendChild(wrap);
-      });
+    // ================= CRYPTO TICKER (2 coin rotator) =================
+    let cryptoList = [];
+    let tickerIndex = 0;
+    let tickerRotateInterval = null;
+
+    async function fetchCryptoTicker(){
+      try{
+        const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=20&page=1&sparkline=true&price_change_percentage=24h');
+        if(!res.ok) return;
+        const data = await res.json();
+        if(!Array.isArray(data) || !data.length) return;
+        cryptoList = data.map(c => ({
+          symbol: (c.symbol || '').toUpperCase(),
+          name: c.name,
+          price: c.current_price,
+          logo: c.image,
+          change24h: c.price_change_percentage_24h,
+          sparkline: (c.sparkline_in_7d && c.sparkline_in_7d.price) || []
+        }));
+      }catch(e){ /* keep showing the last known list on failure */ }
+    }
+
+    function formatEurPrice(p){
+      if(p == null) return '—';
+      const decimals = p >= 100 ? 0 : p >= 1 ? 2 : p >= 0.01 ? 4 : 6;
+      return '€' + p.toLocaleString('it-IT', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    }
+
+    function renderTickerItem(coin, itemIndex){
+      const logoEl   = document.getElementById('tickerLogo' + itemIndex);
+      const symEl    = document.getElementById('tickerSymbol' + itemIndex);
+      const priceEl  = document.getElementById('tickerPrice' + itemIndex);
+      const changeEl = document.getElementById('tickerChange' + itemIndex);
+      const chartEl  = document.getElementById('tickerChart' + itemIndex);
+      const polyEl   = document.getElementById('tickerPolyline' + itemIndex);
+      if(!logoEl || !coin) return;
+
+      logoEl.src = coin.logo || '';
+      logoEl.alt = coin.name || '';
+      symEl.textContent = coin.symbol;
+      priceEl.textContent = formatEurPrice(coin.price);
+
+      const change = coin.change24h;
+      const isUp = typeof change === 'number' ? change >= 0 : true;
+      if(typeof change === 'number'){
+        changeEl.textContent = (change >= 0 ? '+' : '') + change.toFixed(2) + '%';
+      } else {
+        changeEl.textContent = '';
+      }
+      changeEl.className = 'ticker-change ' + (isUp ? 'up' : 'down');
+      chartEl.setAttribute('class', 'ticker-chart ' + (isUp ? 'up' : 'down'));
+
+      const series = coin.sparkline;
+      if(series && series.length > 1){
+        const min = Math.min(...series), max = Math.max(...series);
+        const range = (max - min) || 1;
+        const step = 100 / (series.length - 1);
+        const points = series.map((v, i) => {
+          const x = (i * step).toFixed(2);
+          const y = (28 - ((v - min) / range) * 26).toFixed(2);
+          return x + ',' + y;
+        }).join(' ');
+        polyEl.setAttribute('points', points);
+      } else {
+        polyEl.setAttribute('points', '');
+      }
+    }
+
+    function cycleCardTicker(){
+      const wrap = document.getElementById('cardTicker');
+      if(!wrap || !cryptoList.length) return;
+      wrap.classList.remove('visible');
+      setTimeout(() => {
+        const coin1 = cryptoList[tickerIndex % cryptoList.length];
+        const coin2 = cryptoList[(tickerIndex + 1) % cryptoList.length];
+        tickerIndex += 2;
+        renderTickerItem(coin1, 1);
+        renderTickerItem(coin2, 2);
+        wrap.classList.add('visible');
+      }, 350);
+    }
+
+    async function startCardTicker(){
+      if(tickerRotateInterval) return;
+      await fetchCryptoTicker();
+      cycleCardTicker();
+      tickerRotateInterval = setInterval(cycleCardTicker, 7000);
+      setInterval(fetchCryptoTicker, 2 * 60000);
     }
 
     // ================= STARFIELD (schermata iniziale) =================
@@ -1141,7 +1332,6 @@
         const count = Math.floor((window.innerWidth * window.innerHeight) / 6000);
         stars = Array.from({ length: count }, () => {
           let x, y;
-          // Riduce le stelle al centro (area centrale più grande e meno densa)
           do {
             x = Math.random() * canvas.width;
             y = Math.random() * canvas.height;
@@ -1163,6 +1353,17 @@
       resize(); makeStars();
       window.addEventListener('resize', () => { resize(); makeStars(); });
 
+      const glowSprite = document.createElement('canvas');
+      const glowSize = 16;
+      glowSprite.width = glowSprite.height = glowSize;
+      const gctx = glowSprite.getContext('2d');
+      const grad = gctx.createRadialGradient(glowSize/2, glowSize/2, 0, glowSize/2, glowSize/2, glowSize/2);
+      grad.addColorStop(0, 'rgba(255,255,255,0.9)');
+      grad.addColorStop(0.4, 'rgba(255,255,255,0.35)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      gctx.fillStyle = grad;
+      gctx.fillRect(0, 0, glowSize, glowSize);
+
       function draw(){
         if(!running) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1172,17 +1373,19 @@
           if(s.x < 0) s.x = canvas.width; if(s.x > canvas.width) s.x = 0;
           if(s.y < 0) s.y = canvas.height; if(s.y > canvas.height) s.y = 0;
           const twinkle = 0.35 + 0.65 * Math.abs(Math.sin(now * s.speed * 10 + s.phase));
+          ctx.globalAlpha = twinkle;
+          const g = s.r * 4;
+          ctx.drawImage(glowSprite, s.x - g/2, s.y - g/2, g, g);
+          ctx.globalAlpha = 1;
           ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.arc(s.x, s.y, s.r * 0.6, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(255,255,255,${twinkle.toFixed(3)})`;
-          ctx.shadowBlur = 6; ctx.shadowColor = 'rgba(255,255,255,0.8)';
           ctx.fill();
         }
         rafId = requestAnimationFrame(draw);
       }
       draw();
 
-      // Ferma l'animazione quando la start-screen sparisce, per risparmiare risorse
       const observer = new MutationObserver(() => {
         if(startScreen.classList.contains('hidden')){
           running = false;
@@ -1201,6 +1404,7 @@
       const ctx = canvas.getContext('2d');
       let particlesList = [];
       let lastSpawn = 0;
+      let pageHidden = false;
 
       function resize(){
         canvas.width = window.innerWidth;
@@ -1208,8 +1412,21 @@
       }
       resize();
       window.addEventListener('resize', resize);
+      document.addEventListener('visibilitychange', () => { pageHidden = document.hidden; });
+
+      const glowSprite = document.createElement('canvas');
+      const glowSize = 24;
+      glowSprite.width = glowSprite.height = glowSize;
+      const gctx = glowSprite.getContext('2d');
+      const grad = gctx.createRadialGradient(glowSize/2, glowSize/2, 0, glowSize/2, glowSize/2, glowSize/2);
+      grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+      grad.addColorStop(0.4, 'rgba(255,255,255,0.4)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      gctx.fillStyle = grad;
+      gctx.fillRect(0, 0, glowSize, glowSize);
 
       document.addEventListener('mousemove', (e) => {
+        if(pageHidden) return;
         const now = Date.now();
         if(now - lastSpawn < 30) return;
         lastSpawn = now;
@@ -1223,22 +1440,23 @@
             decay: 0.012 + Math.random() * 0.015
           });
         }
-        if(particlesList.length > 160) particlesList.splice(0, particlesList.length - 160);
-      });
+        if(particlesList.length > 120) particlesList.splice(0, particlesList.length - 120);
+      }, { passive: true });
 
+      let rafId2 = null;
       function draw(){
+        if(pageHidden){ rafId2 = requestAnimationFrame(draw); return; }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for(let i=particlesList.length-1;i>=0;i--){
           const p = particlesList[i];
           p.x += p.vx; p.y += p.vy; p.life -= p.decay;
           if(p.life <= 0){ particlesList.splice(i,1); continue; }
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255,255,255,${(p.life*0.9).toFixed(3)})`;
-          ctx.shadowBlur = 14; ctx.shadowColor = `rgba(255,255,255,0.9)`;
-          ctx.fill();
+          const g = (p.r * 3) * p.life + p.r;
+          ctx.globalAlpha = p.life * 0.9;
+          ctx.drawImage(glowSprite, p.x - g/2, p.y - g/2, g, g);
         }
-        requestAnimationFrame(draw);
+        ctx.globalAlpha = 1;
+        rafId2 = requestAnimationFrame(draw);
       }
       draw();
     })();
@@ -1293,7 +1511,6 @@
         }
       });
 
-      // Easter egg secondario: digitare "matrix" attiva un breve effetto "digital rain"
       const word = 'matrix';
       let wordProgress = 0;
       document.addEventListener('keydown', (e) => {
