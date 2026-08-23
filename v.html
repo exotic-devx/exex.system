@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>visite — exotic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#000000;
+    --panel:rgba(255,255,255,0.03);
+    --paper:#ffffff;
+    --mist:rgba(255,255,255,0.62);
+    --ash:rgba(255,255,255,0.30);
+    --hair:rgba(255,255,255,0.10);
+    --font-ui:'JetBrains Mono', 'Courier New', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--void); color:var(--paper); font-family:var(--font-ui);
+    min-height:100vh; padding:40px 20px 80px;
+  }
+  .wrap{ max-width:820px; margin:0 auto; }
+  .total-label{
+    text-align:center; font-size:12px; letter-spacing:3px; color:var(--ash); margin-bottom:10px;
+    text-transform:uppercase;
+  }
+  .total-count{
+    text-align:center; font-size:56px; font-weight:600; letter-spacing:2px; margin-bottom:44px;
+    background-image:linear-gradient(90deg, red, orange, yellow, lime, cyan, blue, violet, red);
+    background-size:400% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:rgbShift 6s linear infinite;
+  }
+  @keyframes rgbShift{
+    0%{ background-position:0% 50%; }
+    100%{ background-position:400% 50%; }
+  }
+  h1{ font-size:14px; letter-spacing:2px; color:var(--mist); margin-bottom:18px; text-transform:uppercase; }
+  .list{ display:flex; flex-direction:column; gap:8px; }
+  .row{
+    display:grid; grid-template-columns:auto 1fr auto auto; gap:14px; align-items:center;
+    background:var(--panel); border:1px solid var(--hair); border-radius:8px;
+    padding:12px 16px; font-size:12.5px;
+  }
+  .row .flag{
+    font-size:24px;
+    line-height:1;
+    width:32px;
+    text-align:center;
+  }
+  .row .ip{ color:#fff; font-weight:500; letter-spacing:.4px; }
+  .row .country{ color:var(--mist); font-size:11px; }
+  .row .ua{ color:var(--ash); font-size:10.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:260px; }
+  .row .time{ color:var(--mist); font-size:11px; white-space:nowrap; }
+  .empty, .error{ text-align:center; color:var(--ash); margin-top:60px; font-size:13px; letter-spacing:1px; }
+  
+  /* Loading animation */
+  .flag-loading {
+    display:inline-block;
+    width:32px;
+    text-align:center;
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+  
+  @media (max-width:640px){
+    .row{ grid-template-columns:auto 1fr; gap:4px; }
+    .row .ua{ max-width:none; white-space:normal; }
+    .row .time{ grid-column: span 2; }
+    .total-count{ font-size:38px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="total-label">visite totali</div>
+    <div class="total-count" id="totalCount">—</div>
+    <h1>indirizzi ip registrati</h1>
+    <div class="list" id="list"></div>
+  </div>
+
+<script>
+(async function(){
+  const listEl = document.getElementById('list');
+  const totalEl = document.getElementById('totalCount');
+  
+  // Cache per le bandiere
+  const flagCache = new Map();
+  
+  // Funzione per ottenere la bandiera da un IP
+  async function getFlag(ip) {
+    // Se è localhost o IP privato, mostra 🏠
+    if (ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.')) {
+      return { flag: '🏠', country: 'Locale' };
+    }
+    
+    // Controlla la cache
+    if (flagCache.has(ip)) {
+      return flagCache.get(ip);
+    }
+    
+    try {
+      // Usa ip-api.com per il geolocalizzazione (gratuito, senza API key)
+      const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,country,countryCode`);
+      const data = await response.json();
+      
+      if (data.status === 'success') {
+        // Converte il country code in emoji bandiera
+        const flag = countryCodeToEmoji(data.countryCode);
+        const result = { flag: flag, country: data.country };
+        flagCache.set(ip, result);
+        return result;
+      } else {
+        return { flag: '❓', country: 'Sconosciuto' };
+      }
+    } catch(err) {
+      return { flag: '❓', country: 'Sconosciuto' };
+    }
+  }
+  
+  // Converti country code in emoji bandiera
+  function countryCodeToEmoji(code) {
+    if (!code) return '🏳️';
+    // Converte lettere in emoji (A=🇦, B=🇧, etc.)
+    return code.toUpperCase().replace(/./g, char => 
+      String.fromCodePoint(127397 + char.charCodeAt(0))
+    );
+  }
+  
+  try{
+    const res = await fetch('/api/visits');
+    if(!res.ok) throw new Error('bad response');
+    const data = await res.json();
+    totalEl.textContent = (data.total || 0).toLocaleString('it-IT');
+    
+    if(!data.visits || data.visits.length === 0){
+      listEl.innerHTML = '<div class="empty">nessuna visita registrata ancora</div>';
+      return;
+    }
+    
+    // Mostra loading
+    listEl.innerHTML = data.visits.map(v => `
+      <div class="row" data-ip="${escapeHtml(v.ip || '')}">
+        <span class="flag flag-loading">⏳</span>
+        <span class="ip">${escapeHtml(v.ip || '—')}</span>
+        <span class="ua">${escapeHtml(v.userAgent || '')}</span>
+        <span class="time">${formatDate(v.time)}</span>
+      </div>
+    `).join('');
+    
+    // Per ogni riga, carica la bandiera
+    const rows = listEl.querySelectorAll('.row');
+    for (const row of rows) {
+      const ip = row.dataset.ip;
+      if (ip) {
+        const flagEl = row.querySelector('.flag');
+        const result = await getFlag(ip);
+        flagEl.textContent = result.flag;
+        flagEl.className = 'flag';
+        // Aggiungi il paese come tooltip
+        flagEl.title = result.country;
+        
+        // Aggiungi il nome del paese dopo l'IP
+        const ipEl = row.querySelector('.ip');
+        if (ipEl && result.country !== 'Sconosciuto' && result.country !== 'Locale') {
+          ipEl.textContent = ipEl.textContent + ` (${result.country})`;
+        }
+      }
+    }
+    
+  }catch(err){
+    totalEl.textContent = '0';
+    listEl.innerHTML = '<div class="error">impossibile leggere i dati — il server (server.js) è avviato?</div>';
+  }
+  
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  
+  function formatDate(iso){
+    try{
+      const d = new Date(iso);
+      return d.toLocaleString('it-IT');
+    }catch(e){ return iso || ''; }
+  }
+})();
+</script>
+</body>
+</html>
