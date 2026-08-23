@@ -88,7 +88,7 @@
 
   #start-screen{
     position:fixed; inset:0; background:#000; display:flex;
-    align-items:center; justify-content:center; z-index:50;
+    align-items:center; justify-content:center; z-index:50; overflow:hidden;
     transition:opacity 0.8s ease, backdrop-filter 0.8s ease;
   }
   #start-screen.hidden{
@@ -97,9 +97,16 @@
     -webkit-backdrop-filter:blur(20px);
     pointer-events:none;
   }
+  #starfield{
+    position:absolute; inset:0; z-index:1; display:block;
+  }
   #start-text{
     font-family:'Angel Wish', serif; font-size:32px; letter-spacing:3px; color:#fff;
     position:relative; z-index:2;
+  }
+
+  #particles-canvas{
+    position:fixed; inset:0; z-index:2; pointer-events:none;
   }
 
   .stage{
@@ -127,14 +134,14 @@
   }
   .card-front{
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); padding:30px 30px 60px;
+    border:1px solid var(--hair); padding:30px 30px 54px;
     display:flex; flex-direction:column;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
   }
   .card-back{
     transform:rotateY(180deg);
     background:var(--panel); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-    border:1px solid var(--hair); padding:26px 26px 60px;
+    border:1px solid var(--hair); padding:26px 26px 54px;
     display:flex; flex-direction:column; gap:18px;
     box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 30px 80px rgba(0,0,0,.7);
     overflow-y:auto;
@@ -142,13 +149,14 @@
 
   /* ---- flip trigger panel ---- */
   .flip-panel{
-    position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+    position:absolute; bottom:12px; left:12px; right:12px;
     background:rgba(255,255,255,0.04); border:1px solid var(--hair);
     border-radius:20px; padding:8px 20px; z-index:10;
     pointer-events:auto; cursor:none;
     transition:background .3s ease, border-color .3s ease;
     backdrop-filter:blur(4px);
     -webkit-backdrop-filter:blur(4px);
+    text-align:center;
   }
   .flip-panel:hover{
     background:rgba(255,255,255,0.08);
@@ -316,8 +324,8 @@
 
   @media (max-width:580px){
     .card-wrapper{ min-height:auto; width:440px; }
-    .card-front{ padding:20px 16px 54px; min-height:auto; }
-    .card-back{ padding:18px 14px 54px; min-height:auto; gap:12px; }
+    .card-front{ padding:20px 16px 50px; min-height:auto; }
+    .card-back{ padding:18px 14px 50px; min-height:auto; gap:12px; }
     #profile-username{ font-size:30px; min-height:40px; }
     .rule{ margin:16px auto; }
     .badge-section{ margin-bottom:16px; }
@@ -333,7 +341,7 @@
     .spotify-panel .cover, .game-panel .cover{ width:38px; height:38px; }
     .spotify-panel, .game-panel{ padding:8px 10px; gap:10px; }
     .spotify-panel .track-name, .game-panel .game-name{ font-size:11.5px; }
-    .flip-panel{ padding:6px 14px; bottom:10px; }
+    .flip-panel{ padding:6px 14px; bottom:10px; left:10px; right:10px; }
     .flip-panel .flip-text{ font-size:9px; }
   }
 
@@ -355,6 +363,7 @@
 <div class="hud hud-tr" id="hudTr"><b>UPTIME</b> <span id="uptime">00:00</span></div>
 
 <div id="start-screen">
+  <canvas id="starfield"></canvas>
   <div id="start-text"></div>
 </div>
 
@@ -363,6 +372,8 @@
     <source src="https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4" type="video/mp4">
   </video>
 </div>
+
+<canvas id="particles-canvas"></canvas>
 
 <div class="stage">
   <div class="card-wrapper" id="cardWrapper">
@@ -836,6 +847,255 @@
     }
 
     setInterval(fetchDiscordStatus, 30000);
+
+    // ================= BADGE DA JSON =================
+    const DEFAULT_BADGES = [
+      { icon:"assets/owner.gif", alt:"Owner", tooltip:"ball" },
+      { icon:"assets/developer.gif", alt:"Developer", tooltip:"spid" },
+      { icon:"assets/verified.gif", alt:"Verified", tooltip:"CD" },
+      { icon:"assets/nothing.gif", alt:"Nothing", tooltip:"Nothing" },
+      { icon:"assets/meow.gif", alt:"Meow", tooltip:"Meow" },
+      { icon:"assets/knife.webp", alt:"Knife", tooltip:"Knife" },
+      { icon:"assets/what.gif", alt:"What", tooltip:"What" },
+      { icon:"assets/dragon.gif", alt:"Dragon", tooltip:"Dragon" }
+    ];
+    function renderBadges(list){
+      const section = document.querySelector('.badge-section');
+      if(!section) return;
+      section.innerHTML = '';
+      list.forEach(b => {
+        const wrap = document.createElement('div');
+        wrap.className = 'badge-container';
+        const img = document.createElement('img');
+        img.src = b.icon; img.alt = b.alt || ''; img.className = 'badge';
+        const tip = document.createElement('span');
+        tip.className = 'tooltip'; tip.textContent = b.tooltip || b.alt || '';
+        wrap.appendChild(img); wrap.appendChild(tip);
+        section.appendChild(wrap);
+      });
+    }
+
+    // ================= STARFIELD (schermata iniziale) =================
+    (function starfield(){
+      const canvas = document.getElementById('starfield');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+      let running = true;
+      let rafId = null;
+
+      function resize(){
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      function makeStars(){
+        const count = Math.floor((window.innerWidth * window.innerHeight) / 6000);
+        stars = Array.from({ length: count }, () => {
+          let x, y;
+          // Riduce le stelle al centro (area centrale più grande e meno densa)
+          do {
+            x = Math.random() * canvas.width;
+            y = Math.random() * canvas.height;
+          } while (
+            x > canvas.width * 0.25 && x < canvas.width * 0.75 &&
+            y > canvas.height * 0.25 && y < canvas.height * 0.75
+          );
+          return {
+            x: x,
+            y: y,
+            r: Math.random() * 1.4 + 0.3,
+            vx: (Math.random() - 0.5) * 0.06,
+            vy: (Math.random() - 0.5) * 0.06,
+            phase: Math.random() * Math.PI * 2,
+            speed: 0.015 + Math.random() * 0.025
+          };
+        });
+      }
+      resize(); makeStars();
+      window.addEventListener('resize', () => { resize(); makeStars(); });
+
+      function draw(){
+        if(!running) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const now = Date.now() * 0.001;
+        for(const s of stars){
+          s.x += s.vx; s.y += s.vy;
+          if(s.x < 0) s.x = canvas.width; if(s.x > canvas.width) s.x = 0;
+          if(s.y < 0) s.y = canvas.height; if(s.y > canvas.height) s.y = 0;
+          const twinkle = 0.35 + 0.65 * Math.abs(Math.sin(now * s.speed * 10 + s.phase));
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${twinkle.toFixed(3)})`;
+          ctx.shadowBlur = 6; ctx.shadowColor = 'rgba(255,255,255,0.8)';
+          ctx.fill();
+        }
+        rafId = requestAnimationFrame(draw);
+      }
+      draw();
+
+      // Ferma l'animazione quando la start-screen sparisce, per risparmiare risorse
+      const observer = new MutationObserver(() => {
+        if(startScreen.classList.contains('hidden')){
+          running = false;
+          if(rafId) cancelAnimationFrame(rafId);
+        } else if(!running){
+          running = true; draw();
+        }
+      });
+      observer.observe(startScreen, { attributes:true, attributeFilter:['class'] });
+    })();
+
+    // ================= PARTICELLE AL PASSAGGIO DEL MOUSE =================
+    (function particles(){
+      const canvas = document.getElementById('particles-canvas');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let particlesList = [];
+      let lastSpawn = 0;
+
+      function resize(){
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const colors = ['255,255,255', '150,220,255', '200,180,255'];
+
+      document.addEventListener('mousemove', (e) => {
+        const now = Date.now();
+        if(now - lastSpawn < 30) return;
+        lastSpawn = now;
+        for(let i=0;i<2;i++){
+          particlesList.push({
+            x: e.clientX, y: e.clientY,
+            vx: (Math.random() - 0.5) * 1.2,
+            vy: (Math.random() - 0.5) * 1.2 - 0.3,
+            r: Math.random() * 2 + 0.8,
+            life: 1,
+            decay: 0.012 + Math.random() * 0.015,
+            color: colors[Math.floor(Math.random() * colors.length)]
+          });
+        }
+        if(particlesList.length > 160) particlesList.splice(0, particlesList.length - 160);
+      });
+
+      function draw(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for(let i=particlesList.length-1;i>=0;i--){
+          const p = particlesList[i];
+          p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+          if(p.life <= 0){ particlesList.splice(i,1); continue; }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.color},${(p.life*0.8).toFixed(3)})`;
+          ctx.shadowBlur = 8; ctx.shadowColor = `rgba(${p.color},0.6)`;
+          ctx.fill();
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    // ================= EASTER EGG: Konami Code =================
+    (function konami(){
+      const sequence = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+      let progress = 0;
+      function showToast(msg){
+        const toast = document.createElement('div');
+        toast.textContent = msg;
+        toast.style.cssText = `
+          position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-20px);
+          background:rgba(10,10,14,.9); border:1px solid rgba(255,255,255,.25); color:#fff;
+          padding:10px 22px; border-radius:8px; font-family:var(--font-ui); font-size:13px;
+          letter-spacing:1px; z-index:99999; opacity:0; transition:opacity .4s ease, transform .4s ease;
+          box-shadow:0 10px 40px rgba(0,0,0,.6);
+        `;
+        document.body.appendChild(toast);
+        requestAnimationFrame(() => {
+          toast.style.opacity = '1'; toast.style.transform = 'translateX(-50%) translateY(0)';
+        });
+        setTimeout(() => {
+          toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(-20px)';
+          setTimeout(() => toast.remove(), 500);
+        }, 2600);
+      }
+      function rainbowBurst(){
+        cardWrapper.style.transition = 'filter .6s ease';
+        cardWrapper.style.filter = 'hue-rotate(0deg) saturate(1.6)';
+        let deg = 0;
+        const spin = setInterval(() => {
+          deg += 24;
+          cardWrapper.style.filter = `hue-rotate(${deg}deg) saturate(1.6)`;
+          if(deg >= 360){
+            clearInterval(spin);
+            cardWrapper.style.filter = 'none';
+          }
+        }, 40);
+      }
+      document.addEventListener('keydown', (e) => {
+        const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        if(key === sequence[progress]){
+          progress++;
+          if(progress === sequence.length){
+            progress = 0;
+            showToast('👑 konami unlocked');
+            rainbowBurst();
+          }
+        } else {
+          progress = (key === sequence[0]) ? 1 : 0;
+        }
+      });
+
+      // Easter egg secondario: digitare "matrix" attiva un breve effetto "digital rain"
+      const word = 'matrix';
+      let wordProgress = 0;
+      document.addEventListener('keydown', (e) => {
+        const key = e.key.length === 1 ? e.key.toLowerCase() : '';
+        if(!key) return;
+        if(key === word[wordProgress]){
+          wordProgress++;
+          if(wordProgress === word.length){
+            wordProgress = 0;
+            digitalRain();
+          }
+        } else {
+          wordProgress = (key === word[0]) ? 1 : 0;
+        }
+      });
+      function digitalRain(){
+        showToast('◆ matrix mode');
+        const rainCanvas = document.createElement('canvas');
+        rainCanvas.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none;';
+        rainCanvas.width = window.innerWidth; rainCanvas.height = window.innerHeight;
+        document.body.appendChild(rainCanvas);
+        const rctx = rainCanvas.getContext('2d');
+        const cols = Math.floor(rainCanvas.width / 16);
+        const drops = Array(cols).fill(0);
+        const chars = 'アイウエオカキクケコサシスセソ0123456789';
+        let frames = 0;
+        const maxFrames = 140;
+        const timer = setInterval(() => {
+          rctx.fillStyle = 'rgba(0,0,0,0.08)';
+          rctx.fillRect(0, 0, rainCanvas.width, rainCanvas.height);
+          rctx.fillStyle = '#6fffb0';
+          rctx.font = '14px monospace';
+          for(let i=0;i<drops.length;i++){
+            const ch = chars[Math.floor(Math.random() * chars.length)];
+            rctx.fillText(ch, i * 16, drops[i] * 16);
+            if(drops[i] * 16 > rainCanvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+          }
+          frames++;
+          if(frames > maxFrames){
+            clearInterval(timer);
+            rainCanvas.style.transition = 'opacity .8s ease';
+            rainCanvas.style.opacity = '0';
+            setTimeout(() => rainCanvas.remove(), 800);
+          }
+        }, 40);
+      }
+    })();
 
   });
 })();
