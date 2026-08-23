@@ -2,7 +2,7 @@
   "functions": {
     "api/*": {
       "runtime": "nodejs18.x",
-      "entry": "cloud-functions/$1.js"
+      "entry": "functions/$1.js"
     }
   }
 }
