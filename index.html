@@ -90,7 +90,17 @@
   .hud.visible{opacity:1;}
   .hud-tl{top:22px; left:26px;}
   .hud-tr{top:22px; right:26px; text-align:right;}
+  .hud-bl{bottom:22px; left:26px;}
+  .hud-br{bottom:22px; right:26px; text-align:right; pointer-events:auto;}
   .hud b{color:var(--mist); font-weight:500;}
+  .hud-br a{
+    color:var(--ash);
+    text-decoration:none;
+    letter-spacing:1.5px;
+    transition:color .3s ease;
+    pointer-events:auto;
+  }
+  .hud-br a:hover{ color:var(--mist); }
   @media (max-width:700px){ .hud{display:none;} }
 
   #start-screen{
@@ -267,13 +277,21 @@
     margin:4px 0 22px; padding:0 6px; letter-spacing:.2px;
   }
   #profile-bio .bio-link{
-    color:#4fc3f7; text-decoration:none;
-    background:linear-gradient(90deg, #4fc3f7, #ffffff, #4fc3f7);
-    background-size:200% 100%; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    animation:shimmer-text 3s ease-in-out infinite; font-weight:bold; cursor:pointer;
+    color:#a855f7;
+    text-decoration:none;
+    background:linear-gradient(90deg, #7c3aed, #000000, #a855f7, #000000, #7c3aed);
+    background-size:300% 100%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+    animation:shimmer-text-purple 3.5s ease-in-out infinite;
+    font-weight:bold; cursor:pointer;
     transition:filter .3s ease;
   }
-  #profile-bio .bio-link:hover{ filter:drop-shadow(0 0 12px rgba(79,195,247,0.6)); }
+  #profile-bio .bio-link:hover{ filter:drop-shadow(0 0 12px rgba(168,85,247,0.7)); }
+  @keyframes shimmer-text-purple{
+    0%{background-position:200% 0;}
+    100%{background-position:-200% 0;}
+  }
   @keyframes shimmer-text{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 
   .glitch{ animation:glitch .18s ease-in-out; }
@@ -517,6 +535,87 @@
     font-size:8.5px; color:var(--ash); font-family:var(--font-ui); min-width:32px; text-align:center;
   }
 
+  /* ---- CUSTOM CONTEXT MENU ---- */
+  #ctx-menu{
+    position:fixed;
+    z-index:100000;
+    min-width:160px;
+    background:var(--panel);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--hair);
+    border-radius:10px;
+    padding:4px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.02), 0 16px 40px rgba(0,0,0,.65);
+    opacity:0;
+    visibility:hidden;
+    transform:scale(0.92) translateY(-6px);
+    transition:opacity .18s ease, transform .18s cubic-bezier(.34,1.4,.64,1), visibility .18s;
+    pointer-events:none;
+  }
+  #ctx-menu.open{
+    opacity:1;
+    visibility:visible;
+    transform:scale(1) translateY(0);
+    pointer-events:auto;
+  }
+  .ctx-item{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:7px 11px;
+    border-radius:6px;
+    cursor:none;
+    transition:background .2s ease, transform .15s ease;
+    text-decoration:none;
+    position:relative;
+    overflow:hidden;
+  }
+  .ctx-item + .ctx-item{
+    border-top:1px solid var(--hair);
+    margin-top:1px;
+    padding-top:8px;
+  }
+  .ctx-item:hover{
+    background:rgba(255,255,255,0.06);
+    transform:translateX(2px);
+  }
+  .ctx-item:active{ transform:scale(0.97); }
+  .ctx-icon{
+    width:16px;
+    height:16px;
+    flex-shrink:0;
+    border-radius:4px;
+    object-fit:contain;
+  }
+  .ctx-label{
+    font-size:10.5px;
+    letter-spacing:0.6px;
+    font-weight:500;
+    background-size:200% 100%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    animation:ctxGradient 3s ease-in-out infinite;
+  }
+  .ctx-item[data-site="telegram"] .ctx-label{
+    background-image:linear-gradient(90deg, #229ED9, #ffffff, #229ED9, #0088cc);
+  }
+  .ctx-item[data-site="discord"] .ctx-label{
+    background-image:linear-gradient(90deg, #5865F2, #ffffff, #7289DA, #5865F2);
+  }
+  .ctx-item[data-site="spotify"] .ctx-label{
+    background-image:linear-gradient(90deg, #1DB954, #ffffff, #1ed760, #1DB954);
+  }
+  .ctx-item[data-site="gunslol"] .ctx-label{
+    background-image:linear-gradient(90deg, #ff4d6d, #ffffff, #ff8a5c, #ff4d6d);
+  }
+  @keyframes ctxGradient{
+    0%{ background-position:0% 50%; }
+    50%{ background-position:100% 50%; }
+    100%{ background-position:0% 50%; }
+  }
+
   .hidden{ display:none !important; }
 
   @media (max-width:580px){
@@ -563,6 +662,8 @@
 
 <div class="hud hud-tl" id="hudTl"><b>CLOCK</b> <span id="clock">00:00:00</span></div>
 <div class="hud hud-tr" id="hudTr"><b>UPTIME</b> <span id="uptime">00:00</span></div>
+<div class="hud hud-bl" id="hudBl">credit video & music</div>
+<div class="hud hud-br" id="hudBr"><a href="https://www.youtube.com/watch?v=XpTfh41BfHs" target="_blank" rel="noopener">KONSTA</a></div>
 
 <div id="start-screen">
   <canvas id="starfield"></canvas>
@@ -577,6 +678,26 @@
 
 <canvas id="particles-canvas"></canvas>
 <div id="quotes-layer"></div>
+
+<!-- Custom right-click menu -->
+<div id="ctx-menu">
+  <a class="ctx-item" data-site="telegram" href="https://t.me/javph" target="_blank" rel="noopener">
+    <img class="ctx-icon" src="assets/telegram.png" alt="">
+    <span class="ctx-label">Link Telegram</span>
+  </a>
+  <a class="ctx-item" data-site="discord" href="https://discord.com/users/1019329014369882123" target="_blank" rel="noopener">
+    <img class="ctx-icon" src="assets/discord.png" alt="">
+    <span class="ctx-label">Link Discord</span>
+  </a>
+  <a class="ctx-item" data-site="spotify" href="https://open.spotify.com/user/lopp05qs775yh0frde45qcf9c?si=84c4e551e4c24951" target="_blank" rel="noopener">
+    <img class="ctx-icon" src="assets/spotify.png" alt="">
+    <span class="ctx-label">Link Spotify</span>
+  </a>
+  <a class="ctx-item" data-site="gunslol" href="https://guns.lol/javraj" target="_blank" rel="noopener">
+    <img class="ctx-icon" src="assets/gift.png" alt="">
+    <span class="ctx-label">Link Guns.lol</span>
+  </a>
+</div>
 
 <div class="stage">
   <div class="card-wrapper" id="cardWrapper">
@@ -733,7 +854,7 @@
     const startText     = document.getElementById('start-text');
     const cardWrapper   = document.getElementById('cardWrapper');
     const cardFront     = document.getElementById('cardFront');
-    const cardBack       = document.getElementById('cardBack');
+    const cardBack      = document.getElementById('cardBack');
     const profileUsername = document.getElementById('profile-username');
     const profileBio    = document.getElementById('profile-bio');
     const backgroundVideo = document.getElementById('background');
@@ -745,16 +866,72 @@
     const uptimeEl      = document.getElementById('uptime');
     const backClockEl   = document.getElementById('backClock');
     const backDateEl    = document.getElementById('backDate');
-    const huds          = [document.getElementById('hudTl'), document.getElementById('hudTr')];
+    const huds          = [
+      document.getElementById('hudTl'),
+      document.getElementById('hudTr'),
+      document.getElementById('hudBl'),
+      document.getElementById('hudBr')
+    ];
+    const ctxMenu       = document.getElementById('ctx-menu');
 
     let isFlipped = false;
     const bootTime = Date.now();
 
-    // ----- CURSOR -----
+    // ----- CURSOR (throttled) -----
+    let cursorX = 0, cursorY = 0, cursorRaf = null;
     document.addEventListener('mousemove', (e) => {
-      customCursor.style.left = e.clientX + 'px';
-      customCursor.style.top = e.clientY + 'px';
+      cursorX = e.clientX;
+      cursorY = e.clientY;
+      if (!cursorRaf) {
+        cursorRaf = requestAnimationFrame(() => {
+          customCursor.style.left = cursorX + 'px';
+          customCursor.style.top = cursorY + 'px';
+          cursorRaf = null;
+        });
+      }
     }, { passive: true });
+
+    // ----- CUSTOM CONTEXT MENU -----
+    let ctxCloseTimer = null;
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      const menuW = 180;
+      const menuH = 160;
+      let x = e.clientX;
+      let y = e.clientY;
+      if (x + menuW > window.innerWidth) x = window.innerWidth - menuW - 8;
+      if (y + menuH > window.innerHeight) y = window.innerHeight - menuH - 8;
+      if (x < 8) x = 8;
+      if (y < 8) y = 8;
+      ctxMenu.style.left = x + 'px';
+      ctxMenu.style.top = y + 'px';
+      ctxMenu.classList.add('open');
+      if (ctxCloseTimer) clearTimeout(ctxCloseTimer);
+      ctxCloseTimer = setTimeout(() => {
+        ctxMenu.classList.remove('open');
+        ctxCloseTimer = null;
+      }, 4000);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!ctxMenu.contains(e.target)) {
+        ctxMenu.classList.remove('open');
+        if (ctxCloseTimer) { clearTimeout(ctxCloseTimer); ctxCloseTimer = null; }
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        ctxMenu.classList.remove('open');
+        if (ctxCloseTimer) { clearTimeout(ctxCloseTimer); ctxCloseTimer = null; }
+      }
+    });
+    // Close menu after clicking a link
+    ctxMenu.querySelectorAll('.ctx-item').forEach(item => {
+      item.addEventListener('click', () => {
+        setTimeout(() => ctxMenu.classList.remove('open'), 80);
+        if (ctxCloseTimer) { clearTimeout(ctxCloseTimer); ctxCloseTimer = null; }
+      });
+    });
 
     // ----- CLOCK / UPTIME -----
     function pad(n){ return n.toString().padStart(2,'0'); }
@@ -827,7 +1004,7 @@
       }
       cardWrapper.style.opacity = '1';
       gsap.fromTo(cardWrapper, {opacity:0, y:-20, scale:0.96}, {opacity:1, y:0, scale:1, duration:0.9, ease:'power2.out'});
-      huds.forEach((h,i)=> setTimeout(()=> h.classList.add('visible'), 300 + i*120));
+      huds.forEach((h,i)=> setTimeout(()=> h && h.classList.add('visible'), 300 + i*100));
       typeWriterUsername();
       typeWriterBio();
       fetchDiscordStatus();
@@ -841,7 +1018,7 @@
     startScreen.addEventListener('click', startApp);
     startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
 
-    // ----- FLIP CARD (click su pannello, click sulla card, o tasto SPACE) -----
+    // ----- FLIP CARD -----
     let flipAnimating = false;
     let flipCount = 0;
     const flipCountEl = document.getElementById('flipCount');
@@ -892,10 +1069,11 @@
       }
     });
 
-    // ----- EFFETTO 3D SULLO SFONDO -----
+    // ----- 3D TILT (stronger movement) -----
     let tiltX = 0, tiltY = 0;
     let targetTiltX = 0, targetTiltY = 0;
     let isMouseOnCard = false;
+    let lastTiltX = null, lastTiltY = null;
 
     document.addEventListener('mousemove', (e) => {
       const rect = document.body.getBoundingClientRect();
@@ -903,20 +1081,21 @@
       const centerY = rect.height / 2;
       const relX = Math.max(-1, Math.min(1, (e.clientX - centerX) / centerX));
       const relY = Math.max(-1, Math.min(1, (e.clientY - centerY) / centerY));
-      const maxTilt = 8;
+      // Increased max tilt for more movement
+      const maxTilt = 16;
       targetTiltX = relY * maxTilt;
       targetTiltY = -relX * maxTilt;
-      const px = (e.clientX / window.innerWidth - 0.5) * 8;
-      const py = (e.clientY / window.innerHeight - 0.5) * 4;
+      const px = (e.clientX / window.innerWidth - 0.5) * 14;
+      const py = (e.clientY / window.innerHeight - 0.5) * 8;
       backgroundVideo.style.transform = `translate(-50%, -50%) scale(1.05) translate(${px}px, ${py}px)`;
     }, { passive: true });
 
-    let lastTiltX = null, lastTiltY = null;
     function animateTilt() {
       if(document.hidden){ requestAnimationFrame(animateTilt); return; }
-      tiltX += (targetTiltX - tiltX) * 0.08;
-      tiltY += (targetTiltY - tiltY) * 0.08;
-      const changed = lastTiltX === null || Math.abs(tiltX - lastTiltX) > 0.02 || Math.abs(tiltY - lastTiltY) > 0.02;
+      // Slightly snappier follow
+      tiltX += (targetTiltX - tiltX) * 0.12;
+      tiltY += (targetTiltY - tiltY) * 0.12;
+      const changed = lastTiltX === null || Math.abs(tiltX - lastTiltX) > 0.03 || Math.abs(tiltY - lastTiltY) > 0.03;
       if (!isMouseOnCard && !flipAnimating && changed) {
         lastTiltX = tiltX; lastTiltY = tiltY;
         cardWrapper.style.transition = 'none';
@@ -1005,7 +1184,7 @@
       }
     }, 500);
 
-    // ----- DISCORD STATUS + SPOTIFY + GAME -----
+    // ----- DISCORD STATUS + SPOTIFY -----
     async function fetchDiscordStatus(){
       const userId = '1019329014369882123';
       const apiUrl = `https://api.lanyard.rest/v1/users/${userId}`;
@@ -1041,9 +1220,6 @@
 
     function updateSpotifyGame(data){
       const spotify = data.spotify;
-      const activities = data.activities || [];
-
-      // Spotify
       const spotifyCover = document.getElementById('spotifyCover');
       const spotifyTrack = document.getElementById('spotifyTrack');
       const spotifyArtist = document.getElementById('spotifyArtist');
@@ -1177,7 +1353,7 @@
     fetchWeather();
     setInterval(fetchWeather, 15 * 60000);
 
-    // ================= FLOATING QUOTES ON BACKGROUND =================
+    // ================= FLOATING QUOTES =================
     const quotes = [
       "Small steps still move you forward.",
       "Discipline beats motivation.",
@@ -1225,7 +1401,7 @@
       quotesInterval = setInterval(spawnQuote, 8000);
     }
 
-    // ================= CRYPTO TICKER (2 coin rotator) =================
+    // ================= CRYPTO TICKER =================
     let cryptoList = [];
     let tickerIndex = 0;
     let tickerRotateInterval = null;
@@ -1315,7 +1491,7 @@
       setInterval(fetchCryptoTicker, 2 * 60000);
     }
 
-    // ================= STARFIELD (schermata iniziale) =================
+    // ================= STARFIELD (lighter) =================
     (function starfield(){
       const canvas = document.getElementById('starfield');
       if(!canvas) return;
@@ -1329,7 +1505,8 @@
         canvas.height = window.innerHeight;
       }
       function makeStars(){
-        const count = Math.floor((window.innerWidth * window.innerHeight) / 6000);
+        // Reduced star count for better performance
+        const count = Math.min(180, Math.floor((window.innerWidth * window.innerHeight) / 9000));
         stars = Array.from({ length: count }, () => {
           let x, y;
           do {
@@ -1342,11 +1519,11 @@
           return {
             x: x,
             y: y,
-            r: Math.random() * 1.4 + 0.3,
-            vx: (Math.random() - 0.5) * 0.06,
-            vy: (Math.random() - 0.5) * 0.06,
+            r: Math.random() * 1.3 + 0.3,
+            vx: (Math.random() - 0.5) * 0.05,
+            vy: (Math.random() - 0.5) * 0.05,
             phase: Math.random() * Math.PI * 2,
-            speed: 0.015 + Math.random() * 0.025
+            speed: 0.012 + Math.random() * 0.02
           };
         });
       }
@@ -1354,12 +1531,12 @@
       window.addEventListener('resize', () => { resize(); makeStars(); });
 
       const glowSprite = document.createElement('canvas');
-      const glowSize = 16;
+      const glowSize = 14;
       glowSprite.width = glowSprite.height = glowSize;
       const gctx = glowSprite.getContext('2d');
       const grad = gctx.createRadialGradient(glowSize/2, glowSize/2, 0, glowSize/2, glowSize/2, glowSize/2);
-      grad.addColorStop(0, 'rgba(255,255,255,0.9)');
-      grad.addColorStop(0.4, 'rgba(255,255,255,0.35)');
+      grad.addColorStop(0, 'rgba(255,255,255,0.85)');
+      grad.addColorStop(0.4, 'rgba(255,255,255,0.3)');
       grad.addColorStop(1, 'rgba(255,255,255,0)');
       gctx.fillStyle = grad;
       gctx.fillRect(0, 0, glowSize, glowSize);
@@ -1374,11 +1551,11 @@
           if(s.y < 0) s.y = canvas.height; if(s.y > canvas.height) s.y = 0;
           const twinkle = 0.35 + 0.65 * Math.abs(Math.sin(now * s.speed * 10 + s.phase));
           ctx.globalAlpha = twinkle;
-          const g = s.r * 4;
+          const g = s.r * 3.5;
           ctx.drawImage(glowSprite, s.x - g/2, s.y - g/2, g, g);
           ctx.globalAlpha = 1;
           ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r * 0.6, 0, Math.PI * 2);
+          ctx.arc(s.x, s.y, s.r * 0.55, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(255,255,255,${twinkle.toFixed(3)})`;
           ctx.fill();
         }
@@ -1397,7 +1574,7 @@
       observer.observe(startScreen, { attributes:true, attributeFilter:['class'] });
     })();
 
-    // ================= PARTICELLE AL PASSAGGIO DEL MOUSE (cursor trail) =================
+    // ================= PARTICLES (lighter + throttled) =================
     (function particles(){
       const canvas = document.getElementById('particles-canvas');
       if(!canvas) return;
@@ -1415,12 +1592,12 @@
       document.addEventListener('visibilitychange', () => { pageHidden = document.hidden; });
 
       const glowSprite = document.createElement('canvas');
-      const glowSize = 24;
+      const glowSize = 20;
       glowSprite.width = glowSprite.height = glowSize;
       const gctx = glowSprite.getContext('2d');
       const grad = gctx.createRadialGradient(glowSize/2, glowSize/2, 0, glowSize/2, glowSize/2, glowSize/2);
-      grad.addColorStop(0, 'rgba(255,255,255,0.95)');
-      grad.addColorStop(0.4, 'rgba(255,255,255,0.4)');
+      grad.addColorStop(0, 'rgba(255,255,255,0.9)');
+      grad.addColorStop(0.4, 'rgba(255,255,255,0.35)');
       grad.addColorStop(1, 'rgba(255,255,255,0)');
       gctx.fillStyle = grad;
       gctx.fillRect(0, 0, glowSize, glowSize);
@@ -1428,19 +1605,20 @@
       document.addEventListener('mousemove', (e) => {
         if(pageHidden) return;
         const now = Date.now();
-        if(now - lastSpawn < 30) return;
+        // Spawn less frequently
+        if(now - lastSpawn < 45) return;
         lastSpawn = now;
-        for(let i=0;i<2;i++){
-          particlesList.push({
-            x: e.clientX, y: e.clientY,
-            vx: (Math.random() - 0.5) * 1.2,
-            vy: (Math.random() - 0.5) * 1.2 - 0.3,
-            r: Math.random() * 2.4 + 1,
-            life: 1,
-            decay: 0.012 + Math.random() * 0.015
-          });
-        }
-        if(particlesList.length > 120) particlesList.splice(0, particlesList.length - 120);
+        // Only 1 particle per spawn instead of 2
+        particlesList.push({
+          x: e.clientX, y: e.clientY,
+          vx: (Math.random() - 0.5) * 1.1,
+          vy: (Math.random() - 0.5) * 1.1 - 0.25,
+          r: Math.random() * 2.1 + 0.9,
+          life: 1,
+          decay: 0.014 + Math.random() * 0.016
+        });
+        // Lower max particles
+        if(particlesList.length > 70) particlesList.splice(0, particlesList.length - 70);
       }, { passive: true });
 
       let rafId2 = null;
@@ -1451,8 +1629,8 @@
           const p = particlesList[i];
           p.x += p.vx; p.y += p.vy; p.life -= p.decay;
           if(p.life <= 0){ particlesList.splice(i,1); continue; }
-          const g = (p.r * 3) * p.life + p.r;
-          ctx.globalAlpha = p.life * 0.9;
+          const g = (p.r * 2.8) * p.life + p.r;
+          ctx.globalAlpha = p.life * 0.85;
           ctx.drawImage(glowSprite, p.x - g/2, p.y - g/2, g, g);
         }
         ctx.globalAlpha = 1;
