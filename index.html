@@ -101,6 +101,21 @@
     pointer-events:auto;
   }
   .hud-br a:hover{ color:var(--mist); }
+  
+  /* Glow effect for all HUD text */
+  .hud, .hud b, .hud-br a{
+    animation:glowPulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes glowPulse{
+    0%,100%{ 
+      text-shadow:0 0 10px rgba(255,255,255,0.3), 0 0 20px rgba(128,128,128,0.2);
+    }
+    50%{ 
+      text-shadow:0 0 15px rgba(255,255,255,0.5), 0 0 30px rgba(128,128,128,0.4);
+    }
+  }
+  
   @media (max-width:700px){ .hud{display:none;} }
 
   #start-screen{
@@ -279,19 +294,14 @@
   #profile-bio .bio-link{
     color:#a855f7;
     text-decoration:none;
-    background:linear-gradient(90deg, #7c3aed, #000000, #a855f7, #000000, #7c3aed);
-    background-size:300% 100%;
+    background:linear-gradient(90deg, #7c3aed, #a855f7, #7c3aed);
     -webkit-background-clip:text; -webkit-text-fill-color:transparent;
     background-clip:text;
-    animation:shimmer-text-purple 3.5s ease-in-out infinite;
     font-weight:bold; cursor:pointer;
     transition:filter .3s ease;
   }
   #profile-bio .bio-link:hover{ filter:drop-shadow(0 0 12px rgba(168,85,247,0.7)); }
-  @keyframes shimmer-text-purple{
-    0%{background-position:200% 0;}
-    100%{background-position:-200% 0;}
-  }
+  
   @keyframes shimmer-text{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 
   .glitch{ animation:glitch .18s ease-in-out; }
@@ -608,7 +618,7 @@
     background-image:linear-gradient(90deg, #1DB954, #ffffff, #1ed760, #1DB954);
   }
   .ctx-item[data-site="gunslol"] .ctx-label{
-    background-image:linear-gradient(90deg, #ff4d6d, #ffffff, #ff8a5c, #ff4d6d);
+    background-image:linear-gradient(90deg, #7c3aed, #000000, #a855f7, #000000, #7c3aed);
   }
   @keyframes ctxGradient{
     0%{ background-position:0% 50%; }
@@ -660,9 +670,9 @@
 
 <div class="custom-cursor" id="customCursor"></div>
 
-<div class="hud hud-tl" id="hudTl"><b>CLOCK</b> <span id="clock">00:00:00</span></div>
-<div class="hud hud-tr" id="hudTr"><b>UPTIME</b> <span id="uptime">00:00</span></div>
-<div class="hud hud-bl" id="hudBl">credit video & music</div>
+<div class="hud hud-tl" id="hudTl"><b>DEPLOY & BUILD</b> <span>by</span></div>
+<div class="hud hud-tr" id="hudTr"><b>not.exotic.ton</b> <span id="uptime">00:00</span></div>
+<div class="hud hud-bl" id="hudBl">credit film & music</div>
 <div class="hud hud-br" id="hudBr"><a href="https://www.youtube.com/watch?v=XpTfh41BfHs" target="_blank" rel="noopener">KONSTA</a></div>
 
 <div id="start-screen">
@@ -682,19 +692,19 @@
 <!-- Custom right-click menu -->
 <div id="ctx-menu">
   <a class="ctx-item" data-site="telegram" href="https://t.me/javph" target="_blank" rel="noopener">
-    <img class="ctx-icon" src="assets/telegram.png" alt="">
+    <img class="ctx-icon" src="https://static.vecteezy.com/system/resources/previews/023/986/562/large_2x/telegram-logo-telegram-logo-transparent-telegram-icon-transparent-free-free-png.png" alt="">
     <span class="ctx-label">Link Telegram</span>
   </a>
   <a class="ctx-item" data-site="discord" href="https://discord.com/users/1019329014369882123" target="_blank" rel="noopener">
-    <img class="ctx-icon" src="assets/discord.png" alt="">
+    <img class="ctx-icon" src="https://static.vecteezy.com/system/resources/thumbnails/018/930/718/small/discord-logo-discord-icon-transparent-free-png.png" alt="">
     <span class="ctx-label">Link Discord</span>
   </a>
   <a class="ctx-item" data-site="spotify" href="https://open.spotify.com/user/lopp05qs775yh0frde45qcf9c?si=84c4e551e4c24951" target="_blank" rel="noopener">
-    <img class="ctx-icon" src="assets/spotify.png" alt="">
+    <img class="ctx-icon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/1280px-Spotify_logo_without_text.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail" alt="">
     <span class="ctx-label">Link Spotify</span>
   </a>
   <a class="ctx-item" data-site="gunslol" href="https://guns.lol/javraj" target="_blank" rel="noopener">
-    <img class="ctx-icon" src="assets/gift.png" alt="">
+    <img class="ctx-icon" src="https://s3-eu-west-1.amazonaws.com/tpd/logos/658818456b62ffe60083e998/0x0.png" alt="">
     <span class="ctx-label">Link Guns.lol</span>
   </a>
 </div>
@@ -862,7 +872,6 @@
     const customCursor  = document.getElementById('customCursor');
     const statusRing    = document.getElementById('status-ring');
     const lastSeen      = document.getElementById('last-seen');
-    const clockEl       = document.getElementById('clock');
     const uptimeEl      = document.getElementById('uptime');
     const backClockEl   = document.getElementById('backClock');
     const backDateEl    = document.getElementById('backDate');
@@ -933,12 +942,11 @@
       });
     });
 
-    // ----- CLOCK / UPTIME -----
+    // ----- UPTIME -----
     function pad(n){ return n.toString().padStart(2,'0'); }
     function tickClock(){
       const d = new Date();
       const h = pad(d.getHours()), m = pad(d.getMinutes()), s = pad(d.getSeconds());
-      clockEl.textContent = h+':'+m+':'+s;
       backClockEl.textContent = h+':'+m+':'+s;
       const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       backDateEl.textContent = d.getDate()+' '+months[d.getMonth()]+' '+d.getFullYear();
