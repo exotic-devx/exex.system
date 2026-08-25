@@ -135,6 +135,49 @@
   #start-text{
     font-family:'Angel Wish', serif; font-size:32px; letter-spacing:3px; color:#fff;
     position:relative; z-index:2;
+    transition:opacity .5s ease;
+  }
+
+  /* ---- LOADING SEQUENCE ---- */
+  #loading-ui{
+    position:relative; z-index:2;
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    opacity:0; transform:scale(0.94);
+    transition:opacity .6s ease, transform .6s cubic-bezier(.23,1,.32,1);
+  }
+  #loading-ui.hidden{ display:none; }
+  #loading-ui.visible{ opacity:1; transform:scale(1); }
+  #loading-ui.fade-out{
+    opacity:0; transform:scale(1.06);
+    transition:opacity .38s ease, transform .38s ease;
+  }
+  .ring-wrap{ position:relative; width:120px; height:120px; }
+  #loading-ring{
+    position:absolute; inset:0; width:120px; height:120px;
+    transform:rotate(-90deg);
+    filter:drop-shadow(0 0 10px rgba(255,255,255,.3));
+  }
+  #loading-ring circle{ fill:none; }
+  #loading-ring .ring-bg{ stroke:rgba(255,255,255,.08); stroke-width:2; }
+  #loading-ring .ring-progress{
+    stroke:#fff; stroke-width:2; stroke-linecap:round;
+    transition:stroke-dashoffset .1s linear;
+  }
+  #loading-percent{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-size:24px; letter-spacing:1px; color:#fff;
+    text-shadow:0 0 14px rgba(255,255,255,.45);
+    animation:usernameGlow 3.2s ease-in-out infinite;
+  }
+  #loading-status{
+    font-family:var(--font-ui); font-size:10.5px; letter-spacing:2.5px; color:rgba(255,255,255,.5);
+    text-transform:uppercase; transition:opacity .2s ease; min-height:14px;
+  }
+  @media (max-width:580px){
+    .ring-wrap{ width:92px; height:92px; }
+    #loading-ring{ width:92px; height:92px; }
+    #loading-percent{ font-size:19px; }
+    #loading-status{ font-size:9.5px; letter-spacing:2px; }
   }
 
   #particles-canvas{
@@ -678,6 +721,16 @@
 <div id="start-screen">
   <canvas id="starfield"></canvas>
   <div id="start-text"></div>
+  <div id="loading-ui" class="hidden">
+    <div class="ring-wrap">
+      <svg id="loading-ring" viewBox="0 0 120 120">
+        <circle class="ring-bg" cx="60" cy="60" r="52"/>
+        <circle class="ring-progress" id="ringProgress" cx="60" cy="60" r="52"/>
+      </svg>
+      <div id="loading-percent">0%</div>
+    </div>
+    <div id="loading-status">aligning stars…</div>
+  </div>
 </div>
 
 <div id="background-wrapper">
@@ -972,8 +1025,10 @@
     let startIndex = 0;
     let isDeletingStart = false;
     let startCursorVisible = true;
+    let typewriterActive = true;
 
     function typeWriterStart() {
+      if (!typewriterActive) return;
       if (!isDeletingStart && startIndex < startMessage.length) {
         startTextContent = startMessage.slice(0, startIndex + 1);
         startIndex++;
@@ -992,13 +1047,138 @@
       startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
     }
     setInterval(() => {
+      if (!typewriterActive) return;
       startCursorVisible = !startCursorVisible;
       startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
     }, 500);
     typeWriterStart();
 
+    // ----- LOADING SEQUENCE -----
+    const loadingUI       = document.getElementById('loading-ui');
+    const loadingPercentEl= document.getElementById('loading-percent');
+    const loadingStatusEl = document.getElementById('loading-status');
+    const ringProgress    = document.getElementById('ringProgress');
+    const RING_CIRC = 2 * Math.PI * 52;
+    if (ringProgress) {
+      ringProgress.style.strokeDasharray  = RING_CIRC.toFixed(2);
+      ringProgress.style.strokeDashoffset = RING_CIRC.toFixed(2);
+    }
+
+    const loadingMessages = [
+      { at: 0,  text: 'aligning stars…' },
+      { at: 22, text: 'loading assets…' },
+      { at: 50, text: 'tuning frequencies…' },
+      { at: 78, text: 'almost there…' },
+      { at: 97, text: 'ready.' }
+    ];
+    function setLoadingMessage(pct){
+      let msg = loadingMessages[0].text;
+      for (const m of loadingMessages) { if (pct >= m.at) msg = m.text; }
+      if (loadingStatusEl && loadingStatusEl.dataset.msg !== msg) {
+        loadingStatusEl.dataset.msg = msg;
+        loadingStatusEl.style.opacity = '0';
+        setTimeout(() => {
+          loadingStatusEl.textContent = msg;
+          loadingStatusEl.style.opacity = '1';
+        }, 160);
+      }
+    }
+
+    let loadStarted = false;
+    function beginLoad(){
+      if (loadStarted) return;
+      loadStarted = true;
+      typewriterActive = false;
+      startText.style.opacity = '0';
+
+      loadingUI.classList.remove('hidden');
+      requestAnimationFrame(() => loadingUI.classList.add('visible'));
+
+      const weight = { fonts: 20, video: 35, cursorImg: 15, profileImg: 15 };
+      const done = { fonts: false, video: false, cursorImg: false, profileImg: false };
+      let realProgress = 0;
+
+      function recompute(){
+        realProgress = 0;
+        if (done.fonts)      realProgress += weight.fonts;
+        if (done.video)      realProgress += weight.video;
+        if (done.cursorImg)  realProgress += weight.cursorImg;
+        if (done.profileImg) realProgress += weight.profileImg;
+      }
+
+      const fontPromise = (document.fonts && document.fonts.load)
+        ? Promise.race([
+            document.fonts.load('1em "Angel Wish"').then(() => document.fonts.ready).catch(() => {}),
+            new Promise(res => setTimeout(res, 2500))
+          ])
+        : Promise.resolve();
+      fontPromise.then(() => { done.fonts = true; recompute(); });
+
+      const videoPromise = new Promise((resolve) => {
+        if (!backgroundVideo) return resolve();
+        if (backgroundVideo.readyState >= 3) return resolve();
+        const onReady = () => { cleanup(); resolve(); };
+        const cleanup = () => {
+          backgroundVideo.removeEventListener('canplaythrough', onReady);
+          backgroundVideo.removeEventListener('loadeddata', onReady);
+        };
+        backgroundVideo.addEventListener('canplaythrough', onReady, { once: true });
+        backgroundVideo.addEventListener('loadeddata', onReady, { once: true });
+        setTimeout(() => { cleanup(); resolve(); }, 4000);
+      });
+      videoPromise.then(() => { done.video = true; recompute(); });
+
+      function loadImg(src){
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = resolve; img.onerror = resolve;
+          img.src = src;
+        });
+      }
+      loadImg('assets/custom_cursor.png').then(() => { done.cursorImg = true; recompute(); });
+      loadImg('assets/profile.gif').then(() => { done.profileImg = true; recompute(); });
+
+      const startTime = Date.now();
+      const MIN_DURATION = 1400;
+      let displayProgress = 0;
+
+      function tick(){
+        const elapsed = Date.now() - startTime;
+        const trickleTarget = Math.min(15, elapsed / 60);
+        const target = Math.min(99.5, realProgress * 0.85 + trickleTarget);
+        displayProgress += (target - displayProgress) * 0.08;
+        if (displayProgress > target) displayProgress = target;
+
+        const allTasksDone = done.fonts && done.video && done.cursorImg && done.profileImg;
+        const finished = allTasksDone && elapsed >= MIN_DURATION;
+        if (finished) {
+          displayProgress += (100 - displayProgress) * 0.25;
+          if (displayProgress > 99.6) displayProgress = 100;
+        }
+
+        const pctInt = Math.round(displayProgress);
+        if (loadingPercentEl) loadingPercentEl.textContent = pctInt + '%';
+        if (ringProgress) ringProgress.style.strokeDashoffset = (RING_CIRC * (1 - displayProgress / 100)).toFixed(2);
+        setLoadingMessage(pctInt);
+        window.__loadProgress = displayProgress / 100;
+
+        if (displayProgress >= 100) {
+          setTimeout(completeLoad, 260);
+          return;
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function completeLoad(){
+      loadingUI.classList.add('fade-out');
+      setTimeout(() => { startApp(); }, 380);
+    }
+
     // ----- START APP -----
     function startApp() {
+      window.__loadProgress = 0;
       startScreen.classList.add('hidden');
       if (backgroundVideo) {
         backgroundVideo.muted = true;
@@ -1023,8 +1203,8 @@
       const socialLinksEl = document.querySelector('.social-links');
       if(socialLinksEl) setTimeout(()=> socialLinksEl.classList.add('in'), 700);
     }
-    startScreen.addEventListener('click', startApp);
-    startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); startApp(); });
+    startScreen.addEventListener('click', beginLoad);
+    startScreen.addEventListener('touchstart', (e)=>{ e.preventDefault(); beginLoad(); });
 
     // ----- FLIP CARD -----
     let flipAnimating = false;
@@ -1553,11 +1733,38 @@
         if(!running) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const now = Date.now() * 0.001;
+
+        // ---- constellation lines, intensity tied to loading progress ----
+        const prog = window.__loadProgress || 0;
+        if (prog > 0.02) {
+          const maxDist = 85 + prog * 75;
+          const maxDistSq = maxDist * maxDist;
+          ctx.lineWidth = 1;
+          for (let i = 0; i < stars.length; i++) {
+            for (let j = i + 1; j < stars.length; j++) {
+              const dx = stars[i].x - stars[j].x, dy = stars[i].y - stars[j].y;
+              const distSq = dx*dx + dy*dy;
+              if (distSq < maxDistSq) {
+                const dist = Math.sqrt(distSq);
+                const alpha = (1 - dist / maxDist) * prog * 0.55;
+                if (alpha > 0.02) {
+                  ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+                  ctx.beginPath();
+                  ctx.moveTo(stars[i].x, stars[i].y);
+                  ctx.lineTo(stars[j].x, stars[j].y);
+                  ctx.stroke();
+                }
+              }
+            }
+          }
+        }
+
         for(const s of stars){
           s.x += s.vx; s.y += s.vy;
           if(s.x < 0) s.x = canvas.width; if(s.x > canvas.width) s.x = 0;
           if(s.y < 0) s.y = canvas.height; if(s.y > canvas.height) s.y = 0;
-          const twinkle = 0.35 + 0.65 * Math.abs(Math.sin(now * s.speed * 10 + s.phase));
+          let twinkle = 0.35 + 0.65 * Math.abs(Math.sin(now * s.speed * 10 + s.phase));
+          twinkle = Math.min(1, twinkle + prog * 0.25);
           ctx.globalAlpha = twinkle;
           const g = s.r * 3.5;
           ctx.drawImage(glowSprite, s.x - g/2, s.y - g/2, g, g);
