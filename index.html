@@ -1397,42 +1397,30 @@ setInterval(()=>{
 
     // ----- BIO TYPING -----
 const bioMessages = [
-    { text: 'Selling.', class: 'bio-link-selling' },
-    { text: 'DM me.', class: 'bio-link-dm' },
-    { text: 'guns.lol/javraj', class: 'bio-link' }
+    '<span class="bio-link-selling">Selling.</span>', 
+    '<span class="bio-link-dm">DM me.</span>', 
+    '<span class="bio-link">guns.lol/javraj</span>'
 ];
 let bioText='', bioIndex=0, bioMessageIndex=0, isBioDeleting=false, bioCursorVisible=true;
-
-function typeWriterBio(){
-    const currentMessage = bioMessages[bioMessageIndex];
-    const fullText = currentMessage.text;
-    
-    if(!isBioDeleting && bioIndex < fullText.length){
-        bioText = fullText.slice(0, bioIndex+1); 
-        bioIndex++;
-    } else if(isBioDeleting && bioIndex > 0){
-        bioText = fullText.slice(0, bioIndex-1); 
-        bioIndex--;
-    } else if(bioIndex === fullText.length){
-        isBioDeleting = true; 
-        setTimeout(typeWriterBio, 800); 
-        return;
-    } else if(bioIndex === 0 && isBioDeleting){
-        isBioDeleting = false; 
-        bioMessageIndex = (bioMessageIndex+1)%bioMessages.length;
-        setTimeout(typeWriterBio, 100); 
-        return;
-    }
-    
-    // Applica la classe corretta al testo
-    profileBio.innerHTML = `<span class="${currentMessage.class}">${bioText}</span>` + (bioCursorVisible?'|':' ');
-    
-    if(Math.random() < 0.05){
+    function typeWriterBio(){
+      const currentMessage = bioMessages[bioMessageIndex];
+      if(!isBioDeleting && bioIndex < currentMessage.length){
+        bioText = currentMessage.slice(0, bioIndex+1); bioIndex++;
+      } else if(isBioDeleting && bioIndex > 0){
+        bioText = currentMessage.slice(0, bioIndex-1); bioIndex--;
+      } else if(bioIndex === currentMessage.length){
+        isBioDeleting = true; setTimeout(typeWriterBio, 800); return;
+      } else if(bioIndex === 0 && isBioDeleting){
+        isBioDeleting = false; bioMessageIndex = (bioMessageIndex+1)%bioMessages.length;
+        setTimeout(typeWriterBio, 100); return;
+      }
+      profileBio.innerHTML = bioText + (bioCursorVisible?'|':' ');
+      if(Math.random() < 0.05){
         profileBio.classList.add('glitch');
         setTimeout(()=> profileBio.classList.remove('glitch'), 180);
+      }
+      setTimeout(typeWriterBio, isBioDeleting?30:70);
     }
-    setTimeout(typeWriterBio, isBioDeleting?30:70);
-}
       profileBio.innerHTML = bioText + (bioCursorVisible?'|':' ');
       if(Math.random() < 0.05){
         profileBio.classList.add('glitch');
