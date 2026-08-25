@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <!-- Open Graph -->
-<meta property="og:title" content="𝔢𝔵𝔬𝔱𝔦𝔠">
-<meta property="og:description" content="don't try to copy">
+<meta property="og:title" content="𝔢𝔵𝔬𝔱𝔦𝔠 — Exotic Profile">
+<meta property="og:description" content="Personal profile page with live Discord status">
 <meta property="og:image" content="https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4">
 <meta property="og:url" content="https://ex0tic.sytes.net">
 <meta property="og:type" content="website">
@@ -333,24 +333,17 @@
   #profile-bio{
     color:var(--mist); font-size:15px; line-height:1.6; min-height:2em; text-align:center;
     margin:4px 0 22px; padding:0 6px; letter-spacing:.2px;
-}
-
-#profile-bio .bio-link{
+  }
+  #profile-bio .bio-link{
     color:#a855f7;
     text-decoration:none;
     background:linear-gradient(90deg, #7c3aed, #a855f7, #7c3aed);
-    -webkit-background-clip:text; 
-    -webkit-text-fill-color:transparent;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
     background-clip:text;
-    font-weight:bold; 
-    cursor:pointer;
+    font-weight:bold; cursor:pointer;
     transition:filter .3s ease;
-}
-#profile-bio .bio-link:hover{ 
-    filter:drop-shadow(0 0 12px rgba(168,85,247,0.7)); 
-}
-
-#profile-bio .bio-link-selling{
+  }
+  #profile-bio .bio-link-selling{
     color:#ff6b35;
     text-decoration:none;
     background:linear-gradient(90deg, #ffd700, #ffed4a, #ffd700);
@@ -368,7 +361,7 @@
 #profile-bio .bio-link-dm{
     color:#00bfff;
     text-decoration:none;
-    background:linear-gradient(90deg, #0000ff, #6666ff, #0000ff);
+    background:linear-gradient(90deg, #ff0000, #ff6666, #ff0000);
     -webkit-background-clip:text; 
     -webkit-text-fill-color:transparent;
     background-clip:text;
@@ -379,6 +372,7 @@
 #profile-bio .bio-link-dm:hover{ 
     filter:drop-shadow(0 0 12px rgba(0,191,255,0.7)); 
 }
+  #profile-bio .bio-link:hover{ filter:drop-shadow(0 0 12px rgba(168,85,247,0.7)); }
   
   @keyframes shimmer-text{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 
@@ -1081,12 +1075,10 @@
       }
       startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
     }
-setInterval(()=>{
-      bioCursorVisible = !bioCursorVisible;
-      const currentMessage = bioMessages[bioMessageIndex];
-      if(bioIndex>=0 && bioIndex<=currentMessage.text.length){
-        profileBio.innerHTML = `<span class="${currentMessage.class}">${bioText}</span>` + (bioCursorVisible?'|':' ');
-      }
+    setInterval(() => {
+      if (!typewriterActive) return;
+      startCursorVisible = !startCursorVisible;
+      startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
     }, 500);
     typeWriterStart();
 
@@ -1397,7 +1389,7 @@ setInterval(()=>{
 
     // ----- BIO TYPING -----
 const bioMessages = [
-    '<span class="bio-link-selling">Selling.</span>', 
+    '<span class="bio-link-selling">Site for sale.</span>', 
     '<span class="bio-link-dm">DM me.</span>', 
     '<span class="bio-link">guns.lol/javraj</span>'
 ];
@@ -1409,25 +1401,11 @@ let bioText='', bioIndex=0, bioMessageIndex=0, isBioDeleting=false, bioCursorVis
       } else if(isBioDeleting && bioIndex > 0){
         bioText = currentMessage.slice(0, bioIndex-1); bioIndex--;
       } else if(bioIndex === currentMessage.length){
-        isBioDeleting = true; setTimeout(typeWriterBio, 800); return;
+        isBioDeleting = true; setTimeout(typeWriterBio, 2200); return;
       } else if(bioIndex === 0 && isBioDeleting){
         isBioDeleting = false; bioMessageIndex = (bioMessageIndex+1)%bioMessages.length;
-        setTimeout(typeWriterBio, 100); return;
+        setTimeout(typeWriterBio, 400); return;
       }
-      profileBio.innerHTML = bioText + (bioCursorVisible?'|':' ');
-      if(Math.random() < 0.05){
-        profileBio.classList.add('glitch');
-        setTimeout(()=> profileBio.classList.remove('glitch'), 180);
-      }
-      setTimeout(typeWriterBio, isBioDeleting?30:70);
-    }
-      profileBio.innerHTML = bioText + (bioCursorVisible?'|':' ');
-      if(Math.random() < 0.05){
-        profileBio.classList.add('glitch');
-        setTimeout(()=> profileBio.classList.remove('glitch'), 180);
-      }
-      setTimeout(typeWriterBio, isBioDeleting?30:70);  // Ridotto da 50:100 a 30:70
-    }
       profileBio.innerHTML = bioText + (bioCursorVisible?'|':' ');
       if(Math.random() < 0.05){
         profileBio.classList.add('glitch');
