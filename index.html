@@ -1081,10 +1081,12 @@
       }
       startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
     }
-    setInterval(() => {
-      if (!typewriterActive) return;
-      startCursorVisible = !startCursorVisible;
-      startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
+setInterval(()=>{
+      bioCursorVisible = !bioCursorVisible;
+      const currentMessage = bioMessages[bioMessageIndex];
+      if(bioIndex>=0 && bioIndex<=currentMessage.text.length){
+        profileBio.innerHTML = `<span class="${currentMessage.class}">${bioText}</span>` + (bioCursorVisible?'|':' ');
+      }
     }, 500);
     typeWriterStart();
 
