@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <!-- Open Graph -->
-<meta property="og:title" content="𝔢𝔵𝔬𝔱𝔦𝔠 — Exotic Profile">
-<meta property="og:description" content="Personal profile page with live Discord status">
+<meta property="og:title" content="𝔢𝔵𝔬𝔱𝔦𝔠">
+<meta property="og:description" content="don't try to copy">
 <meta property="og:image" content="https://r2.guns.lol/a128e056-52ce-4903-a862-8a4761ebedc4.mp4">
 <meta property="og:url" content="https://ex0tic.sytes.net">
 <meta property="og:type" content="website">
@@ -134,7 +134,7 @@
   }
   #start-text{
     font-family:'Angel Wish', serif; font-size:32px; letter-spacing:3px; color:#fff;
-    position:relative; z-index:2;
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:2;
     transition:opacity .5s ease;
   }
 
@@ -1094,7 +1094,8 @@
       loadingUI.classList.remove('hidden');
       requestAnimationFrame(() => loadingUI.classList.add('visible'));
 
-      const weight = { fonts: 20, video: 35, cursorImg: 15, profileImg: 15 };
+      // Pesi: DEVONO sommare a 100, altrimenti il progresso reale non arriva mai al 100%.
+      const weight = { fonts: 20, video: 35, cursorImg: 15, profileImg: 15, safety: 15 };
       const done = { fonts: false, video: false, cursorImg: false, profileImg: false };
       let realProgress = 0;
 
@@ -1106,15 +1107,25 @@
         if (done.profileImg) realProgress += weight.profileImg;
       }
 
+      // Ogni task ha il PROPRIO timeout indipendente: se un asset si blocca
+      // (video CDN lento, font che non risponde), quel singolo timeout lo
+      // sblocca comunque — non dipende da un timer condiviso.
+      function withTimeout(promise, ms){
+        return Promise.race([
+          promise,
+          new Promise((resolve) => setTimeout(resolve, ms))
+        ]);
+      }
+
       const fontPromise = (document.fonts && document.fonts.load)
-        ? Promise.race([
+        ? withTimeout(
             document.fonts.load('1em "Angel Wish"').then(() => document.fonts.ready).catch(() => {}),
-            new Promise(res => setTimeout(res, 2500))
-          ])
+            2500
+          )
         : Promise.resolve();
       fontPromise.then(() => { done.fonts = true; recompute(); });
 
-      const videoPromise = new Promise((resolve) => {
+      const videoPromise = withTimeout(new Promise((resolve) => {
         if (!backgroundVideo) return resolve();
         if (backgroundVideo.readyState >= 3) return resolve();
         const onReady = () => { cleanup(); resolve(); };
@@ -1124,36 +1135,41 @@
         };
         backgroundVideo.addEventListener('canplaythrough', onReady, { once: true });
         backgroundVideo.addEventListener('loadeddata', onReady, { once: true });
-        setTimeout(() => { cleanup(); resolve(); }, 4000);
-      });
+      }), 4000);
       videoPromise.then(() => { done.video = true; recompute(); });
 
       function loadImg(src){
-        return new Promise((resolve) => {
+        return withTimeout(new Promise((resolve) => {
           const img = new Image();
           img.onload = resolve; img.onerror = resolve;
           img.src = src;
-        });
+        }), 3000);
       }
       loadImg('assets/custom_cursor.png').then(() => { done.cursorImg = true; recompute(); });
       loadImg('assets/profile.gif').then(() => { done.profileImg = true; recompute(); });
 
       const startTime = Date.now();
       const MIN_DURATION = 1400;
+      // Rete di sicurezza assoluta: qualunque cosa succeda, dopo questo tempo
+      // il loading si considera comunque concluso.
+      const HARD_MAX_DURATION = 6000;
       let displayProgress = 0;
 
       function tick(){
         const elapsed = Date.now() - startTime;
-        const trickleTarget = Math.min(15, elapsed / 60);
-        const target = Math.min(99.5, realProgress * 0.85 + trickleTarget);
-        displayProgress += (target - displayProgress) * 0.08;
-        if (displayProgress > target) displayProgress = target;
-
         const allTasksDone = done.fonts && done.video && done.cursorImg && done.profileImg;
-        const finished = allTasksDone && elapsed >= MIN_DURATION;
+        const finished = (allTasksDone && elapsed >= MIN_DURATION) || elapsed >= HARD_MAX_DURATION;
+
         if (finished) {
           displayProgress += (100 - displayProgress) * 0.25;
           if (displayProgress > 99.6) displayProgress = 100;
+        } else {
+          // Il "trickle" copre solo il margine lasciato libero dal peso 'safety',
+          // così target può realisticamente avvicinarsi al 100% reale.
+          const trickleTarget = Math.min(weight.safety, elapsed / 60);
+          const target = Math.min(97, realProgress + trickleTarget);
+          displayProgress += (target - displayProgress) * 0.08;
+          if (displayProgress > target) displayProgress = target;
         }
 
         const pctInt = Math.round(displayProgress);
@@ -1343,7 +1359,7 @@
     }, 500);
 
     // ----- BIO TYPING -----
-    const bioMessages = ["Open-source.", "DM me for tut.", '<span class="bio-link">guns.lol/javraj</span>'];
+    const bioMessages = ["Selling.", "DM me.", '<span class="bio-link">guns.lol/javraj</span>'];
     let bioText='', bioIndex=0, bioMessageIndex=0, isBioDeleting=false, bioCursorVisible=true;
     function typeWriterBio(){
       const currentMessage = bioMessages[bioMessageIndex];
@@ -1733,31 +1749,7 @@
         if(!running) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const now = Date.now() * 0.001;
-
-        // ---- constellation lines, intensity tied to loading progress ----
         const prog = window.__loadProgress || 0;
-        if (prog > 0.02) {
-          const maxDist = 85 + prog * 75;
-          const maxDistSq = maxDist * maxDist;
-          ctx.lineWidth = 1;
-          for (let i = 0; i < stars.length; i++) {
-            for (let j = i + 1; j < stars.length; j++) {
-              const dx = stars[i].x - stars[j].x, dy = stars[i].y - stars[j].y;
-              const distSq = dx*dx + dy*dy;
-              if (distSq < maxDistSq) {
-                const dist = Math.sqrt(distSq);
-                const alpha = (1 - dist / maxDist) * prog * 0.55;
-                if (alpha > 0.02) {
-                  ctx.strokeStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
-                  ctx.beginPath();
-                  ctx.moveTo(stars[i].x, stars[i].y);
-                  ctx.lineTo(stars[j].x, stars[j].y);
-                  ctx.stroke();
-                }
-              }
-            }
-          }
-        }
 
         for(const s of stars){
           s.x += s.vx; s.y += s.vy;
