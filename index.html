@@ -333,17 +333,52 @@
   #profile-bio{
     color:var(--mist); font-size:15px; line-height:1.6; min-height:2em; text-align:center;
     margin:4px 0 22px; padding:0 6px; letter-spacing:.2px;
-  }
-  #profile-bio .bio-link{
+}
+
+#profile-bio .bio-link{
     color:#a855f7;
     text-decoration:none;
     background:linear-gradient(90deg, #7c3aed, #a855f7, #7c3aed);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    -webkit-background-clip:text; 
+    -webkit-text-fill-color:transparent;
     background-clip:text;
-    font-weight:bold; cursor:pointer;
+    font-weight:bold; 
+    cursor:pointer;
     transition:filter .3s ease;
-  }
-  #profile-bio .bio-link:hover{ filter:drop-shadow(0 0 12px rgba(168,85,247,0.7)); }
+}
+#profile-bio .bio-link:hover{ 
+    filter:drop-shadow(0 0 12px rgba(168,85,247,0.7)); 
+}
+
+#profile-bio .bio-link-selling{
+    color:#ff6b35;
+    text-decoration:none;
+    background:linear-gradient(90deg, #ff4500, #ff8c00, #ff4500);
+    -webkit-background-clip:text; 
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    font-weight:bold; 
+    cursor:pointer;
+    transition:filter .3s ease;
+}
+#profile-bio .bio-link-selling:hover{ 
+    filter:drop-shadow(0 0 12px rgba(255,140,0,0.7)); 
+}
+
+#profile-bio .bio-link-dm{
+    color:#00bfff;
+    text-decoration:none;
+    background:linear-gradient(90deg, #000000, #00bfff, #000000);
+    -webkit-background-clip:text; 
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    font-weight:bold; 
+    cursor:pointer;
+    transition:filter .3s ease;
+}
+#profile-bio .bio-link-dm:hover{ 
+    filter:drop-shadow(0 0 12px rgba(0,191,255,0.7)); 
+}
   
   @keyframes shimmer-text{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 
@@ -1359,8 +1394,12 @@
     }, 500);
 
     // ----- BIO TYPING -----
-    const bioMessages = ["Selling.", "DM me.", '<span class="bio-link">guns.lol/javraj</span>'];
-    let bioText='', bioIndex=0, bioMessageIndex=0, isBioDeleting=false, bioCursorVisible=true;
+const bioMessages = [
+    '<span class="bio-link-selling">Selling.</span>', 
+    '<span class="bio-link-dm">DM me.</span>', 
+    '<span class="bio-link">guns.lol/javraj</span>'
+];
+let bioText='', bioIndex=0, bioMessageIndex=0, isBioDeleting=false, bioCursorVisible=true;
     function typeWriterBio(){
       const currentMessage = bioMessages[bioMessageIndex];
       if(!isBioDeleting && bioIndex < currentMessage.length){
